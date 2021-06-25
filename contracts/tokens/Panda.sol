@@ -4,12 +4,12 @@ pragma solidity ^0.8.0;
 
 import '@openzeppelin/contracts/token/ERC20/IERC20.sol';
 
-contract FinAxis is IERC20 {
+contract Panda is IERC20 {
     mapping(address => uint256) private _balances;
     mapping(address => mapping(address => uint256)) private _allowances;
 
-    string private _name = "FinAxis";
-    string private _symbol = "FINA";
+    string private _name = "PANDA";
+    string private _symbol = "PANDA";
     uint256 private _totalSupply = 10000000000000000000; //21,000,000 FINA tokens
     uint8 private _decimals = 10;
 
