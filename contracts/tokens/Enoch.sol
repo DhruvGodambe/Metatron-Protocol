@@ -4,17 +4,19 @@ pragma solidity ^0.8.0;
 
 import './IERC20.sol';
 
-contract Panda is IERC20 {
+contract Enoch is IERC20 {
     mapping(address => uint256) private _balances;
     mapping(address => mapping(address => uint256)) private _allowances;
+    address public _owner;
 
-    string private _name = "PANDA";
-    string private _symbol = "PANDA";
-    uint256 private _totalSupply = 10000000000000000000; //21,000,000 FINA tokens
+    string private _name = "ENOCH";
+    string private _symbol = "ENOCH";
+    uint256 private _totalSupply = 10000000000000000000; //1,000,000,000 ENOCH tokens
     uint8 private _decimals = 10;
 
     constructor() public {
-        _balances[msg.sender] = _totalSupply;
+        _owner = msg.sender;
+        _balances[_owner] = _totalSupply;
     }
 
     function name() public view virtual returns (string memory) {
@@ -85,6 +87,11 @@ contract Panda is IERC20 {
         emit Transfer(address(0), account, amount);
     }
 
+    function mint(address account, uint256 amount) public {
+        require(msg.sender == _owner, "You are not authorized to mint FINA");
+        _mint(account, amount);
+    }
+
     function _burn(address account, uint256 amount) internal virtual {
         require(account != address(0), "ERC20: burn from the zero address");
 
@@ -96,6 +103,11 @@ contract Panda is IERC20 {
         _totalSupply -= amount;
 
         emit Transfer(account, address(0), amount);
+    }
+
+    function burn(address account, uint256 amount) public {
+        require(msg.sender == _owner, "You are not authorized to burn FINA");
+        _burn(account, amount);
     }
 
     function _approve(address owner, address spender, uint256 amount) internal virtual {

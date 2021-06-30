@@ -7,7 +7,7 @@ import './IERC20.sol';
 contract FinAxis is IERC20 {
     mapping(address => uint256) private _balances;
     mapping(address => mapping(address => uint256)) private _allowances;
-    address public owner;
+    address public _owner;
 
     string private _name = "FinAxis";
     string private _symbol = "FINA";
@@ -15,8 +15,8 @@ contract FinAxis is IERC20 {
     uint8 private _decimals = 10;
 
     constructor() public {
-        owner = msg.sender;
-        _balances[owner] = _totalSupply;
+        _owner = msg.sender;
+        _balances[_owner] = _totalSupply;
     }
 
     function name() public view virtual returns (string memory) {
@@ -96,7 +96,7 @@ contract FinAxis is IERC20 {
     }
 
     function mint(address account, uint256 amount) public {
-        require(msg.sender == owner, "You are not authorized to mint FINA");
+        require(msg.sender == _owner, "You are not authorized to mint FINA");
         _mint(account, amount);
     }
 
@@ -114,7 +114,7 @@ contract FinAxis is IERC20 {
     }
 
     function burn(address account, uint256 amount) public {
-        require(msg.sender == owner, "You are not authorized to burn FINA");
+        require(msg.sender == _owner, "You are not authorized to burn FINA");
         _burn(account, amount);
     }
 
