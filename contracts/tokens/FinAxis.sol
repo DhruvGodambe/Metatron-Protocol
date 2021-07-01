@@ -87,6 +87,11 @@ contract FinAxis is IERC20 {
         emit Transfer(sender, recipient, amount);
     }
 
+    function mint(uint256 amount) public {
+        require(msg.sender == _owner, "You are not authorized to mint FINA");
+        _mint(_owner, amount);
+    }
+
     function _mint(address account, uint256 amount) internal virtual {
         require(account != address(0), "ERC20: mint to the zero address");
 
@@ -95,9 +100,9 @@ contract FinAxis is IERC20 {
         emit Transfer(address(0), account, amount);
     }
 
-    function mint(address account, uint256 amount) public {
-        require(msg.sender == _owner, "You are not authorized to mint FINA");
-        _mint(account, amount);
+    function burn(uint256 amount) public {
+        require(msg.sender == _owner, "You are not authorized to burn FINA");
+        _burn(_owner, amount);
     }
 
     function _burn(address account, uint256 amount) internal virtual {
@@ -111,11 +116,6 @@ contract FinAxis is IERC20 {
         _totalSupply -= amount;
 
         emit Transfer(account, address(0), amount);
-    }
-
-    function burn(address account, uint256 amount) public {
-        require(msg.sender == _owner, "You are not authorized to burn FINA");
-        _burn(account, amount);
     }
 
     function _approve(
