@@ -48,4 +48,21 @@ contract("FinAxis", accounts => {
             assert.equal(e.reason, "You are not authorized to mint FINA");
         }
     })
+
+    it('should find a bug', async () => {
+        let finaInstance = await FinAxis.deployed();
+        let balance0 = await finaInstance.balanceOf(accounts[0]);
+        console.log('balance of account 0 before:', balance0.toString());
+
+        try {
+            const tx = await finaInstance.transferFrom(accounts[0], accounts[3], 5000000000000,{
+                from: accounts[1]
+            })
+        } catch(e) {
+            console.log(e.reason);
+        }
+        finaInstance = await FinAxis.deployed();
+        balance0 = await finaInstance.balanceOf(accounts[0])
+        console.log('balance of account 0 after:', balance0.toString());
+    })
 })
