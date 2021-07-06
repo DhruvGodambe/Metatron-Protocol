@@ -11,8 +11,8 @@ contract FinAxis is IERC20 {
 
     string private _name = "FinAxis";
     string private _symbol = "FINA";
-    uint256 private _totalSupply = 210000000000000000; //21,000,000 FINA tokens
-    uint8 private _decimals = 10;
+    uint256 private _totalSupply = 21000000000000000000000000; //21,000,000 FINA tokens
+    uint8 private _decimals = 18;
 
     constructor() public {
         _owner = msg.sender;
