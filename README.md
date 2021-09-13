@@ -1,12 +1,15 @@
-# FinAxis-dao-Protocol
-FinAxis is a DAO oraganisation.
+# Basic Sample Hardhat Project
 
-This repository consists of the core smart contracts used in the FinAxis ecosystem. It is currently under progress of the developers and more contracts will be pushed soon.
+This project demonstrates a basic Hardhat use case. It comes with a sample contract, a test for that contract, a sample script that deploys that contract, and an example of a task implementation, which simply lists the available accounts.
 
-## Tokens
+Try running some of the following tasks:
 
-The tokens folder in the contracts have 2 ERC20 tokens.
-
-* FinAxis (FINA) - The governance token of FinAxis organization
-
-* Enoch (ENOCH) - The utility token which will be used on the defi social network platform to earn, win and award users.
+```shell
+npx hardhat accounts
+npx hardhat compile
+npx hardhat clean
+npx hardhat test
+npx hardhat node
+node scripts/sample-script.js
+npx hardhat help
+```
