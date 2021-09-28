@@ -14,12 +14,16 @@ async function main() {
   // await hre.run('compile');
 
   // We get the contract to deploy
-  const Greeter = await hre.ethers.getContractFactory("Greeter");
-  const greeter = await Greeter.deploy("Hello, Hardhat!");
+  const Enoch = await hre.ethers.getContractFactory("Enoch");
+  const enoch = await Enoch.deploy();
 
-  await greeter.deployed();
+  await enoch.deployed();
 
-  console.log("Greeter deployed to:", greeter.address);
+  const gasPrice = parseInt(enoch.deployTransaction.gasPrice.toString())
+  const gasLimit = parseInt(enoch.deployTransaction.gasLimit.toString())
+  console.log("Gas price", gasPrice/10**9);
+  console.log("Gas Limit", gasLimit);
+  console.log("Ether required", (gasLimit*gasPrice)/10**18);
 }
 
 // We recommend this pattern to be able to use async/await everywhere
