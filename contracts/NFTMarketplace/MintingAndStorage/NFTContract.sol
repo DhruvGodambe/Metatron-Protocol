@@ -17,14 +17,18 @@ contract NFTContract is ERC721URIStorage, Ownable {
         console.log("This is an NFT contract. Whoa!");
     }
 
-    function mintNewNFT(string memory tokenURI) public onlyOwner returns (uint256) {
+     function mintNewNFT(string memory tokenURI) public returns (uint256) {
         _tokenIds.increment();
         uint256 newItemId = _tokenIds.current();
 
         _mint(msg.sender, newItemId);
         _setTokenURI(newItemId, tokenURI);
 
-        console.log("New NFT minted");
+        // console.log("New NFT minted");
         return newItemId;
+    }
+
+    function getTotalNFTs() public view returns (uint256) {
+        return _tokenIds.current();
     }
 }
