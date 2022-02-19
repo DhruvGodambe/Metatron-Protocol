@@ -95,4 +95,6 @@ contract ERC721MintingFactory {
     function getTotalNFTsMinted(address _nftContract) public view returns (uint256) {
         return ERC721NFTContract(_nftContract).getTotalNFTs();
     }
+
+    
 }
