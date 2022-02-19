@@ -688,8 +688,8 @@
       ]
     },
     "F:\\Metatron\\metatronprotocol\\contracts\\NFTMarketplace\\MintingAndStorage\\ERC721MintingFactory.sol": {
-      "lastModificationDate": 1645270458588,
-      "contentHash": "dd382afd69746258722671790f91f083",
+      "lastModificationDate": 1645276948775,
+      "contentHash": "e8686d497644e6142f7fbe7f7569b5b2",
       "sourceName": "contracts/NFTMarketplace/MintingAndStorage/ERC721MintingFactory.sol",
       "solcConfig": {
         "version": "0.8.4",

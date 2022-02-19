@@ -448,20 +448,34 @@ const { ethers } = require("hardhat");
 const { isCallTrace } = require("hardhat/internal/hardhat-network/stack-traces/message-trace");
 
 
-let account, erc721MintingFactoryInstance, nftContract, nftContractInstance;
+let account, account2, erc721MintingFactoryInstance, nftContract, nftContractInstance;
+let mintingFactoryAddress;
+let newExchangeAddress;
 
 
 
 
 describe("ERC721MintingFactory", () => {
     beforeEach(async () => {
-        [account, ] = await ethers.getSigners();
+        [account, account2 ] = await ethers.getSigners();
+        // const erc721MintingFactory = await ethers.getContractFactory("ERC721MintingFactory");
+        // erc721MintingFactoryInstance = await erc721MintingFactory.deploy();
+        // await erc721MintingFactoryInstance.deployed();
+
+        // mintingFactoryAddress = erc721MintingFactoryInstance.address;
+        // console.log("Minting Factory Address: ", mintingFactoryAddress);
+        
+
+    })
+    
+    it ('Should mint the main Factory Contract', async () => {
         const erc721MintingFactory = await ethers.getContractFactory("ERC721MintingFactory");
         erc721MintingFactoryInstance = await erc721MintingFactory.deploy();
         await erc721MintingFactoryInstance.deployed();
 
+        mintingFactoryAddress = erc721MintingFactoryInstance.address;
+        console.log("Minting Factory Address: ", mintingFactoryAddress);
     })
-    
 
     // WORKING
     it ('Should mint NFT contract', async () => {
@@ -495,11 +509,18 @@ describe("ERC721MintingFactory", () => {
     // })
 
     it ('Should mint an NFT for a contract', async () => {
-        let newNFT = await erc721MintingFactoryInstance.mintNFT(nftContract, "https://gateway.pinata.cloud/ipfs/QmYJ8A4js3Pcqgp3HkCeoj2BUuen5tD7o8Z4R2k46eLM8b");
+        let newNFT = await erc721MintingFactoryInstance.connect(account2).mintNFT(nftContract, "https://gateway.pinata.cloud/ipfs/QmYJ8A4js3Pcqgp3HkCeoj2BUuen5tD7o8Z4R2k46eLM8b");
 
         await newNFT.wait()
 
-       // this shows error as it would be called by the creator only 
+        // this shows error as it would be called by the creator only 
+        let tokenIdMinted;
+        erc721MintingFactoryInstance.on("NFTMinted", (_nftContract, _tokenId) => {
+            tokenIdMinted = _tokenId;
+            console.log(_nftContract, _tokenId);
+        });
+        await new Promise(res => setTimeout(() => res(null), 5000));
+        console.log("TokenID Minted #: ", tokenIdMinted);
     })
 
     // WORKING FINE
@@ -509,32 +530,35 @@ describe("ERC721MintingFactory", () => {
         console.log(totalNFTs);
     })
 
+    // WORKING => But gives undefined
     it ('Should return total NFT contract minted by a user', async () => {
-        let totalCollections = await erc721MintingFactoryInstance.getNFTsForOwner(account);
-        await totalCollections.wait();
+        // let totalCollections = await erc721MintingFactoryInstance.getNFTsForOwner(account);
+        let totalCollections = await erc721MintingFactoryInstance.ownerToNFTs[account];
+        
+        // await totalCollections.wait();
 
-        console.log(totalCollections);
+        console.log("total collections: ", totalCollections);
     })
 
     // WORKING FINE
     it ('Should be able to change Exchange Address', async () => {
-        let changeAddress = await erc721MintingFactoryInstance.updateExchangeAddress('0x259989150c6302D5A7AeEc4DA49ABfe1464C58fE');
+        let changeAddress = await erc721MintingFactoryInstance.updateExchangeAddress(account2.address);
         await changeAddress.wait();
 
-        let newAddress;
+        
 
         erc721MintingFactoryInstance.on("ExchangeAddressChanged", (_oldAddress, _newAddress) => {
-            newAddress = _newAddress;
+            newExchangeAddress = _newAddress;
             console.log(_oldAddress, _newAddress);
         });
         await new Promise(res => setTimeout(() => res(null), 5000));
-        console.log("New Exchange Address: ", newAddress);
+        console.log("New Exchange Address: ", newExchangeAddress);
     })
 
     
-    // ERROR => Only Exchange can call it
+    // ERROR => Only Exchange can call it, Done that
     it ('Should be able to change NFT owner in mapping', async () => {
-        let nftOwnerChange = await erc721MintingFactoryInstance.updateOwner(nftContract, 1, '0x259989150c6302D5A7AeEc4DA49ABfe1464C58fE');
+        let nftOwnerChange = await erc721MintingFactoryInstance.connect(account2).updateOwner(nftContract, 1, '0x259989150c6302D5A7AeEc4DA49ABfe1464C58fE');
         await nftOwnerChange.wait();
 
         let newOwner, tokenId;
@@ -544,7 +568,7 @@ describe("ERC721MintingFactory", () => {
             console.log(_nftContract, _tokenId, _newOwner);
         });
         await new Promise(res => setTimeout(() => res(null), 5000));
-        console.log("New Owner Address: ", newOwner, " Token Id: ", tokenId);
+        console.log("New Owner Address: ", newOwner, " Token Id: ", tokenId, " old owner: ", account2.address);
 
     })
     
