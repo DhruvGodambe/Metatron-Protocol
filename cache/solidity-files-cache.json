@@ -62,8 +62,8 @@
       "artifacts": []
     },
     "F:\\Metatron\\metatronprotocol\\contracts\\NFTMarketplace\\Exchange\\ExchangeCore.sol": {
-      "lastModificationDate": 1645080783373,
-      "contentHash": "d41d8cd98f00b204e9800998ecf8427e",
+      "lastModificationDate": 1645433292051,
+      "contentHash": "2cc42a7e327269fcc40418c8d9126fd2",
       "sourceName": "contracts/NFTMarketplace/Exchange/ExchangeCore.sol",
       "solcConfig": {
         "version": "0.8.4",
