@@ -10,14 +10,18 @@ import "@openzeppelin/contracts/access/Ownable.sol";
 contract ERC721NFTContract is ERC721URIStorage, Ownable {
     using Counters for Counters.Counter;
     Counters.Counter private _tokenIds;
-    
-    constructor(string memory _name, string memory _symbol) 
-        ERC721(_name, _symbol) 
+
+    constructor(string memory _name, string memory _symbol)
+        ERC721(_name, _symbol)
     {
         console.log("This is an NFT contract. Whoa!");
     }
 
-    function mintNewNFT(string memory tokenURI) public onlyOwner returns (uint256) {
+    function mintNewNFT(string memory tokenURI)
+        public
+        onlyOwner
+        returns (uint256)
+    {
         _tokenIds.increment();
         uint256 newItemId = _tokenIds.current();
 
