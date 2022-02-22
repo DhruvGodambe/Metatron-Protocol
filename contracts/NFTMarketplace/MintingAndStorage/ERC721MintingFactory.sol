@@ -53,9 +53,7 @@ contract ERC721MintingFactory {
         returns (address _nftcontract)
     {
         // create new contract
-        address nftContract = address(
-            new ERC721NFTContract(_name, _symbol, msg.sender)
-        );
+        address nftContract = address(new ERC721NFTContract(_name, _symbol));
         // update mapping of owner to NFTContracts
         ownerToNFTs[msg.sender].push(nftContract);
         nftToOwner[nftContract] = msg.sender;

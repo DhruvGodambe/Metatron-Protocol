@@ -95,13 +95,39 @@ interface IERC20 {
     );
 }
 
-contract ExchangeCore {
+// make it ownable
+import "@openzeppelin/contracts/access/Ownable.sol";
+import "@openzeppelin/contracts/security/Pausable.sol";
+
+contract ExchangeCore is Ownable, Pausable {
     MintingFactory internal mintingFactory;
     IERC20 internal WETH;
+
+    // enable and disable
+    bool enable;
 
     constructor(MintingFactory _mintingFactory, IERC20 _weth) {
         mintingFactory = MintingFactory(_mintingFactory);
         WETH = IERC20(_weth);
+    }
+
+    function validate(
+        address _nftContract,
+        uint256 _tokenId,
+        address _buyer,
+        address _seller,
+        uint256 _amount,
+        uint256 _auctionEndTime
+    ) internal {
+        require(
+            IERC20(WETH).allowance(_buyer, address(this)) > _amount,
+            "Allowance is less than the NFT's price."
+        );
+        require(
+            IERC20(WETH).balanceOf(_buyer) > _amount,
+            "Buyer doesn't have sufficient funds"
+        );
+        require(_auctionEndTime < block.timestamp, "Auction in progress");
     }
 
     function executeOrder(
@@ -109,12 +135,24 @@ contract ExchangeCore {
         uint256 _tokenId,
         address _buyer,
         address _seller,
-        uint256 _amount
-    ) public returns (address newOwner, uint256 tokenId) {
-        require(
-            IERC20(WETH).allowance(_buyer, address(this)) > _amount,
-            "Allowance is less than the NFT's price."
+        uint256 _amount,
+        uint256 _auctionEndTime
+    )
+        public
+        onlyOwner
+        whenNotPaused
+        returns (address newOwner, uint256 tokenId)
+    {
+        // Validating all the requirements
+        validate(
+            _nftContract,
+            _tokenId,
+            _buyer,
+            _seller,
+            _amount,
+            _auctionEndTime
         );
+
         // transferring the amount to the seller
         IERC20(WETH).transferFrom(_buyer, _seller, _amount);
         // transferring the NFT to the buyer
