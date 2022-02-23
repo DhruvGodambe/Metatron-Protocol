@@ -2,112 +2,21 @@
 
 pragma solidity ^0.8.0;
 
-interface MintingFactory {
-    function updateOwner(
-        address _nftContract,
-        uint256 _tokenId,
-        address _newOwner
-    ) external;
-}
-
-interface IERC721 {
-    event Transfer(
-        address indexed _from,
-        address indexed _to,
-        uint256 indexed _tokenId
-    );
-
-    event Approval(
-        address indexed _owner,
-        address indexed _approved,
-        uint256 indexed _tokenId
-    );
-
-    event ApprovalForAll(
-        address indexed _owner,
-        address indexed _operator,
-        bool _approved
-    );
-
-    function balanceOf(address _owner) external view returns (uint256);
-
-    function ownerOf(uint256 _tokenId) external view returns (address);
-
-    function safeTransferFrom(
-        address _from,
-        address _to,
-        uint256 _tokenId,
-        bytes calldata data
-    ) external payable;
-
-    function safeTransferFrom(
-        address _from,
-        address _to,
-        uint256 _tokenId
-    ) external payable;
-
-    function transferFrom(
-        address _from,
-        address _to,
-        uint256 _tokenId
-    ) external payable;
-
-    function approve(address _approved, uint256 _tokenId) external payable;
-
-    function setApprovalForAll(address _operator, bool _approved) external;
-
-    function getApproved(uint256 _tokenId) external view returns (address);
-
-    function isApprovedForAll(address _owner, address _operator)
-        external
-        view
-        returns (bool);
-}
-
-interface IERC20 {
-    function totalSupply() external view returns (uint256);
-
-    function balanceOf(address account) external view returns (uint256);
-
-    function transfer(address recipient, uint256 amount)
-        external
-        returns (bool);
-
-    function allowance(address owner, address spender)
-        external
-        view
-        returns (uint256);
-
-    function approve(address spender, uint256 amount) external returns (bool);
-
-    function transferFrom(
-        address sender,
-        address recipient,
-        uint256 amount
-    ) external returns (bool);
-
-    event Transfer(address indexed from, address indexed to, uint256 value);
-
-    event Approval(
-        address indexed owner,
-        address indexed spender,
-        uint256 value
-    );
-}
-
 // make it ownable
 import "@openzeppelin/contracts/access/Ownable.sol";
 import "@openzeppelin/contracts/security/Pausable.sol";
 
+// import required interfaces
+import "./Interface/IERC20.sol";
+import "./Interface/IERC721.sol";
+import "./Interface/IMintingFactory.sol";
+
 contract ExchangeCore is Ownable, Pausable {
-    MintingFactory internal mintingFactory;
+    IMintingFactory internal mintingFactory;
     IERC20 internal WETH;
 
-    // enable and disable
-    bool enable;
-
-    constructor(MintingFactory _mintingFactory, IERC20 _weth) {
-        mintingFactory = MintingFactory(_mintingFactory);
+    constructor(IMintingFactory _mintingFactory, IERC20 _weth) {
+        mintingFactory = IMintingFactory(_mintingFactory);
         WETH = IERC20(_weth);
     }
 
@@ -158,7 +67,7 @@ contract ExchangeCore is Ownable, Pausable {
         // transferring the NFT to the buyer
         IERC721(_nftContract).transferFrom(_seller, _buyer, _tokenId);
         // updating the NFT ownership in our Minting Factory
-        MintingFactory(mintingFactory).updateOwner(
+        IMintingFactory(mintingFactory).updateOwner(
             _nftContract,
             _tokenId,
             _buyer
