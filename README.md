@@ -1,15 +1,24 @@
-# Basic Sample Hardhat Project
+# Development Procedure
 
-This project demonstrates a basic Hardhat use case. It comes with a sample contract, a test for that contract, a sample script that deploys that contract, and an example of a task implementation, which simply lists the available accounts.
+1. Open two terminals
+    terminal 1:
+        run the following command:
+        ```
+        npx hardhat node
+        ```
 
-Try running some of the following tasks:
+        This will start a local development blockchain at port 8545
 
-```shell
-npx hardhat accounts
-npx hardhat compile
-npx hardhat clean
-npx hardhat test
-npx hardhat node
-node scripts/sample-script.js
-npx hardhat help
-```
+    terminal 2:
+        after setting up terminal 1, run all the other comands in here.
+        
+        Start with running scripts
+        ```
+        npx hardhat run scripts/deployMintingFactory.js --network localhost
+        npx hardhat run scripts/exchangeApprovals.js --network localhost
+        ```
+
+        Then run test cases
+        ```
+        npx hardhat test --network localhost
+        ```
