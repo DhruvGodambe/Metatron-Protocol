@@ -4,7 +4,9 @@ const main = async () => {
     await nftFactory.deployed();
     console.log("Contract deployed to: ", nftFactory.address);
 
-    const accounts = await hre.ethers.getSigners()
+    const [account, account2, account3] = await hre.ethers.getSigners();
+
+    let creator = account3.address;
 
     // *****   // accounts3 => creator bana dena
 

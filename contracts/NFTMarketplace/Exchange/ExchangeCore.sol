@@ -22,41 +22,41 @@ contract ExchangeCore is Ownable, Pausable {
         WETH = IERC20(_weth);
     }
 
-    function putOnDirectSale(address _nftContract, uint256 _tokenId)
-        public
-        returns (address, uint256)
-    {
-        // check if the sender owns this nft
-        address nftOwner = IERC721(_nftContract).ownerOf(_tokenId);
-        require(
-            msg.sender == nftOwner,
-            "Message sender is not the owner of NFT"
-        );
-        // then approve this nft to the contract
-        // this function in web3, we'll add approve functionality
+    // function putOnDirectSale(address _nftContract, uint256 _tokenId)
+    //     public
+    //     returns (address, uint256)
+    // {
+    //     // check if the sender owns this nft
+    //     address nftOwner = IERC721(_nftContract).ownerOf(_tokenId);
+    //     require(
+    //         msg.sender == nftOwner,
+    //         "Message sender is not the owner of NFT"
+    //     );
+    //     // then approve this nft to the contract
+    //     // this function in web3, we'll add approve functionality
 
-        return (_nftContract, _tokenId);
-    }
+    //     return (_nftContract, _tokenId);
+    // }
 
-    function putOnAuction(address _nftContract, uint256 _tokenId)
-        public
-        returns (
-            address,
-            uint256,
-            uint256
-        )
-    {
-        // check if sender owns this nft
-        address nftOwner = IERC721(_nftContract).ownerOf(_tokenId);
-        require(
-            msg.sender == nftOwner,
-            "Message sender is not the owner of NFT"
-        );
-        // then approve this nft to the contract
-        // then, add auctionTimeLimit to blocktime and that is auctionEndTime
-        uint256 auctionEndTime = block.timestamp + auctionTimeLimit;
-        return (_nftContract, _tokenId, auctionEndTime);
-    }
+    // function putOnAuction(address _nftContract, uint256 _tokenId)
+    //     public
+    //     returns (
+    //         address,
+    //         uint256,
+    //         uint256
+    //     )
+    // {
+    //     // check if sender owns this nft
+    //     address nftOwner = IERC721(_nftContract).ownerOf(_tokenId);
+    //     require(
+    //         msg.sender == nftOwner,
+    //         "Message sender is not the owner of NFT"
+    //     );
+    //     // then approve this nft to the contract
+    //     // then, add auctionTimeLimit to blocktime and that is auctionEndTime
+    //     uint256 auctionEndTime = block.timestamp + auctionTimeLimit;
+    //     return (_nftContract, _tokenId, auctionEndTime);
+    // }
 
     function validate(
         address _nftContract,
