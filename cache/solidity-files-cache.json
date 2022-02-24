@@ -62,8 +62,8 @@
       "artifacts": []
     },
     "F:\\Metatron\\metatronprotocol\\contracts\\NFTMarketplace\\Exchange\\ExchangeCore.sol": {
-      "lastModificationDate": 1645602970072,
-      "contentHash": "14b6e1dba0a27c9200fcbc14095718ee",
+      "lastModificationDate": 1645684744132,
+      "contentHash": "ebe0f588dc7392a965ccc5dd02f715bf",
       "sourceName": "contracts/NFTMarketplace/Exchange/ExchangeCore.sol",
       "solcConfig": {
         "version": "0.8.4",
@@ -90,9 +90,9 @@
       "imports": [
         "@openzeppelin/contracts/access/Ownable.sol",
         "@openzeppelin/contracts/security/Pausable.sol",
-        "./Interface/IERC20.sol",
-        "./Interface/IERC721.sol",
-        "./Interface/IMintingFactory.sol"
+        "./../Interface/IERC20.sol",
+        "./../Interface/IERC721.sol",
+        "./../Interface/IMintingFactory.sol"
       ],
       "versionPragmas": [
         "^0.8.0"
@@ -733,108 +733,6 @@
         "Pausable"
       ]
     },
-    "F:\\Metatron\\metatronprotocol\\contracts\\NFTMarketplace\\Exchange\\Interface\\IERC20.sol": {
-      "lastModificationDate": 1645602589887,
-      "contentHash": "26f3f106367138ab42d25e4f842dfea8",
-      "sourceName": "contracts/NFTMarketplace/Exchange/Interface/IERC20.sol",
-      "solcConfig": {
-        "version": "0.8.4",
-        "settings": {
-          "optimizer": {
-            "enabled": false,
-            "runs": 200
-          },
-          "outputSelection": {
-            "*": {
-              "*": [
-                "abi",
-                "evm.bytecode",
-                "evm.deployedBytecode",
-                "evm.methodIdentifiers"
-              ],
-              "": [
-                "ast"
-              ]
-            }
-          }
-        }
-      },
-      "imports": [],
-      "versionPragmas": [
-        "^0.8.0"
-      ],
-      "artifacts": [
-        "IERC20"
-      ]
-    },
-    "F:\\Metatron\\metatronprotocol\\contracts\\NFTMarketplace\\Exchange\\Interface\\IERC721.sol": {
-      "lastModificationDate": 1645602621420,
-      "contentHash": "553afe5c3e0b26274b8fff8311329140",
-      "sourceName": "contracts/NFTMarketplace/Exchange/Interface/IERC721.sol",
-      "solcConfig": {
-        "version": "0.8.4",
-        "settings": {
-          "optimizer": {
-            "enabled": false,
-            "runs": 200
-          },
-          "outputSelection": {
-            "*": {
-              "*": [
-                "abi",
-                "evm.bytecode",
-                "evm.deployedBytecode",
-                "evm.methodIdentifiers"
-              ],
-              "": [
-                "ast"
-              ]
-            }
-          }
-        }
-      },
-      "imports": [],
-      "versionPragmas": [
-        "^0.8.0"
-      ],
-      "artifacts": [
-        "IERC721"
-      ]
-    },
-    "F:\\Metatron\\metatronprotocol\\contracts\\NFTMarketplace\\Exchange\\Interface\\IMintingFactory.sol": {
-      "lastModificationDate": 1645603053158,
-      "contentHash": "51477c786740d963f034cbf12342e25d",
-      "sourceName": "contracts/NFTMarketplace/Exchange/Interface/IMintingFactory.sol",
-      "solcConfig": {
-        "version": "0.8.4",
-        "settings": {
-          "optimizer": {
-            "enabled": false,
-            "runs": 200
-          },
-          "outputSelection": {
-            "*": {
-              "*": [
-                "abi",
-                "evm.bytecode",
-                "evm.deployedBytecode",
-                "evm.methodIdentifiers"
-              ],
-              "": [
-                "ast"
-              ]
-            }
-          }
-        }
-      },
-      "imports": [],
-      "versionPragmas": [
-        "^0.8.0"
-      ],
-      "artifacts": [
-        "IMintingFactory"
-      ]
-    },
     "F:\\Metatron\\metatronprotocol\\contracts\\NFTMarketplace\\MintingAndStorage\\Enoch\\AltERC721NFTContract.sol": {
       "lastModificationDate": 1645602302816,
       "contentHash": "a0ad8c4c4e5cdf2278dccfc49e169b53",
@@ -983,6 +881,108 @@
       ],
       "artifacts": [
         "AltERC721MintingFactory"
+      ]
+    },
+    "F:\\Metatron\\metatronprotocol\\contracts\\NFTMarketplace\\Interface\\IERC20.sol": {
+      "lastModificationDate": 1645602589887,
+      "contentHash": "26f3f106367138ab42d25e4f842dfea8",
+      "sourceName": "contracts/NFTMarketplace/Interface/IERC20.sol",
+      "solcConfig": {
+        "version": "0.8.4",
+        "settings": {
+          "optimizer": {
+            "enabled": false,
+            "runs": 200
+          },
+          "outputSelection": {
+            "*": {
+              "*": [
+                "abi",
+                "evm.bytecode",
+                "evm.deployedBytecode",
+                "evm.methodIdentifiers"
+              ],
+              "": [
+                "ast"
+              ]
+            }
+          }
+        }
+      },
+      "imports": [],
+      "versionPragmas": [
+        "^0.8.0"
+      ],
+      "artifacts": [
+        "IERC20"
+      ]
+    },
+    "F:\\Metatron\\metatronprotocol\\contracts\\NFTMarketplace\\Interface\\IERC721.sol": {
+      "lastModificationDate": 1645602621420,
+      "contentHash": "553afe5c3e0b26274b8fff8311329140",
+      "sourceName": "contracts/NFTMarketplace/Interface/IERC721.sol",
+      "solcConfig": {
+        "version": "0.8.4",
+        "settings": {
+          "optimizer": {
+            "enabled": false,
+            "runs": 200
+          },
+          "outputSelection": {
+            "*": {
+              "*": [
+                "abi",
+                "evm.bytecode",
+                "evm.deployedBytecode",
+                "evm.methodIdentifiers"
+              ],
+              "": [
+                "ast"
+              ]
+            }
+          }
+        }
+      },
+      "imports": [],
+      "versionPragmas": [
+        "^0.8.0"
+      ],
+      "artifacts": [
+        "IERC721"
+      ]
+    },
+    "F:\\Metatron\\metatronprotocol\\contracts\\NFTMarketplace\\Interface\\IMintingFactory.sol": {
+      "lastModificationDate": 1645603053158,
+      "contentHash": "51477c786740d963f034cbf12342e25d",
+      "sourceName": "contracts/NFTMarketplace/Interface/IMintingFactory.sol",
+      "solcConfig": {
+        "version": "0.8.4",
+        "settings": {
+          "optimizer": {
+            "enabled": false,
+            "runs": 200
+          },
+          "outputSelection": {
+            "*": {
+              "*": [
+                "abi",
+                "evm.bytecode",
+                "evm.deployedBytecode",
+                "evm.methodIdentifiers"
+              ],
+              "": [
+                "ast"
+              ]
+            }
+          }
+        }
+      },
+      "imports": [],
+      "versionPragmas": [
+        "^0.8.0"
+      ],
+      "artifacts": [
+        "IMintingFactory"
       ]
     }
   }
