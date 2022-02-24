@@ -1,7 +1,7 @@
 {
   "_format": "hh-sol-artifact-1",
   "contractName": "IMintingFactory",
-  "sourceName": "contracts/NFTMarketplace/Exchange/Interface/IMintingFactory.sol",
+  "sourceName": "contracts/NFTMarketplace/Interface/IMintingFactory.sol",
   "abi": [
     {
       "inputs": [

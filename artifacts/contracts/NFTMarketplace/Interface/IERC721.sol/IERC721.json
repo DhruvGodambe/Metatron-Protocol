@@ -1,7 +1,7 @@
 {
   "_format": "hh-sol-artifact-1",
   "contractName": "IERC721",
-  "sourceName": "contracts/NFTMarketplace/Exchange/Interface/IERC721.sol",
+  "sourceName": "contracts/NFTMarketplace/Interface/IERC721.sol",
   "abi": [
     {
       "anonymous": false,

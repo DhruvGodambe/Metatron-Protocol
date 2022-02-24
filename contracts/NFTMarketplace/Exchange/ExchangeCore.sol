@@ -7,9 +7,9 @@ import "@openzeppelin/contracts/access/Ownable.sol";
 import "@openzeppelin/contracts/security/Pausable.sol";
 
 // import required interfaces
-import "./Interface/IERC20.sol";
-import "./Interface/IERC721.sol";
-import "./Interface/IMintingFactory.sol";
+import "./../Interface/IERC20.sol";
+import "./../Interface/IERC721.sol";
+import "./../Interface/IMintingFactory.sol";
 
 contract ExchangeCore is Ownable, Pausable {
     IMintingFactory internal mintingFactory;
