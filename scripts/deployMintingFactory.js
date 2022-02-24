@@ -6,14 +6,19 @@ const main = async () => {
 
     const accounts = await hre.ethers.getSigners()
 
-    let txn = await nftFactory.createNFTContract("CHENNAI SUPER KINGS", "CSK");
-    await txn.wait()
-    console.log("NFT Contract minted!");
+    // *****   // accounts3 => creator bana dena
 
-    // get the contract address now
-    let txn2 = nftFactory.getNFTsForOwner(accounts[0]);
-    await txn.wait();
-    console.log(txn);
+    // creator will mint his nft,
+    // then, console log the nft address and creator address.
+
+    // let txn = await nftFactory.createNFTContract("CHENNAI SUPER KINGS", "CSK");
+    // await txn.wait()
+    // console.log("NFT Contract minted!");
+
+    // // get the contract address now
+    // let txn2 = nftFactory.getNFTsForOwner(accounts[0]);
+    // await txn.wait();
+    // console.log(txn);
 
 
 }
@@ -22,7 +27,7 @@ const runMain = async () => {
     try {
         await main();
         process.exit(0);
-    } catch(error) {
+    } catch (error) {
         console.log(error);
         process.exit(1);
     }

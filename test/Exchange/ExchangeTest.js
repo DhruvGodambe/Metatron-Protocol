@@ -8,7 +8,7 @@ const { nftAbi } = require("../../artifacts/contracts/NFTMarketplace/Exchange/In
 let account, account2, WETH, NFT, exchangeContractInstance;
 
 describe("ExchangeCore", () => {
-
+    // All deployments should go in scripts
     let wethAddress = '0xDf032Bc4B9dC2782Bb09352007D4C57B75160B15';
     let nftAddress = '0x920364dBa7540fea7d3e9c8e27e94eF1CA5B317e';
     let amount = 1;
@@ -31,10 +31,10 @@ describe("ExchangeCore", () => {
         console.log(NFT);
     })
 
-    it ('Should deploy Exchange contract', async () => {
+    it('Should deploy Exchange contract', async () => {
         let exchangeContract = await ethers.getContractFactory("ExchangeCore");
         exchangeContract.deploy();
-        exchangeContractInstance = await exchangeContract.deployed(); 
+        exchangeContractInstance = await exchangeContract.deployed();
     })
 
     it('Should Approve x tokens for Buy Order', async () => {
@@ -44,14 +44,14 @@ describe("ExchangeCore", () => {
 
     })
 
-    it ('Should Approve nft with given tokenId for Sell Order', async () => {
+    it('Should Approve nft with given tokenId for Sell Order', async () => {
         // approves the nft with given token id
         let allowanceNFT = await NFT.getApproved(tokenId);
         console.log(allowanceNFT);
 
     })
 
-    it ('Should Validate the NFT sale', async () => {
+    it('Should Validate the NFT sale', async () => {
         // check token allowance
         let allowanceAmt = await WETH.allowance(account, exchangeAddress);
         console.log(allowanceAmt);
@@ -64,10 +64,10 @@ describe("ExchangeCore", () => {
         console.log(allowanceNFT);
 
         // check auction time
-        
+
     })
 
-    it ('Should execute the order', async () => {
+    it('Should execute the order', async () => {
         let executeOrder = await exchangeContractInstance.executeOrder(nftAddress, tokenId, account, account2, amount, auctionTime);
         console.log(executeOrder);
     })
