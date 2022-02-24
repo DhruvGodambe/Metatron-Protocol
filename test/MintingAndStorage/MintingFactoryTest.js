@@ -11,7 +11,7 @@ let mintingFactoryAddress, newExchangeAddress;
 
 // creating an instance of the minting factory
 factoryContractInstance = async () => {
-    const erc721MintingFactory = await ethers.getContractFactory("ERC721MintingFactory");
+    const erc721MintingFactory = await ethers.getContractFactory("AltERC721MintingFactory");
     erc721MintingFactoryInstance = await erc721MintingFactory.deploy();
     await erc721MintingFactoryInstance.deployed();
 

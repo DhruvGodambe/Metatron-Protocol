@@ -15,9 +15,47 @@ contract ExchangeCore is Ownable, Pausable {
     IMintingFactory internal mintingFactory;
     IERC20 internal WETH;
 
+    uint256 auctionTimeLimit = 28800;
+
     constructor(IMintingFactory _mintingFactory, IERC20 _weth) {
         mintingFactory = IMintingFactory(_mintingFactory);
         WETH = IERC20(_weth);
+    }
+
+    function putOnDirectSale(address _nftContract, uint256 _tokenId)
+        public
+        returns (address, uint256)
+    {
+        // check if the sender owns this nft
+        address nftOwner = IERC721(_nftContract).ownerOf(_tokenId);
+        require(
+            msg.sender == nftOwner,
+            "Message sender is not the owner of NFT"
+        );
+        // then approve this nft to the contract
+        // this function in web3, we'll add approve functionality
+
+        return (_nftContract, _tokenId);
+    }
+
+    function putOnAuction(address _nftContract, uint256 _tokenId)
+        public
+        returns (
+            address,
+            uint256,
+            uint256
+        )
+    {
+        // check if sender owns this nft
+        address nftOwner = IERC721(_nftContract).ownerOf(_tokenId);
+        require(
+            msg.sender == nftOwner,
+            "Message sender is not the owner of NFT"
+        );
+        // then approve this nft to the contract
+        // then, add auctionTimeLimit to blocktime and that is auctionEndTime
+        uint256 auctionEndTime = block.timestamp + auctionTimeLimit;
+        return (_nftContract, _tokenId, auctionEndTime);
     }
 
     function validate(
@@ -25,8 +63,7 @@ contract ExchangeCore is Ownable, Pausable {
         uint256 _tokenId,
         address _buyer,
         address _seller,
-        uint256 _amount,
-        uint256 _auctionEndTime
+        uint256 _amount
     ) internal {
         require(
             IERC20(WETH).allowance(_buyer, address(this)) > _amount,
@@ -36,7 +73,13 @@ contract ExchangeCore is Ownable, Pausable {
             IERC20(WETH).balanceOf(_buyer) > _amount,
             "Buyer doesn't have sufficient funds"
         );
-        require(_auctionEndTime < block.timestamp, "Auction in progress");
+    }
+
+    function validateAuctionTime(uint256 _auctionEndTime) internal view {
+        require(
+            _auctionEndTime < block.timestamp,
+            "Auction Time still in progress"
+        );
     }
 
     function executeOrder(
@@ -53,14 +96,12 @@ contract ExchangeCore is Ownable, Pausable {
         returns (address newOwner, uint256 tokenId)
     {
         // Validating all the requirements
-        validate(
-            _nftContract,
-            _tokenId,
-            _buyer,
-            _seller,
-            _amount,
-            _auctionEndTime
-        );
+
+        if (_auctionEndTime != 0) {
+            validateAuctionTime(_auctionEndTime);
+        }
+
+        validate(_nftContract, _tokenId, _buyer, _seller, _amount);
 
         // transferring the amount to the seller
         IERC20(WETH).transferFrom(_buyer, _seller, _amount);
