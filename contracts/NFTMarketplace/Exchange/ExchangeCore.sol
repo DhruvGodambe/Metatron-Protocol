@@ -27,6 +27,7 @@ contract ExchangeCore is Ownable, Pausable {
         WETH = IERC20(_weth);
     }
 
+    // One who bids for an nft, can cancel it anytime before auction ends
     // cancelledOrders[userAddress][nftContract][id] => returns bool
     mapping(address => mapping(address => mapping(uint256 => bool)))
         public cancelledOrders;
@@ -38,7 +39,7 @@ contract ExchangeCore is Ownable, Pausable {
         address newOwner
     );
 
-    event OrderCancelled(address nftContract, uint256 tokenId, address seller);
+    event OrderCancelled(address nftContract, uint256 tokenId, address buyer);
 
     // function putOnDirectSale(address _nftContract, uint256 _tokenId)
     //     public
@@ -140,11 +141,11 @@ contract ExchangeCore is Ownable, Pausable {
         bool validSeller = validateSeller(_nftContract, _tokenId, _seller);
         bool validBuyer = validateBuyer(_buyer, _amount);
 
-        bool isCancel = cancelledOrders[_seller][_nftContract][_tokenId];
+        bool isCancel = cancelledOrders[_buyer][_nftContract][_tokenId];
 
-        require(validTime == true, "Auction is already over");
-        require(validSeller == true, "Seller isn't valid");
-        require(validBuyer == true, "Buyer isn't valid");
+        require(validTime, "Auction is already over");
+        require(validSeller, "Seller isn't valid");
+        require(validBuyer, "Buyer isn't valid");
         require(isCancel == false, "Order is cancelled");
 
         _amount *= 1e18;
@@ -174,15 +175,17 @@ contract ExchangeCore is Ownable, Pausable {
     function cancelOrder(
         address _nftContract,
         uint256 _tokenId,
-        address _seller
+        address _buyer
     ) public {
         // approvals to be checked
-        bool success = validateSeller(_nftContract, _tokenId, _seller);
+        bool validSeller = validateSeller(_nftContract, _tokenId, _seller);
+        bool validBuyer = validateBuyer(_buyer, _amount);
         // decrease approval in web3 scripts
         // add this cancelled Order in the mapping
-        cancelledOrders[_seller][_nftContract][_tokenId] = true;
-
-        emit OrderCancelled(_nftContract, _tokenId, _seller);
+        if (success && success2) {
+            cancelledOrders[_buyer][_nftContract][_tokenId] = true;
+            emit OrderCancelled(_nftContract, _tokenId, _buyer);
+        }
     }
 
     function setTradingFeeFactor(uint256 _tradingFeeFactor) public onlyOwner {

@@ -72,6 +72,11 @@ describe("ExchangeCore", () => {
         console.log(executeOrder);
     })
 
+    it('Should cancel the order', async () => {
+        let cancelOrder = await exchangeContractInstance.cancelOrder(nftAddress, tokenId, account);
+        console.log(cancelOrder);
+    })
+
 
 })
 
