@@ -77,8 +77,8 @@ contract ExchangeCore is Ownable, Pausable {
 
     function validateAuctionTime(uint256 _auctionEndTime) internal view {
         require(
-            _auctionEndTime < block.timestamp,
-            "Auction Time still in progress"
+            _auctionEndTime > block.timestamp,
+            "Auction has ended"
         );
     }
 

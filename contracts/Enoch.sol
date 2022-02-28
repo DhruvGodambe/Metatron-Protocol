@@ -11,7 +11,7 @@ contract Enoch is IERC20 {
 
     string private _name = "ENOCH";
     string private _symbol = "ENOCH";
-    uint256 private _totalSupply = 6000000000000000000000000; //1,000,000,000 ENOCH tokens
+    uint256 private _totalSupply = 300000000000000000000000000; //300,000,000 ENOCH tokens
     uint8 private _decimals = 18;
 
     constructor() {
