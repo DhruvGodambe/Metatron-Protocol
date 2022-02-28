@@ -147,6 +147,8 @@ contract ExchangeCore is Ownable, Pausable {
         require(validBuyer == true, "Buyer isn't valid");
         require(isCancel == false, "Order is cancelled");
 
+        _amount *= 1e18;
+
         // transfer tradingFee to the exchange
         uint256 fee = _amount.mul(tradingFeeFactor).div(tradingFeeFactorMax);
         IERC20(WETH).transferFrom(_buyer, address(this), fee);
