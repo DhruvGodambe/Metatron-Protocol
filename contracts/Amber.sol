@@ -4,14 +4,14 @@ pragma solidity ^0.8.0;
 
 import './IERC20.sol';
 
-contract FinAxis is IERC20 {
+contract Amber is IERC20 {
     mapping(address => uint256) private _balances;
     mapping(address => mapping(address => uint256)) private _allowances;
     address public _owner;
 
-    string private _name = "FinAxis";
-    string private _symbol = "FINA";
-    uint256 private _totalSupply = 21000000000000000000000000; //21,000,000 FINA tokens
+    string private _name = "Amber";
+    string private _symbol = "AMBER";
+    uint256 private _totalSupply = 3500000000000000000000000000; //3,500,000,000 AMBER tokens
     uint8 private _decimals = 18;
 
     constructor() {

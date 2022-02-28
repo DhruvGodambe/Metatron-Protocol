@@ -98,8 +98,8 @@ contract ExchangeCore is Ownable, Pausable {
         returns (bool)
     {
         require(
-            _auctionEndTime < block.timestamp,
-            "Auction Time still in progress"
+            _auctionEndTime > block.timestamp,
+            "Auction has ended"
         );
         return true;
     }
