@@ -25,11 +25,9 @@ contract ExchangeCore is Ownable, Pausable {
         WETH = IERC20(_weth);
     }
 
-    struct Order {
-        address nftContract;
-        uint256 tokenId;
-    }
-    mapping(address => Order[]) public cancelledOrders;
+    // cancelledOrders[userAddress][nftContract][id] => returns bool
+    mapping(address => mapping(address => mapping(uint256 => bool)))
+        public cancelledOrders;
 
     event OrderExecuted(
         address nftContract,
@@ -37,6 +35,8 @@ contract ExchangeCore is Ownable, Pausable {
         address oldOwner,
         address newOwner
     );
+
+    event OrderCancelled(address nftContract, uint256 tokenId, address seller);
 
     // function putOnDirectSale(address _nftContract, uint256 _tokenId)
     //     public
@@ -74,13 +74,31 @@ contract ExchangeCore is Ownable, Pausable {
     //     return (_nftContract, _tokenId, auctionEndTime);
     // }
 
-    function validate(
+    function validateSeller(
         address _nftContract,
         uint256 _tokenId,
-        address _buyer,
-        address _seller,
-        uint256 _amount
+        address _seller
     ) internal returns (bool) {
+        // check if he owns the token
+        address tokenOwner = IERC721(_nftContract).ownerOf(_tokenId);
+        require(_seller == tokenOwner, "Seller does not owns the token");
+
+        // check token approval
+        address tokenApprovedAddress = IERC721(_nftContract).getApproved(
+            _tokenId
+        );
+        require(
+            tokenApprovedAddress == address(this),
+            "Contract is not approved for this NFT"
+        );
+
+        return true;
+    }
+
+    function validateBuyer(address _buyer, uint256 _amount)
+        internal
+        returns (bool)
+    {
         require(
             IERC20(WETH).allowance(_buyer, address(this)) > _amount,
             "Allowance is less than the NFT's price."
@@ -97,10 +115,7 @@ contract ExchangeCore is Ownable, Pausable {
         view
         returns (bool)
     {
-        require(
-            _auctionEndTime > block.timestamp,
-            "Auction has ended"
-        );
+        require(_auctionEndTime > block.timestamp, "Auction has ended");
         return true;
     }
 
@@ -120,58 +135,50 @@ contract ExchangeCore is Ownable, Pausable {
             validTime = true;
         }
 
-        bool success = validate(
+        bool validSeller = validateSeller(_nftContract, _tokenId, _seller);
+        bool validBuyer = validateBuyer(_buyer, _amount);
+
+        bool isCancel = cancelledOrders[_seller][_nftContract][_tokenId];
+
+        require(validTime == true, "Auction is already over");
+        require(validSeller == true, "Seller isn't valid");
+        require(validBuyer == true, "Buyer isn't valid");
+        require(isCancel == false, "Order is cancelled");
+
+        // transfer tradingFee to the exchange
+        uint256 fee = _amount.mul(tradingFee).div(tradingFeeFactorMax);
+        IERC20(WETH).transferFrom(_buyer, address(this), fee);
+
+        // transferring the amount to the seller
+        uint256 transferableAmt = _amount
+            .mul(tradingFeeFactorMax.sub(tradingFee))
+            .div(tradingFeeFactorMax);
+        IERC20(WETH).transferFrom(_buyer, _seller, transferableAmt);
+
+        // transferring the NFT to the buyer
+        IERC721(_nftContract).transferFrom(_seller, _buyer, _tokenId);
+        // updating the NFT ownership in our Minting Factory
+        IMintingFactory(mintingFactory).updateOwner(
             _nftContract,
             _tokenId,
-            _buyer,
-            _seller,
-            _amount
+            _buyer
         );
 
-        (nft, token) = cancelledOrders[_seller];
-
-        if (success && validTime) {
-            // transfer tradingFee to the exchange
-            uint256 fee = _amount.mul(tradingFee).div(tradingFeeFactorMax);
-            IERC20(WETH).transferFrom(_buyer, address(this), fee);
-
-            // transferring the amount to the seller
-            uint256 transferableAmt = _amount
-                .mul(tradingFeeFactorMax.sub(tradingFee))
-                .div(tradingFeeFactorMax);
-            IERC20(WETH).transferFrom(_buyer, _seller, transferableAmt);
-
-            // transferring the NFT to the buyer
-            IERC721(_nftContract).transferFrom(_seller, _buyer, _tokenId);
-            // updating the NFT ownership in our Minting Factory
-            IMintingFactory(mintingFactory).updateOwner(
-                _nftContract,
-                _tokenId,
-                _buyer
-            );
-
-            emit OrderExecuted(_nftContract, _tokenId, _seller, _buyer);
-        }
+        emit OrderExecuted(_nftContract, _tokenId, _seller, _buyer);
     }
 
     function cancelOrder(
         address _nftContract,
         uint256 _tokenId,
-        address _buyer,
-        address _seller,
-        uint256 _amount
-    ) {
+        address _seller
+    ) public {
         // approvals to be checked
-        bool success = validate(
-            _nftContract,
-            _tokenId,
-            _buyer,
-            _seller,
-            _amount
-        );
+        bool success = validateSeller(_nftContract, _tokenId, _seller);
         // decrease approval in web3 scripts
         // add this cancelled Order in the mapping
-        cancelledOrders[_seller].push(Order(_nftContract, _tokenId));
+        cancelledOrders[_seller][_nftContract][_tokenId] = true;
+
+        emit OrderCancelled(_nftContract, _tokenId, _seller);
     }
 
     function setTradingFeeFactor(uint256 _tradingFeeFactor) public onlyOwner {
