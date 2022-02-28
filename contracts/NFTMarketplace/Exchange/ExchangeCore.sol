@@ -13,6 +13,8 @@ import "./../Interface/IERC721.sol";
 import "./../Interface/IMintingFactory.sol";
 
 contract ExchangeCore is Ownable, Pausable {
+    using SafeMath for uint256;
+
     IMintingFactory internal mintingFactory;
     IERC20 internal WETH;
 
@@ -146,12 +148,12 @@ contract ExchangeCore is Ownable, Pausable {
         require(isCancel == false, "Order is cancelled");
 
         // transfer tradingFee to the exchange
-        uint256 fee = _amount.mul(tradingFee).div(tradingFeeFactorMax);
+        uint256 fee = _amount.mul(tradingFeeFactor).div(tradingFeeFactorMax);
         IERC20(WETH).transferFrom(_buyer, address(this), fee);
 
         // transferring the amount to the seller
         uint256 transferableAmt = _amount
-            .mul(tradingFeeFactorMax.sub(tradingFee))
+            .mul(tradingFeeFactorMax.sub(tradingFeeFactor))
             .div(tradingFeeFactorMax);
         IERC20(WETH).transferFrom(_buyer, _seller, transferableAmt);
 
