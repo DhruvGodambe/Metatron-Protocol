@@ -9,6 +9,7 @@ function getInstance(name) {
 
 async function main() {
   const forwarder = await getInstance("MinimalForwarder");
+  const accounts = await ethers.getSigners();
   console.log(
     `Testing request tmp/request.json on forwarder at ${forwarder.address}...`
   );
@@ -19,10 +20,15 @@ async function main() {
     console.log(
       `Signature ${signature} for request is${!valid ? " not " : " "}valid`
     );
-    const transactionResponse = await forwarder.execute(request, signature);
+    const transactionResponse = await forwarder
+      .connect(accounts[1])
+      .execute(request, signature);
 
     const transactionReceipt = await transactionResponse.wait(1);
-    console.log("**@ transactionReceipt is , ", transactionReceipt);
+    console.log(
+      "**@ request executed , txHash  is , ",
+      transactionReceipt.transactionHash
+    );
   } catch (err) {
     console.log(`Could not validate signature for request: ${err.message}`);
   }

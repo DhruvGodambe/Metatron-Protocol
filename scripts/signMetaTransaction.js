@@ -1,4 +1,4 @@
-const { ethers } = require("hardhat");
+const { ethers, network } = require("hardhat");
 const { signMetaTxRequest } = require("../utils/signer");
 const { readFileSync, writeFileSync } = require("fs");
 
@@ -13,40 +13,14 @@ function getInstance(name) {
 async function main() {
   const forwarder = await getInstance("MinimalForwarder");
   const registry = await getInstance("Registry");
-
-  const { NAME: name, PRIVATE_KEY_2: signer } = process.env;
-  const from = new ethers.Wallet(signer).address;
+  const mockToken = await getInstance("MockToken");
 
   // signing simple registry
-  console.log(`Signing registration of ${name || DEFAULT_NAME} as ${from}...`);
-  const data = registry.interface.encodeFunctionData("register", [
-    name || DEFAULT_NAME,
-  ]);
-  const result = await signMetaTxRequest(signer, forwarder, {
-    to: registry.address,
-    from,
-    data,
-  });
-
-  writeFileSync("request.json", JSON.stringify(result, null, 2));
-  console.log(`Signature: `, result.signature);
-  console.log(`Request: `, result.request);
-
-  //  signing mockToken transfer
-  // const {
-  //   NAME: name,
-  //   PRIVATE_KEY_2: signer,
-  //   PRIVATE_KEY_1: fromAddress,
-  // } = process.env;
-  // const from = new ethers.Wallet(fromAddress).address;
-  // const to = new ethers.Wallet(toAddress).address;
-  // const amount = "10000000000000000000";
-  // console.log(
-  //   `Signing mockToken transfer of amount  ${amount} from ${from}...  to ${to}`
-  // );
-  // const data = registry.interface.encodeFunctionData("transfer", [
-  //   toAddress,
-  //   amount,
+  // const { NAME: name, PRIVATE_KEY_2: signer } = process.env;
+  // const from = new ethers.Wallet(signer).address;
+  // console.log(`Signing registration of ${name || DEFAULT_NAME} as ${from}...`);
+  // const data = registry.interface.encodeFunctionData("register", [
+  //   name || DEFAULT_NAME,
   // ]);
   // const result = await signMetaTxRequest(signer, forwarder, {
   //   to: registry.address,
@@ -57,6 +31,44 @@ async function main() {
   // writeFileSync("request.json", JSON.stringify(result, null, 2));
   // console.log(`Signature: `, result.signature);
   // console.log(`Request: `, result.request);
+
+  //  signing mockToken transfer
+  let from;
+  let to;
+  let amount = "10000000000000000000";
+
+  const accounts = await ethers.getSigners();
+
+  // if (network.config.chainId == 31337) {
+  //   const accounts = await ethers.getSigners();
+  //   from = accounts[0].address;
+  //   to = accounts[1].address;
+  // } else {
+  const { PRIVATE_KEY_1: signer, PRIVATE_KEY_2: sender } = process.env;
+  from = new ethers.Wallet(signer).address;
+
+  to = new ethers.Wallet(sender).address;
+  // }
+  console.log(
+    `Signing mockToken transfer of amount  ${amount} from ${from}...  to ${to}`
+  );
+  //  signer approving the forwarder contract to spend its erc20 token
+  // const approvalTransaction = await mockToken
+  //   .connect(accounts[1])
+  //   .approve(forwarder.address, "10000000000000000000000000000000000000");
+  // const approvalTxReceipt = await approvalTransaction.wait(1);
+  // console.log("**@ approvalTxReceipt is , ", approvalTxReceipt.transactionHash);
+
+  const data = mockToken.interface.encodeFunctionData("transfer", [to, amount]);
+  const result = await signMetaTxRequest(signer, forwarder, {
+    to: mockToken.address,
+    from: from,
+    data,
+  });
+
+  writeFileSync("request.json", JSON.stringify(result, null, 2));
+  console.log(`Signature: `, result.signature);
+  console.log(`Request: `, result.request);
 }
 
 if (require.main === module) {

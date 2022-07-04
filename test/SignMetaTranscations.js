@@ -16,6 +16,12 @@ describe.only("autotasks/relay", function () {
   beforeEach(async function () {
     forwarder = await deploy("MinimalForwarder");
     registry = await deploy("Registry", forwarder.address);
+    mockToken = await deploy(
+      "MockToken",
+      "Mock Token",
+      "MT_1",
+      forwarder.address
+    );
     accounts = await ethers.getSigners();
     signer = accounts[2];
   });
@@ -33,6 +39,32 @@ describe.only("autotasks/relay", function () {
         from: signer.address,
         to: registry.address,
         data: registry.interface.encodeFunctionData("register", ["meta-txs"]),
+      }
+    );
+
+    const whitelist = [registry.address];
+    await relay(forwarder, request, signature, whitelist);
+
+    expect(await registry.owners("meta-txs")).to.equal(signer.address);
+    expect(await registry.names(signer.address)).to.equal("meta-txs");
+  });
+
+  it("transfers ERC20 token via a meta-tx", async function () {
+    signer = accounts[1];
+    sender = accounts[2];
+    await mockToken.approve(forwarder.address, "10000000000000000");
+
+    const { request, signature } = await signMetaTxRequest(
+      signer.provider,
+      forwarder,
+      {
+        from: signer.address,
+        to: registry.address,
+        data: registry.interface.encodeFunctionData("transferFrom", [
+          signer.address,
+          sender.address,
+          "10000000000000000000",
+        ]),
       }
     );
 

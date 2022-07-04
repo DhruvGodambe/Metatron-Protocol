@@ -8,8 +8,20 @@ async function deploy(name, ...params) {
 
 async function main() {
   const forwarder = await deploy("MinimalForwarder");
+  await forwarder.deployed();
   const registry = await deploy("Registry", forwarder.address);
-  const mockToken = await deploy("MockToken", "MockToken", "MT_1");
+  await registry.deployed();
+  // const registry = { address: "0x00" };
+  // const forwarder = { address: "0x7424B39abD3fb87517aE6900C398996ed01548A8" };
+  // const registry = { address: "0x00" };
+
+  const mockToken = await deploy(
+    "MockToken",
+    "Mock Token",
+    "MT_1",
+    forwarder.address
+  );
+  await mockToken.deployed();
 
   writeFileSync(
     "deploy.json",

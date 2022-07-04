@@ -53,7 +53,7 @@ async function buildRequest(forwarder, input) {
   const nonce = await forwarder
     .getNonce(input.from)
     .then((nonce) => nonce.toString());
-  return { value: 0, gas: 1e6, nonce, ...input };
+  return { value: 0, gas: 1e8, nonce, ...input };
 }
 
 async function buildTypedData(forwarder, request) {
@@ -63,17 +63,10 @@ async function buildTypedData(forwarder, request) {
 }
 
 async function signMetaTxRequest(signer, forwarder, input) {
-  console.log("**@ signMetaTxRequest called with signer ,  ", signer);
-  console.log("**@ signMetaTxRequest called with forwarder ,  ", forwarder);
-  console.log("**@ signMetaTxRequest called with input ,  ", input);
-
   const request = await buildRequest(forwarder, input);
-  console.log("**@ request is , ", request);
   const toSign = await buildTypedData(forwarder, request);
-  console.log("**@ toSign is , ", toSign);
 
   const signature = await signTypedData(signer, input.from, toSign);
-  console.log("**@ signature is , ", signature);
 
   return { signature, request };
 }
