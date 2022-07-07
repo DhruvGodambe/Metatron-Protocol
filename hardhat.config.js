@@ -30,6 +30,19 @@ module.exports = {
       chainId: 4,
       blockConfirmations: 6,
     },
+    goerli: {
+      url: process.env.GOERLI_RPC_URL,
+      accounts: [process.env.PRIVATE_KEY_1, process.env.PRIVATE_KEY_2],
+      chainId: 5,
+      blockConfirmations: 6,
+    },
+
+    mumbai: {
+      url: process.env.MUMBAI_RPC_URL,
+      accounts: [process.env.PRIVATE_KEY_1, process.env.PRIVATE_KEY_2],
+      chainId: 80001,
+      blockConfirmations: 6,
+    },
   },
   solidity: {
     compilers: [

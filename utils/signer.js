@@ -64,9 +64,12 @@ async function buildTypedData(forwarder, request) {
 
 async function signMetaTxRequest(signer, forwarder, input) {
   const request = await buildRequest(forwarder, input);
+  console.log("**@ request is , ", request);
   const toSign = await buildTypedData(forwarder, request);
+  console.log("**@ toSign is , ", toSign);
 
   const signature = await signTypedData(signer, input.from, toSign);
+  console.log("**@ signature is , ", signature);
 
   return { signature, request };
 }

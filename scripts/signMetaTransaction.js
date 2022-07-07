@@ -12,8 +12,9 @@ function getInstance(name) {
 
 async function main() {
   const forwarder = await getInstance("MinimalForwarder");
-  const registry = await getInstance("Registry");
+  // const registry = await getInstance("Registry");
   const mockToken = await getInstance("MockToken");
+  const simpleExchange = await getInstance("SimpleExchange");
 
   // signing simple registry
   // const { NAME: name, PRIVATE_KEY_2: signer } = process.env;
@@ -54,14 +55,14 @@ async function main() {
   );
   //  signer approving the forwarder contract to spend its erc20 token
   // const approvalTransaction = await mockToken
-  //   .connect(accounts[1])
+  //   .connect(accounts[0])
   //   .approve(forwarder.address, "10000000000000000000000000000000000000");
   // const approvalTxReceipt = await approvalTransaction.wait(1);
   // console.log("**@ approvalTxReceipt is , ", approvalTxReceipt.transactionHash);
 
-  const data = mockToken.interface.encodeFunctionData("transfer", [to, amount]);
+  const data = simpleExchange.interface.encodeFunctionData("deposit", [amount]);
   const result = await signMetaTxRequest(signer, forwarder, {
-    to: mockToken.address,
+    to: simpleExchange.address,
     from: from,
     data,
   });

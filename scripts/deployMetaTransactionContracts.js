@@ -9,8 +9,8 @@ async function deploy(name, ...params) {
 async function main() {
   const forwarder = await deploy("MinimalForwarder");
   await forwarder.deployed();
-  const registry = await deploy("Registry", forwarder.address);
-  await registry.deployed();
+  // const registry = await deploy("Registry", forwarder.address);
+  // await registry.deployed();
   // const registry = { address: "0x00" };
   // const forwarder = { address: "0x7424B39abD3fb87517aE6900C398996ed01548A8" };
   // const registry = { address: "0x00" };
@@ -23,13 +23,19 @@ async function main() {
   );
   await mockToken.deployed();
 
+  const simpleExchange = await deploy(
+    "SimpleExchange",
+    mockToken.address,
+    forwarder.address
+  );
+
   writeFileSync(
     "deploy.json",
     JSON.stringify(
       {
         MinimalForwarder: forwarder.address,
-        Registry: registry.address,
         MockToken: mockToken.address,
+        SimpleExchange: simpleExchange.address,
       },
       null,
       2
@@ -37,8 +43,9 @@ async function main() {
   );
 
   console.log(
-    `MinimalForwarder: ${forwarder.address}\nRegistry: ${registry.address}\nMockToken: ${mockToken.address}`
+    `MinimalForwarder: ${forwarder.address}\nSimpleExchange: ${simpleExchange.address}\nMockToken: ${mockToken.address}`
   );
+  // console.log(`MinimalForwarder: ${forwarder.address}`);
 }
 
 if (require.main === module) {
