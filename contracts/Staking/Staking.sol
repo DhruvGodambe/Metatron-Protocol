@@ -5,7 +5,7 @@ import {AccessControlUpgradeable} from "@openzeppelin/contracts-upgradeable/acce
 import {ReentrancyGuardUpgradeable} from "@openzeppelin/contracts-upgradeable/security/ReentrancyGuardUpgradeable.sol";
 import "@openzeppelin/contracts-upgradeable/proxy/utils/Initializable.sol";
 import {UUPSUpgradeable} from "@openzeppelin/contracts-upgradeable/proxy/utils/UUPSUpgradeable.sol";
-import "@openzeppelin/contracts/security/Pausable.sol";
+import "@openzeppelin/contracts-upgradeable/security/PausableUpgradeable.sol";
 import "@openzeppelin/contracts/utils/math/SafeMath.sol";
 // import "@openzeppelin/contracts/utils/math/SafeCast.sol";
 
@@ -21,7 +21,7 @@ contract Staking is
     UUPSUpgradeable,
     ReentrancyGuardUpgradeable,
     AccessControlUpgradeable,
-    Pausable
+    PausableUpgradeable
 {
     // Initializable,
     // Pausable
@@ -41,7 +41,11 @@ contract Staking is
     // user => user stake details
     mapping(address => User) public UserInfo;
 
-    event NFTStaked(address user, uint256 tokenId, uint256 initialBalance);
+    event NFTStaked(
+        address indexed user,
+        uint256 indexed tokenId,
+        uint256 initialBalance
+    );
 
     struct User {
         uint256 stakingTimestamp;
@@ -59,6 +63,7 @@ contract Staking is
         uint256 _interestRate,
         uint256 _stakingPeriod
     ) external initializer {
+        __UUPSUpgradeable_init();
         stakingToken = _stakingToken;
         rewardToken = _rewardToken;
         interestRate = _interestRate;
@@ -66,25 +71,39 @@ contract Staking is
         stakingPeriod = _stakingPeriod;
     }
 
-    function stake(uint256 _initialBalance, uint256 _tokenId)
-        external
-        whenNotPaused
-    {
+    function stake(
+        uint256 _initialBalance,
+        uint256 _tokenId,
+        address _user
+    ) external whenNotPaused {
         require(
             IERC721(stakingToken).ownerOf(_tokenId) == msg.sender,
             "Owner does not owns this NFT!"
+        );
+        // Check approval NFT -> this contract
+        require(
+            IERC721(stakingToken).getApproved(_tokenId) == address(this),
+            "Staking Contract is not approved for this NFT!"
         );
 
         // transfer the tokens to this contract
         IERC721(stakingToken).transferFrom(msg.sender, address(this), _tokenId);
 
         // keep track of how much this user has staked
-        UserInfo[msg.sender].stakingTimestamp = block.timestamp;
-        UserInfo[msg.sender].tokenId = _tokenId;
-        UserInfo[msg.sender].stakedAmount = _initialBalance;
+        UserInfo[_user].stakingTimestamp = block.timestamp;
+        UserInfo[_user].tokenId = _tokenId;
+        UserInfo[_user].stakedAmount = _initialBalance;
 
-        calculateUserRewards(msg.sender, _initialBalance);
-        emit NFTStaked(msg.sender, _tokenId, _initialBalance);
+        // do calcn here and store in mapping
+        (uint256 _totalRewards, uint256 _rewardInstallment) = _calculateRewards(
+            _initialBalance,
+            interestRate,
+            stakingPeriod
+        );
+        UserInfo[_user].rewardsEarned = _totalRewards;
+        UserInfo[_user].rewardInstallment = _rewardInstallment;
+
+        emit NFTStaked(_user, _tokenId, _initialBalance);
     }
 
     function claimReward(address _user) external {
@@ -110,19 +129,6 @@ contract Staking is
         }
     }
 
-    function calculateUserRewards(address _user, uint256 _stakedAmount)
-        public
-        view
-    {
-        (uint256 _totalRewards, uint256 _rewardInstallment) = _calculateRewards(
-            _stakedAmount,
-            interestRate,
-            stakingPeriod
-        );
-        UserInfo[_user].rewardsEarned = _totalRewards;
-        UserInfo[_user].rewardInstallment = _rewardInstallment;
-    }
-
     // APY and REWARDS Calculation
     // Compound Frequency fixed
     // APY = [{ 1 + r/n } ^ n] - 1
@@ -146,7 +152,7 @@ contract Staking is
         uint256 _userStake,
         uint256 _interestRate,
         uint256 _term
-    ) internal returns (uint256, uint256) {
+    ) internal pure returns (uint256, uint256) {
         // staking period in months and so is _term
         _term = _term.div(12);
         uint256 rewards = _userStake.mul((1 + _interestRate)**_term);
@@ -180,6 +186,8 @@ contract Staking is
         );
     }
 
+    function _authorizeUpgrade(address) internal override {}
+
     // admin functions => implement later
     function pause() external {
         _pause();
@@ -189,4 +197,11 @@ contract Staking is
         _unpause();
     }
 
+    function _msgSender() internal view override returns (address) {
+        return msg.sender;
+    }
+
+    function _msgData() internal view override returns (bytes calldata) {
+        return msg.data;
+    }
 }
