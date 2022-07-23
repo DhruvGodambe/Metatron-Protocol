@@ -1,5 +1,5 @@
 // SPDX-License-Identifier: MIT
-pragma solidity ^0.8.10;
+pragma solidity ^0.8.4;
 
 import {AccessControlUpgradeable} from "@openzeppelin/contracts-upgradeable/access/AccessControlUpgradeable.sol";
 import {ReentrancyGuardUpgradeable} from "@openzeppelin/contracts-upgradeable/security/ReentrancyGuardUpgradeable.sol";
@@ -31,30 +31,46 @@ contract Staking is
     address public stakingToken; // ERC721
     address public rewardToken; // ERC20 - Enoch Tokens
 
-    uint256 public interestRate; // initialize
-    uint256 public stakingPeriod; // initialize
+    uint256 public INTEREST_RATE; // initialize
+    // in month
+    uint256 public STAKING_PERIOD; // initialize 
+    uint256 public APY;
+    uint256 public REWARD_CONSTANT;
 
-    uint256 public apy;
+    uint256 public constant PRECISION_CONSTANT = 10000;
+    uint256 public constant oneMonthTimeConstant = 2592000;
 
     // user => rewards (enoch tokens)
     mapping(address => uint256) public userRewards;
-    // user => user stake details
-    mapping(address => User) public UserInfo;
+    // userAddress => (tokenId => UserStakeInfo)
+    mapping(address => mapping(uint256 => User)) public UserInfo;
+    // fetch user remaining rewards for each stake via mapping
+    // address => tokenId => bool  // all rewards claimed
+    mapping(address => mapping(uint256 => bool)) public rewardsClaimedInfo;
 
     event NFTStaked(
         address indexed user,
         uint256 indexed tokenId,
-        uint256 initialBalance
+        uint256 initialBalance,
+        uint256 timestamp
     );
+
+    // emitted when the user collects all the rewards
+    event UserClaimedRewards(address indexed _user, uint256 _stakedToken, uint256 _claimedRewards);
+
+    modifier onlyAdmin() {
+        require(hasRole(DEFAULT_ADMIN_ROLE, msg.sender), "Not an Admin!");
+        _;
+    }
 
     struct User {
         uint256 stakingTimestamp;
-        uint256 tokenId;
         uint256 stakedAmount;
         uint256 rewardsEarned;
         uint256 claimedRewards;
         uint256 rewardInstallment;
         uint256 lastWithdrawalTime;
+        uint256 lastRewardAccumulatedTime;
     }
 
     function initialize(
@@ -66,15 +82,17 @@ contract Staking is
         __UUPSUpgradeable_init();
         stakingToken = _stakingToken;
         rewardToken = _rewardToken;
-        interestRate = _interestRate;
-        apy = _interestRate;
-        stakingPeriod = _stakingPeriod;
+        INTEREST_RATE = _interestRate;
+        APY = _interestRate;
+        STAKING_PERIOD = _stakingPeriod;
+        _setupRole(DEFAULT_ADMIN_ROLE, msg.sender);
+
     }
 
     function stake(
-        uint256 _initialBalance,
+        address _user,
         uint256 _tokenId,
-        address _user
+        uint256 _initialBalance
     ) external whenNotPaused {
         require(
             IERC721(stakingToken).ownerOf(_tokenId) == msg.sender,
@@ -90,42 +108,48 @@ contract Staking is
         IERC721(stakingToken).transferFrom(msg.sender, address(this), _tokenId);
 
         // keep track of how much this user has staked
-        UserInfo[_user].stakingTimestamp = block.timestamp;
-        UserInfo[_user].tokenId = _tokenId;
-        UserInfo[_user].stakedAmount = _initialBalance;
+        UserInfo[_user][_tokenId].stakingTimestamp = block.timestamp;
+        UserInfo[_user][_tokenId].stakedAmount = _initialBalance.mul(PRECISION_CONSTANT);
 
         // do calcn here and store in mapping
         (uint256 _totalRewards, uint256 _rewardInstallment) = _calculateRewards(
-            _initialBalance,
-            interestRate,
-            stakingPeriod
+            _initialBalance
         );
-        UserInfo[_user].rewardsEarned = _totalRewards;
-        UserInfo[_user].rewardInstallment = _rewardInstallment;
+        UserInfo[_user][_tokenId].rewardsEarned = _totalRewards;
+        UserInfo[_user][_tokenId].rewardInstallment = _rewardInstallment;
 
-        emit NFTStaked(_user, _tokenId, _initialBalance);
+        emit NFTStaked(_user, _tokenId, _initialBalance, block.timestamp);
     }
 
-    function claimReward(address _user) external {
-        uint256 remainingRewards = UserInfo[_user].rewardsEarned.sub(
-            UserInfo[_user].claimedRewards
+    // time-reward check
+    function claimReward(address _user, uint256 _tokenId) external {
+        uint256 remainingRewards = UserInfo[_user][_tokenId].rewardsEarned.sub(
+            UserInfo[_user][_tokenId].claimedRewards
         );
 
-        require(remainingRewards >= 0, "You have claimed your rewards!");
-        uint256 installment = UserInfo[_user].rewardInstallment;
+        require(remainingRewards > 2, "You have claimed your rewards!");
+
+        // one month = 2592000
+        require((block.timestamp - UserInfo[_user][_tokenId].stakingTimestamp) >= oneMonthTimeConstant && (block.timestamp - UserInfo[_user][_tokenId].lastRewardAccumulatedTime) >= 2592000, "User cannot claim rewards before due time!");
+
+        uint256 installment = UserInfo[_user][_tokenId].rewardInstallment;
         // pay one installments
-        UserInfo[_user].claimedRewards += installment;
-        UserInfo[_user].lastWithdrawalTime = block.timestamp;
+        UserInfo[_user][_tokenId].claimedRewards += installment;
+        UserInfo[_user][_tokenId].lastWithdrawalTime = block.timestamp;
+        UserInfo[_user][_tokenId].lastRewardAccumulatedTime += oneMonthTimeConstant;
         // transfer
         IERC20(rewardToken).transfer(msg.sender, installment);
 
-        if (UserInfo[_user].rewardsEarned == UserInfo[_user].claimedRewards) {
+        if (UserInfo[_user][_tokenId].rewardsEarned.sub(UserInfo[_user][_tokenId].claimedRewards) <= 2) {
             // burn the token
             IERC721(stakingToken).transferFrom(
-                msg.sender,
+                address(this),
                 address(0),
-                UserInfo[_user].tokenId
+                _tokenId
             );
+            // all rewards claimed by the user
+            rewardsClaimedInfo[_user][_tokenId] = true;
+            emit UserClaimedRewards(_user, _tokenId, UserInfo[_user][_tokenId].claimedRewards);
         }
     }
 
@@ -149,23 +173,27 @@ contract Staking is
     //
 
     function _calculateRewards(
-        uint256 _userStake,
-        uint256 _interestRate,
-        uint256 _term
-    ) internal pure returns (uint256, uint256) {
-        // staking period in months and so is _term
-        _term = _term.div(12);
-        uint256 rewards = _userStake.mul((1 + _interestRate)**_term);
+        uint256 _userStake
+    ) internal view returns (uint256, uint256) {
+    
+        uint256 rewards = _userStake.mul(REWARD_CONSTANT);
 
         uint256 rewardInstallment = rewards.div(3);
         return (rewards, rewardInstallment);
     }
 
-    function getStakedInfo(address _user)
+    // suppose x**y; x = 1.85, y = 0.25;
+    // x**y = 1.1663
+    // REWARD_CONSTANT = 11663
+    function setRewardConstant(uint256 _rewardConstant) public onlyAdmin returns(uint256) {
+        REWARD_CONSTANT = _rewardConstant;
+        return REWARD_CONSTANT;
+    }
+
+    function getStakedInfo(address _user, uint256 _tokenId)
         public
         view
         returns (
-            uint256,
             uint256,
             uint256,
             uint256,
@@ -176,14 +204,17 @@ contract Staking is
     {
         // return all details
         return (
-            UserInfo[_user].stakingTimestamp,
-            UserInfo[_user].tokenId,
-            UserInfo[_user].stakedAmount,
-            UserInfo[_user].rewardsEarned,
-            UserInfo[_user].claimedRewards,
-            UserInfo[_user].rewardInstallment,
-            UserInfo[_user].lastWithdrawalTime
+            UserInfo[_user][_tokenId].stakingTimestamp,
+            UserInfo[_user][_tokenId].stakedAmount,
+            UserInfo[_user][_tokenId].rewardsEarned,
+            UserInfo[_user][_tokenId].claimedRewards,
+            UserInfo[_user][_tokenId].rewardInstallment,
+            UserInfo[_user][_tokenId].lastWithdrawalTime
         );
+    }
+
+    function getPendingRewardsInfo(address _user, uint256 _tokenId) public view returns (uint256) {
+        return UserInfo[_user][_tokenId].rewardsEarned.sub(UserInfo[_user][_tokenId].claimedRewards);
     }
 
     function _authorizeUpgrade(address) internal override {}
@@ -195,6 +226,18 @@ contract Staking is
 
     function unpause() external {
         _unpause();
+    }
+
+     function addAdmin(address account) external onlyAdmin {
+        grantRole(DEFAULT_ADMIN_ROLE, account);
+    }
+
+    function removeAdmin(address account) external onlyAdmin {
+        revokeRole(DEFAULT_ADMIN_ROLE, account);
+    }
+    
+    function leaveAdminRole() external onlyAdmin {
+        renounceRole(DEFAULT_ADMIN_ROLE, msg.sender);
     }
 
     function _msgSender() internal view override returns (address) {
