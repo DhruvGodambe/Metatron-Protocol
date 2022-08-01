@@ -39,11 +39,12 @@ contract Staking is
 
     uint256 public constant PRECISION_CONSTANT = 10000;
     uint256 public constant oneMonthTimeConstant = 2592000;
+    uint256 public maxUnclaimableToken;
 
     // user => rewards (enoch tokens)
     mapping(address => uint256) public userRewards;
     // userAddress => (tokenId => UserStakeInfo)
-    mapping(address => mapping(uint256 => User)) public UserInfo;
+    mapping(address => mapping(uint256 => StakingDetails)) public UserInfo;
     // fetch user remaining rewards for each stake via mapping
     // address => tokenId => bool  // all rewards claimed
     mapping(address => mapping(uint256 => bool)) public rewardsClaimedInfo;
@@ -63,7 +64,8 @@ contract Staking is
         _;
     }
 
-    struct User {
+    // struct name update
+    struct StakingDetails {
         uint256 stakingTimestamp;
         uint256 stakedAmount;
         uint256 rewardsEarned;
@@ -85,9 +87,42 @@ contract Staking is
         INTEREST_RATE = _interestRate;
         APY = _interestRate;
         STAKING_PERIOD = _stakingPeriod;
+        maxUnclaimableToken = _stakingPeriod - 1;
         _setupRole(DEFAULT_ADMIN_ROLE, msg.sender);
 
     }
+
+    //        ,-.
+    //        `-'
+    //        /|\
+    //         |                    ,----------------.              ,----------.
+    //        / \                   |    Staking     |              | Staking  |
+    //      Caller                  `-------+--------'              `----+-----'
+    //        |                          stake()                         |
+    //        | --------------------------------------------------------->
+    //        |                             |check owner & token approval|                        |
+    //        |                             |----------------------------|
+    //        |                             |     transfers NFT          |
+    //        |                             |                            |
+    //        |                             |                            |
+    //        |                             |     update stake info      |
+    //        |                             | --------------------------->
+    //        |                             |   _calculateRewards()      |
+    //        |                             |stakedAmount*REWARD_CONSTANT|
+    //        |                             | --------------------------->
+    //        |                             |   update reward info       |
+    //        |                             |----.                       |
+    //        |                             |    | emit NFTStaked        |
+    //        |                             |<---'                       |
+    //        |                             |                            |
+    //        |                             |                            |
+    //        | <----------------------------                            |
+    //      Caller                  ,-------+--------.              ,----+-----.
+    //        ,-.                   |    Staking     |              | Staking  |
+    //        `-'                   `----------------'              `----------'
+    //        /|\
+    //         |
+    //        / \
 
     function stake(
         address _user,
@@ -121,16 +156,50 @@ contract Staking is
         emit NFTStaked(_user, _tokenId, _initialBalance, block.timestamp);
     }
 
+
+     //        ,-.
+    //        `-'
+    //        /|\
+    //         |                    ,----------------.              ,----------.
+    //        / \                   |    Staking     |              | Staking  |
+    //      Caller                  `-------+--------'              `----+-----'
+    //        |                          stake()                         |
+    //        | --------------------------------------------------------->
+    //        |                             |calculate remaining reward |                        |
+    //        |                             |----------------------------|
+    //        |                             |checks if reward to claim is|          |
+    //        |                             |greater than maxUnclaimable |
+    //        |                             |                            |
+    //        |                             |checks if valid withdrawTime|
+    //        |                             | --------------------------->
+    //        |                             |update withdraw info        |
+    //        |                             |transfer rewardInstallment  |
+    //        |                             | --------------------------->
+    //        |                             |  if (lastWithdrawal)       |
+    //        |                             |      burns the STAKED NFT  |
+    //        |                             |      set rewardClaimed true|
+    //        |                             |----.                       |
+    //        |                             |    | emit UserClaimedReward|
+    //        |                             |<---'                       |
+    //        | <----------------------------                            |
+    //      Caller                  ,-------+--------.              ,----+-----.
+    //        ,-.                   |    Staking     |              | Staking  |
+    //        `-'                   `----------------'              `----------'
+    //        /|\
+    //         |
+    //        / \
+
     // time-reward check
     function claimReward(address _user, uint256 _tokenId) external {
         uint256 remainingRewards = UserInfo[_user][_tokenId].rewardsEarned.sub(
             UserInfo[_user][_tokenId].claimedRewards
         );
 
-        require(remainingRewards > 2, "You have claimed your rewards!");
+        // minimumClaimableToken = 2 // set this var
+        require(remainingRewards > maxUnclaimableToken, "You have claimed your rewards!");
 
         // one month = 2592000
-        require((block.timestamp - UserInfo[_user][_tokenId].stakingTimestamp) >= oneMonthTimeConstant && (block.timestamp - UserInfo[_user][_tokenId].lastRewardAccumulatedTime) >= 2592000, "User cannot claim rewards before due time!");
+        require((block.timestamp - UserInfo[_user][_tokenId].stakingTimestamp) >= oneMonthTimeConstant && (block.timestamp - UserInfo[_user][_tokenId].lastRewardAccumulatedTime) >= oneMonthTimeConstant, "User cannot claim rewards before due time!");
 
         uint256 installment = UserInfo[_user][_tokenId].rewardInstallment;
         // pay one installments
@@ -182,6 +251,7 @@ contract Staking is
         return (rewards, rewardInstallment);
     }
 
+    // suppose, interest rate = 85% for term of 3 months
     // suppose x**y; x = 1.85, y = 0.25;
     // x**y = 1.1663
     // REWARD_CONSTANT = 11663
