@@ -28,6 +28,38 @@ contract StakeFactory is UUPSUpgradeable, AccessControlUpgradeable, PausableUpgr
         implementation = _implementation;
     }
 
+    //        ,-.
+    //        `-'
+    //        /|\
+    //         |                    ,----------------.              ,----------.
+    //        / \                   |  StakeFactory  |              | Staking  |
+    //      Caller                  `-------+--------'              `----+-----'
+    //        |                       setupStakeContract()               |
+    //        | --------------------------------------------------------->
+    //        |                             |                            |
+    //        |                             |----.
+    //        |                             |    | initialize 
+    //        |                             |<---'
+    //        |                             |                            |
+    //        |                             |           deploy           |
+    //        |                             | --------------------------->
+    //        |                             |                            |
+    //        |                             |       initialize stake     |
+    //        |                             | --------------------------->
+    //        |                             |                            |
+    //        |                             |----.                       |
+    //        |                             |    | emit StakeCreated     |
+    //        |                             |<---'                       |
+    //        |                             |                            |
+    //        | return stake contract address|                            |
+    //        | <----------------------------                            |
+    //      Caller                  ,-------+--------.              ,----+-----.
+    //        ,-.                   |  StakeFactory  |              | Staking  |
+    //        `-'                   `----------------'              `----------'
+    //        /|\
+    //         |
+    //        / \
+
     function setupStakeContract(
         address _stakingToken,
         address _rewardToken,
