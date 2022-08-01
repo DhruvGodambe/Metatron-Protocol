@@ -99,11 +99,11 @@ contract StakeFactory is UUPSUpgradeable, AccessControlUpgradeable, PausableUpgr
         renounceRole(DEFAULT_ADMIN_ROLE, msg.sender);
     }
 
-     function pause() external {
+     function pause() external onlyAdmin {
         _pause();
     }
 
-    function unpause() external {
+    function unpause() external onlyAdmin {
         _unpause();
     }
 

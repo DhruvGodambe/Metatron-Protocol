@@ -2,131 +2,34 @@
 
 pragma solidity ^0.8.0;
 
-import './IERC20.sol';
+import "@openzeppelin/contracts/token/ERC20/ERC20.sol";
 
-contract Amber is IERC20 {
+contract Amber is ERC20 {
     mapping(address => uint256) private _balances;
-    mapping(address => mapping(address => uint256)) private _allowances;
     address public _owner;
 
-    string private _name = "Amber";
-    string private _symbol = "AMBER";
-    uint256 private _totalSupply = 3500000000000000000000000000; //3,500,000,000 AMBER tokens
-    uint8 private _decimals = 18;
+    uint256 private _initialSupply = 10000000000000000000000000;  // 10 M
+    uint256 private maxTotalSupply = 1000000000000000000000000000; // 1 B AMBER tokens
+    uint256 private _totalSupply; 
 
-    constructor() {
+    constructor() ERC20("Amber", "AMBER") {
         _owner = msg.sender;
-        _balances[_owner] = _totalSupply;
-    }
-
-    function name() public view virtual returns (string memory) {
-        return _name;
-    }
-
-    function symbol() public view virtual returns (string memory) {
-        return _symbol;
-    }
-
-    function decimals() public view virtual returns (uint8) {
-        return _decimals;
+        _balances[_owner] = _initialSupply;
+        _totalSupply += _initialSupply;
     }
 
     function totalSupply() public view virtual override returns (uint256) {
         return _totalSupply;
     }
 
-    function balanceOf(address account) public view virtual override returns (uint256) {
-        return _balances[account];
-    }
-
-    function transfer(address recipient, uint256 amount) public virtual override returns (bool) {
-        _transfer(msg.sender, recipient, amount);
-        return true;
-    }
-
-    function allowance(address owner, address spender) public view virtual override returns (uint256) {
-        return _allowances[owner][spender];
-    }
-
-    function approve(address spender, uint256 amount) public virtual override returns (bool) {
-        _approve(msg.sender, spender, amount);
-        return true;
-    }
-
-    function transferFrom(
-        address sender,
-        address recipient,
-        uint256 amount
-    ) public virtual override returns (bool) {
-        _transfer(sender, recipient, amount);
-
-        uint256 currentAllowance = _allowances[sender][msg.sender];
-        require(currentAllowance >= amount, "ERC20: transfer amount exceeds allowance");
-        unchecked {
-            _approve(sender, msg.sender, currentAllowance - amount);
-        }
-
-        return true;
-    }
-
-    function _transfer(
-        address sender,
-        address recipient,
-        uint256 amount
-    ) internal virtual {
-        require(sender != address(0), "ERC20: transfer from the zero address");
-        require(recipient != address(0), "ERC20: transfer to the zero address");
-
-        uint256 senderBalance = _balances[sender];
-        require(senderBalance >= amount, "ERC20: transfer amount exceeds balance");
-        unchecked {
-            _balances[sender] = senderBalance - amount;
-        }
-        _balances[recipient] += amount;
-
-        emit Transfer(sender, recipient, amount);
-    }
-
-    function mint(uint256 amount) public {
-        require(msg.sender == _owner, "You are not authorized to mint FINA");
-        _mint(_owner, amount);
-    }
-
-    function _mint(address account, uint256 amount) internal virtual {
-        require(account != address(0), "ERC20: mint to the zero address");
-
-        _totalSupply += amount;
-        _balances[account] += amount;
-        emit Transfer(address(0), account, amount);
+    function mint(address account, uint256 amount) public {
+        require(msg.sender == _owner, "You are not authorized to mint AMBER");
+        require(maxTotalSupply > (_totalSupply + amount), "Token Supply cannot exceed the limit");
+        _mint(account, amount);
     }
 
     function burn(uint256 amount) public {
-        require(msg.sender == _owner, "You are not authorized to burn FINA");
+        require(msg.sender == _owner, "You are not authorized to burn AMBER");
         _burn(_owner, amount);
-    }
-
-    function _burn(address account, uint256 amount) internal virtual {
-        require(account != address(0), "ERC20: burn from the zero address");
-
-        uint256 accountBalance = _balances[account];
-        require(accountBalance >= amount, "ERC20: burn amount exceeds balance");
-        unchecked {
-            _balances[account] = accountBalance - amount;
-        }
-        _totalSupply -= amount;
-
-        emit Transfer(account, address(0), amount);
-    }
-
-    function _approve(
-        address owner,
-        address spender,
-        uint256 amount
-    ) internal virtual {
-        require(owner != address(0), "ERC20: approve from the zero address");
-        require(spender != address(0), "ERC20: approve to the zero address");
-
-        _allowances[owner][spender] = amount;
-        emit Approval(owner, spender, amount);
     }
 }

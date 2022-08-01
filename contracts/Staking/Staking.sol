@@ -7,10 +7,9 @@ import "@openzeppelin/contracts-upgradeable/proxy/utils/Initializable.sol";
 import {UUPSUpgradeable} from "@openzeppelin/contracts-upgradeable/proxy/utils/UUPSUpgradeable.sol";
 import "@openzeppelin/contracts-upgradeable/security/PausableUpgradeable.sol";
 import "@openzeppelin/contracts/utils/math/SafeMath.sol";
-// import "@openzeppelin/contracts/utils/math/SafeCast.sol";
 
-import "../NFTMarketplace/Interface/IERC721.sol";
-import "../Tokens/IERC20.sol";
+import "../Tokens/IPremiumNFT.sol";
+import "../Tokens/Enoch.sol";
 
 // APY - 90%
 // Staking period - 3 Months
@@ -23,10 +22,8 @@ contract Staking is
     AccessControlUpgradeable,
     PausableUpgradeable
 {
-    // Initializable,
-    // Pausable
+
     using SafeMath for uint256;
-    // using SafeCast for uint256;
 
     address public stakingToken; // ERC721
     address public rewardToken; // ERC20 - Enoch Tokens
@@ -40,6 +37,9 @@ contract Staking is
     uint256 public constant PRECISION_CONSTANT = 10000;
     uint256 public constant oneMonthTimeConstant = 2592000;
     uint256 public maxUnclaimableToken;
+    
+    uint256[] stakedNFTs; // array of all staked NFTs
+    uint256[2][] public rewardTokenMinted;  // amount, timestamp
 
     // user => rewards (enoch tokens)
     mapping(address => uint256) public userRewards;
@@ -64,7 +64,6 @@ contract Staking is
         _;
     }
 
-    // struct name update
     struct StakingDetails {
         uint256 stakingTimestamp;
         uint256 stakedAmount;
@@ -95,10 +94,10 @@ contract Staking is
     //        ,-.
     //        `-'
     //        /|\
-    //         |                    ,----------------.              ,----------.
-    //        / \                   |    Staking     |              | Staking  |
-    //      Caller                  `-------+--------'              `----+-----'
-    //        |                          stake()                         |
+    //         |                    ,----------------.              
+    //        / \                   |    Staking     |              
+    //      Caller                  `-------+--------'              
+    //        |                          stake()                         
     //        | --------------------------------------------------------->
     //        |                             |check owner & token approval|                        |
     //        |                             |----------------------------|
@@ -117,9 +116,9 @@ contract Staking is
     //        |                             |                            |
     //        |                             |                            |
     //        | <----------------------------                            |
-    //      Caller                  ,-------+--------.              ,----+-----.
-    //        ,-.                   |    Staking     |              | Staking  |
-    //        `-'                   `----------------'              `----------'
+    //      Caller                  ,-------+--------.              
+    //        ,-.                   |    Staking     |              
+    //        `-'                   `----------------'              
     //        /|\
     //         |
     //        / \
@@ -129,22 +128,29 @@ contract Staking is
         uint256 _tokenId,
         uint256 _initialBalance
     ) external whenNotPaused {
+
+        // check token stake update, if false, then only stake
+        require((IPremiumNFT(stakingToken).getTokenStakedInfo(_tokenId) == false), "Token already staked earlier");
+
         require(
-            IERC721(stakingToken).ownerOf(_tokenId) == msg.sender,
+            IPremiumNFT(stakingToken).ownerOf(_tokenId) == msg.sender,
             "Owner does not owns this NFT!"
         );
         // Check approval NFT -> this contract
         require(
-            IERC721(stakingToken).getApproved(_tokenId) == address(this),
+            IPremiumNFT(stakingToken).getApproved(_tokenId) == address(this),
             "Staking Contract is not approved for this NFT!"
         );
 
         // transfer the tokens to this contract
-        IERC721(stakingToken).transferFrom(msg.sender, address(this), _tokenId);
+        IPremiumNFT(stakingToken).transferFrom(msg.sender, address(this), _tokenId);
 
         // keep track of how much this user has staked
         UserInfo[_user][_tokenId].stakingTimestamp = block.timestamp;
         UserInfo[_user][_tokenId].stakedAmount = _initialBalance.mul(PRECISION_CONSTANT);
+
+        // update in stakedNFTs array
+        stakedNFTs.push(_tokenId);
 
         // do calcn here and store in mapping
         (uint256 _totalRewards, uint256 _rewardInstallment) = _calculateRewards(
@@ -157,17 +163,17 @@ contract Staking is
     }
 
 
-     //        ,-.
+    //        ,-.
     //        `-'
     //        /|\
-    //         |                    ,----------------.              ,----------.
-    //        / \                   |    Staking     |              | Staking  |
-    //      Caller                  `-------+--------'              `----+-----'
+    //         |                    ,----------------.            
+    //        / \                   |    Staking     |              
+    //      Caller                  `-------+--------'              
     //        |                          stake()                         |
     //        | --------------------------------------------------------->
     //        |                             |calculate remaining reward |                        |
     //        |                             |----------------------------|
-    //        |                             |checks if reward to claim is|          |
+    //        |                             |checks if reward to claim is|          
     //        |                             |greater than maxUnclaimable |
     //        |                             |                            |
     //        |                             |checks if valid withdrawTime|
@@ -182,9 +188,9 @@ contract Staking is
     //        |                             |    | emit UserClaimedReward|
     //        |                             |<---'                       |
     //        | <----------------------------                            |
-    //      Caller                  ,-------+--------.              ,----+-----.
-    //        ,-.                   |    Staking     |              | Staking  |
-    //        `-'                   `----------------'              `----------'
+    //      Caller                  ,-------+--------.             
+    //        ,-.                   |    Staking     |              
+    //        `-'                   `----------------'              
     //        /|\
     //         |
     //        / \
@@ -207,15 +213,13 @@ contract Staking is
         UserInfo[_user][_tokenId].lastWithdrawalTime = block.timestamp;
         UserInfo[_user][_tokenId].lastRewardAccumulatedTime += oneMonthTimeConstant;
         // transfer
-        IERC20(rewardToken).transfer(msg.sender, installment);
+        Enoch(rewardToken).mint(msg.sender, installment);
+        rewardTokenMinted.push([installment, block.timestamp]);
 
         if (UserInfo[_user][_tokenId].rewardsEarned.sub(UserInfo[_user][_tokenId].claimedRewards) <= 2) {
             // burn the token
-            IERC721(stakingToken).transferFrom(
-                address(this),
-                address(0),
-                _tokenId
-            );
+            IPremiumNFT(stakingToken).burn(_tokenId);
+
             // all rewards claimed by the user
             rewardsClaimedInfo[_user][_tokenId] = true;
             emit UserClaimedRewards(_user, _tokenId, UserInfo[_user][_tokenId].claimedRewards);
@@ -290,11 +294,11 @@ contract Staking is
     function _authorizeUpgrade(address) internal override {}
 
     // admin functions => implement later
-    function pause() external {
+    function pause() external onlyAdmin {
         _pause();
     }
 
-    function unpause() external {
+    function unpause() external onlyAdmin {
         _unpause();
     }
 
@@ -308,6 +312,10 @@ contract Staking is
     
     function leaveAdminRole() external onlyAdmin {
         renounceRole(DEFAULT_ADMIN_ROLE, msg.sender);
+    }
+
+    function pauseStatus() public view virtual returns (bool) {
+        return paused();
     }
 
     function _msgSender() internal view override returns (address) {

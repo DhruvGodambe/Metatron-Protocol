@@ -14,8 +14,6 @@ describe("====>Staking<====", function () {
   let userAddress2: string;
   let Staking: any;
   let staking: any;
-  let StakingProxy: any;
-  let stakingProxy: any;
   let StakeFactory: any;
   let stakeFactory: any;
   let DKToken: any;
@@ -28,7 +26,6 @@ describe("====>Staking<====", function () {
     accounts = await ethers.getSigners();
 
     Staking = await ethers.getContractFactory("Staking");
-    StakingProxy = await ethers.getContractFactory('StakingProxy');
     StakeFactory = await ethers.getContractFactory("StakeFactory");
     DKToken = await ethers.getContractFactory('DKToken');
     Barrel = await ethers.getContractFactory('Barrel');
@@ -48,13 +45,6 @@ describe("====>Staking<====", function () {
     await staking.deployed();
     console.log("Staking deployed at ", staking.address);
 
-    stakingProxy = await StakingProxy.deploy(staking.address, "0x00", {
-      gasLimit: 10000000,
-      gasPrice: 100000000000
-    });
-    await stakingProxy.deployed();
-    console.log("Proxy deployed at ", stakingProxy.address);
-
     stakeFactory = await StakeFactory.deploy();
     await stakeFactory.deployed();
     console.log("Factory deployed at ", stakeFactory.address);
@@ -63,12 +53,11 @@ describe("====>Staking<====", function () {
     await dkToken.deployed();
     console.log("DKToken deployed at ", dkToken.address);
 
-    barrel = await Barrel.deploy("Knight Templer Distellery", "KTD");
+    barrel = await Barrel.deploy();
     await barrel.deployed();
     console.log("Barrel deployed at ", barrel.address);
 
     await staking.initialize(barrel.address, dkToken.address, 90, 90)
-    await stakingProxy.initialize(staking.address);
     await stakeFactory.initialize(staking.address);
 
     // try deploying one contract from factory
