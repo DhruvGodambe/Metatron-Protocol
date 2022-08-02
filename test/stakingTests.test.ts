@@ -16,10 +16,10 @@ describe("====>Staking<====", function () {
   let staking: any;
   let StakeFactory: any;
   let stakeFactory: any;
-  let DKToken: any;
-  let dkToken: any;
-  let Barrel: any;
-  let barrel: any;
+  let Enoch: any;
+  let enoch: any;
+  let PremiumNFT: any;
+  let premiumNFT: any;
 
 
   this.beforeAll(async function () {
@@ -27,8 +27,8 @@ describe("====>Staking<====", function () {
 
     Staking = await ethers.getContractFactory("Staking");
     StakeFactory = await ethers.getContractFactory("StakeFactory");
-    DKToken = await ethers.getContractFactory('DKToken');
-    Barrel = await ethers.getContractFactory('Barrel');
+    Enoch = await ethers.getContractFactory('Enoch');
+    PremiumNFT = await ethers.getContractFactory('PremiumNFT');
 
   });
 
@@ -49,15 +49,15 @@ describe("====>Staking<====", function () {
     await stakeFactory.deployed();
     console.log("Factory deployed at ", stakeFactory.address);
 
-    dkToken = await DKToken.deploy();
-    await dkToken.deployed();
-    console.log("DKToken deployed at ", dkToken.address);
+    enoch = await Enoch.deploy();
+    await enoch.deployed();
+    console.log("DKToken deployed at ", enoch.address);
 
-    barrel = await Barrel.deploy();
-    await barrel.deployed();
-    console.log("Barrel deployed at ", barrel.address);
+    premiumNFT = await PremiumNFT.deploy("Knight Templer Distillery", "KTD");
+    await premiumNFT.deployed();
+    console.log("Barrel deployed at ", premiumNFT.address);
 
-    await staking.initialize(barrel.address, dkToken.address, 90, 90)
+    await staking.initialize(premiumNFT.address, enoch.address, 90, 3)
     await stakeFactory.initialize(staking.address);
 
     // try deploying one contract from factory
@@ -70,20 +70,20 @@ describe("====>Staking<====", function () {
   });
 
   it ("Check my ERC-20 bal && Mint NFT", async () => {
-    let tx = await dkToken.connect(owner).balanceOf(ownerAddress);
+    let tx = await enoch.connect(owner).balanceOf(ownerAddress);
     console.log("Helle from tests!");
     console.log("balance", tx);
 
-    let tx2 = await barrel.connect(owner).mint(ownerAddress, 1);
+    let tx2 = await premiumNFT.connect(owner).mint(ownerAddress, 1);
     console.log("Helle from tests!");
 
-    let tx3 = await barrel.connect(owner).balanceOf(ownerAddress);
+    let tx3 = await premiumNFT.connect(owner).balanceOf(ownerAddress);
     console.log("Barrel Bal.", tx3);
   });
 
   it ("Chalo stake karte hai", async () => {
-    let tx1 = await barrel.connect(owner).mint(ownerAddress, 1);
-    let tx2 = await barrel.connect(owner).approve(Staking.address, 1);
+    let tx1 = await premiumNFT.connect(owner).mint(ownerAddress, 1);
+    let tx2 = await premiumNFT.connect(owner).approve(staking.address, 1);
     let tx3 = await staking.connect(owner).setRewardConstant(11633);
 
     let tx = await staking.connect(owner).stake(ownerAddress, 1, 100);
@@ -104,6 +104,26 @@ describe("====>Staking<====", function () {
     let val = (x**y).toPrecision(5);
     console.log("exponent", val);
   });
+
+  it ("Calling calculate rewards", async () => {
+    console.log("The owner calling", ownerAddress);
+    
+    let tx1 = await staking.setRewardConstant(10000);
+    // const receipt = await tx1.wait();
+    // console.log("tx1", tx1);
+    
+    let tx = await staking._calculateRewards(100);
+    // const receipt2 = await tx.wait();
+    // console.log("tx", receipt2);
+    
+  });
+
+  it ("Creating StakingProxy using StakeFactory",async () => {
+    let tx = await stakeFactory.connect(owner).setupStakeContract(premiumNFT.address, enoch.address, 90, 3);
+    console.log(tx);
+    
+   
+  })
 
 
 });

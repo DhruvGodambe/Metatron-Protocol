@@ -10,6 +10,7 @@ import "@openzeppelin/contracts/utils/math/SafeMath.sol";
 
 import "../Tokens/IPremiumNFT.sol";
 import "../Tokens/Enoch.sol";
+import "hardhat/console.sol";
 
 // APY - 90%
 // Staking period - 3 Months
@@ -28,26 +29,18 @@ contract Staking is
     address public stakingToken; // ERC721
     address public rewardToken; // ERC20 - Enoch Tokens
 
-    uint256 public INTEREST_RATE; // initialize
     // in month
-    uint256 public STAKING_PERIOD; // initialize 
+    uint256 public STAKING_MONTHS; // initialize  
     uint256 public APY;
     uint256 public REWARD_CONSTANT;
 
     uint256 public constant PRECISION_CONSTANT = 10000;
     uint256 public constant oneMonthTimeConstant = 2592000;
     uint256 public maxUnclaimableToken;
-    
-    uint256[] stakedNFTs; // array of all staked NFTs
-    uint256[2][] public rewardTokenMinted;  // amount, timestamp
 
-    // user => rewards (enoch tokens)
-    mapping(address => uint256) public userRewards;
+
     // userAddress => (tokenId => UserStakeInfo)
     mapping(address => mapping(uint256 => StakingDetails)) public UserInfo;
-    // fetch user remaining rewards for each stake via mapping
-    // address => tokenId => bool  // all rewards claimed
-    mapping(address => mapping(uint256 => bool)) public rewardsClaimedInfo;
 
     event NFTStaked(
         address indexed user,
@@ -57,7 +50,9 @@ contract Staking is
     );
 
     // emitted when the user collects all the rewards
-    event UserClaimedRewards(address indexed _user, uint256 _stakedToken, uint256 _claimedRewards);
+    event RewardsClaimed(address indexed _user, uint256 _stakedTokenId, uint256 _rewardAmount, uint256 _timestamp);
+
+    event MsgSender(address _sender);
 
     modifier onlyAdmin() {
         require(hasRole(DEFAULT_ADMIN_ROLE, msg.sender), "Not an Admin!");
@@ -67,7 +62,7 @@ contract Staking is
     struct StakingDetails {
         uint256 stakingTimestamp;
         uint256 stakedAmount;
-        uint256 rewardsEarned;
+        uint256 totalClaimableRewards; 
         uint256 claimedRewards;
         uint256 rewardInstallment;
         uint256 lastWithdrawalTime;
@@ -83,9 +78,8 @@ contract Staking is
         __UUPSUpgradeable_init();
         stakingToken = _stakingToken;
         rewardToken = _rewardToken;
-        INTEREST_RATE = _interestRate;
         APY = _interestRate;
-        STAKING_PERIOD = _stakingPeriod;
+        STAKING_MONTHS = _stakingPeriod;
         maxUnclaimableToken = _stakingPeriod - 1;
         _setupRole(DEFAULT_ADMIN_ROLE, msg.sender);
 
@@ -127,7 +121,7 @@ contract Staking is
         address _user,
         uint256 _tokenId,
         uint256 _initialBalance
-    ) external whenNotPaused {
+    ) external whenNotPaused onlyAdmin {
 
         // check token stake update, if false, then only stake
         require((IPremiumNFT(stakingToken).getTokenStakedInfo(_tokenId) == false), "Token already staked earlier");
@@ -149,14 +143,11 @@ contract Staking is
         UserInfo[_user][_tokenId].stakingTimestamp = block.timestamp;
         UserInfo[_user][_tokenId].stakedAmount = _initialBalance.mul(PRECISION_CONSTANT);
 
-        // update in stakedNFTs array
-        stakedNFTs.push(_tokenId);
-
         // do calcn here and store in mapping
         (uint256 _totalRewards, uint256 _rewardInstallment) = _calculateRewards(
             _initialBalance
         );
-        UserInfo[_user][_tokenId].rewardsEarned = _totalRewards;
+        UserInfo[_user][_tokenId].totalClaimableRewards = _totalRewards;
         UserInfo[_user][_tokenId].rewardInstallment = _rewardInstallment;
 
         emit NFTStaked(_user, _tokenId, _initialBalance, block.timestamp);
@@ -196,8 +187,8 @@ contract Staking is
     //        / \
 
     // time-reward check
-    function claimReward(address _user, uint256 _tokenId) external {
-        uint256 remainingRewards = UserInfo[_user][_tokenId].rewardsEarned.sub(
+    function claimReward(address _user, uint256 _tokenId) external onlyAdmin {
+        uint256 remainingRewards = UserInfo[_user][_tokenId].totalClaimableRewards.sub(
             UserInfo[_user][_tokenId].claimedRewards
         );
 
@@ -214,16 +205,14 @@ contract Staking is
         UserInfo[_user][_tokenId].lastRewardAccumulatedTime += oneMonthTimeConstant;
         // transfer
         Enoch(rewardToken).mint(msg.sender, installment);
-        rewardTokenMinted.push([installment, block.timestamp]);
 
-        if (UserInfo[_user][_tokenId].rewardsEarned.sub(UserInfo[_user][_tokenId].claimedRewards) <= 2) {
+        if (UserInfo[_user][_tokenId].totalClaimableRewards.sub(UserInfo[_user][_tokenId].claimedRewards) <= 2) {
             // burn the token
             IPremiumNFT(stakingToken).burn(_tokenId);
 
             // all rewards claimed by the user
-            rewardsClaimedInfo[_user][_tokenId] = true;
-            emit UserClaimedRewards(_user, _tokenId, UserInfo[_user][_tokenId].claimedRewards);
         }
+        emit RewardsClaimed(_user, _tokenId, UserInfo[_user][_tokenId].claimedRewards, block.timestamp);
     }
 
     // APY and REWARDS Calculation
@@ -246,13 +235,18 @@ contract Staking is
     //
 
     function _calculateRewards(
-        uint256 _userStake
-    ) internal view returns (uint256, uint256) {
+        uint256 _nftInitialBalance
+    ) public returns (uint256, uint256) {
     
-        uint256 rewards = _userStake.mul(REWARD_CONSTANT);
+        uint256 totalRewards = _nftInitialBalance.mul(REWARD_CONSTANT);
 
-        uint256 rewardInstallment = rewards.div(3);
-        return (rewards, rewardInstallment);
+        uint256 rewardInstallment = totalRewards.div(STAKING_MONTHS);
+
+        console.log("Sender: ", msg.sender);
+
+        emit MsgSender(msg.sender);
+
+        return (totalRewards, rewardInstallment);
     }
 
     // suppose, interest rate = 85% for term of 3 months
@@ -280,7 +274,7 @@ contract Staking is
         return (
             UserInfo[_user][_tokenId].stakingTimestamp,
             UserInfo[_user][_tokenId].stakedAmount,
-            UserInfo[_user][_tokenId].rewardsEarned,
+            UserInfo[_user][_tokenId].totalClaimableRewards,
             UserInfo[_user][_tokenId].claimedRewards,
             UserInfo[_user][_tokenId].rewardInstallment,
             UserInfo[_user][_tokenId].lastWithdrawalTime
@@ -288,7 +282,7 @@ contract Staking is
     }
 
     function getPendingRewardsInfo(address _user, uint256 _tokenId) public view returns (uint256) {
-        return UserInfo[_user][_tokenId].rewardsEarned.sub(UserInfo[_user][_tokenId].claimedRewards);
+        return UserInfo[_user][_tokenId].totalClaimableRewards.sub(UserInfo[_user][_tokenId].claimedRewards);
     }
 
     function _authorizeUpgrade(address) internal override {}
