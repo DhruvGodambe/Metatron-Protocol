@@ -1,31 +1,35 @@
 // SPDX-License-Identifier: MIT
 pragma solidity ^0.8.4;
 
-import {AccessControlUpgradeable} from "@openzeppelin/contracts-upgradeable/access/AccessControlUpgradeable.sol";
 import {UUPSUpgradeable} from "@openzeppelin/contracts-upgradeable/proxy/utils/UUPSUpgradeable.sol";
 import "@openzeppelin/contracts-upgradeable/proxy/utils/Initializable.sol";
 import "@openzeppelin/contracts-upgradeable/security/PausableUpgradeable.sol";
 
+import "../Registry/IAdminRegistry.sol";
 import "./Staking.sol";
 import "./StakingProxy.sol";
 
-contract StakeFactory is UUPSUpgradeable, AccessControlUpgradeable, PausableUpgradeable {
+contract StakeFactory is UUPSUpgradeable, PausableUpgradeable {
 
      /// @notice Address for implementation of Staking to clone
     address public implementation;
-
-    modifier onlyAdmin() {
-        require(hasRole(DEFAULT_ADMIN_ROLE, msg.sender), "Not an Admin!");
-        _;
-    }
+    address public adminRegistry;
 
     event StakeCreated(address _stake, address _stakingToken, address _rewardToken);
 
+    modifier onlyAdmin() {
+        require(
+            IAdminRegistry(adminRegistry).isAdmin(msg.sender),
+            "AdminRegistry: Restricted to admin."
+        );
+        _;
+    }
+
     /// @dev Initializes the proxy contract
-    function initialize(address _implementation) external initializer {
+    function initialize(address _implementation, address _adminRegistry) external initializer {
         __UUPSUpgradeable_init();
-        _setupRole(DEFAULT_ADMIN_ROLE, msg.sender);
         implementation = _implementation;
+        adminRegistry = _adminRegistry;
     }
 
     //        ,-.
@@ -64,7 +68,8 @@ contract StakeFactory is UUPSUpgradeable, AccessControlUpgradeable, PausableUpgr
         address _stakingToken,
         address _rewardToken,
         uint256 _interestRate,
-        uint256 _stakingPeriod
+        uint256 _stakingPeriod,
+        address _adminRegistry
     ) public returns (address) {
         StakingProxy newStake = new StakingProxy(implementation, "");
 
@@ -74,7 +79,8 @@ contract StakeFactory is UUPSUpgradeable, AccessControlUpgradeable, PausableUpgr
             _stakingToken,
             _rewardToken,
             _interestRate,
-            _stakingPeriod
+            _stakingPeriod,
+            _adminRegistry
         );
 
         emit StakeCreated(newStakeAddress, _stakingToken, _rewardToken);
@@ -86,18 +92,6 @@ contract StakeFactory is UUPSUpgradeable, AccessControlUpgradeable, PausableUpgr
         override
         onlyAdmin
     {}
-
-    function addAdmin(address account) external onlyAdmin {
-        grantRole(DEFAULT_ADMIN_ROLE, account);
-    }
-
-    function removeAdmin(address account) external onlyAdmin {
-        revokeRole(DEFAULT_ADMIN_ROLE, account);
-    }
-
-    function leaveAdminRole() external onlyAdmin {
-        renounceRole(DEFAULT_ADMIN_ROLE, msg.sender);
-    }
 
      function pause() external onlyAdmin {
         _pause();

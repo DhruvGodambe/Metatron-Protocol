@@ -1,13 +1,13 @@
 // SPDX-License-Identifier: MIT
 pragma solidity ^0.8.4;
 
-import {AccessControlUpgradeable} from "@openzeppelin/contracts-upgradeable/access/AccessControlUpgradeable.sol";
 import {ReentrancyGuardUpgradeable} from "@openzeppelin/contracts-upgradeable/security/ReentrancyGuardUpgradeable.sol";
 import "@openzeppelin/contracts-upgradeable/proxy/utils/Initializable.sol";
 import {UUPSUpgradeable} from "@openzeppelin/contracts-upgradeable/proxy/utils/UUPSUpgradeable.sol";
 import "@openzeppelin/contracts-upgradeable/security/PausableUpgradeable.sol";
 import "@openzeppelin/contracts/utils/math/SafeMath.sol";
 
+import "../Registry/IAdminRegistry.sol";
 import "../Tokens/IPremiumNFT.sol";
 import "../Tokens/Enoch.sol";
 import "hardhat/console.sol";
@@ -20,7 +20,6 @@ import "hardhat/console.sol";
 contract Staking is
     UUPSUpgradeable,
     ReentrancyGuardUpgradeable,
-    AccessControlUpgradeable,
     PausableUpgradeable
 {
 
@@ -37,6 +36,8 @@ contract Staking is
     uint256 public constant PRECISION_CONSTANT = 10000;
     uint256 public constant oneMonthTimeConstant = 2592000;
     uint256 public maxUnclaimableToken;
+
+    address public adminRegistry;
 
 
     // userAddress => (tokenId => UserStakeInfo)
@@ -55,7 +56,10 @@ contract Staking is
     event MsgSender(address _sender);
 
     modifier onlyAdmin() {
-        require(hasRole(DEFAULT_ADMIN_ROLE, msg.sender), "Not an Admin!");
+        require(
+            IAdminRegistry(adminRegistry).isAdmin(msg.sender),
+            "AdminRegistry: Restricted to admin."
+        );
         _;
     }
 
@@ -73,7 +77,8 @@ contract Staking is
         address _stakingToken,
         address _rewardToken,
         uint256 _interestRate,
-        uint256 _stakingPeriod
+        uint256 _stakingPeriod,
+        address _adminRegistry
     ) external initializer {
         __UUPSUpgradeable_init();
         stakingToken = _stakingToken;
@@ -81,8 +86,7 @@ contract Staking is
         APY = _interestRate;
         STAKING_MONTHS = _stakingPeriod;
         maxUnclaimableToken = _stakingPeriod - 1;
-        _setupRole(DEFAULT_ADMIN_ROLE, msg.sender);
-
+        adminRegistry = _adminRegistry;
     }
 
     //        ,-.
@@ -296,18 +300,6 @@ contract Staking is
         _unpause();
     }
 
-     function addAdmin(address account) external onlyAdmin {
-        grantRole(DEFAULT_ADMIN_ROLE, account);
-    }
-
-    function removeAdmin(address account) external onlyAdmin {
-        revokeRole(DEFAULT_ADMIN_ROLE, account);
-    }
-    
-    function leaveAdminRole() external onlyAdmin {
-        renounceRole(DEFAULT_ADMIN_ROLE, msg.sender);
-    }
-
     function pauseStatus() public view virtual returns (bool) {
         return paused();
     }
@@ -316,7 +308,7 @@ contract Staking is
         return msg.sender;
     }
 
-    function _msgData() internal view override returns (bytes calldata) {
+    function _msgData() internal pure override returns (bytes calldata) {
         return msg.data;
     }
 }
