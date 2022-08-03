@@ -12,6 +12,8 @@ describe("====>Staking<====", function () {
   let ownerAddress: string;
   let userAddress: string;
   let userAddress2: string;
+  let AdminRegistry: any;
+  let adminRegistry: any;
   let Staking: any;
   let staking: any;
   let StakeFactory: any;
@@ -21,10 +23,13 @@ describe("====>Staking<====", function () {
   let PremiumNFT: any;
   let premiumNFT: any;
 
+  let StakingInstance: any;
+
 
   this.beforeAll(async function () {
     accounts = await ethers.getSigners();
 
+    AdminRegistry = await ethers.getContractFactory("AdminRegistry");
     Staking = await ethers.getContractFactory("Staking");
     StakeFactory = await ethers.getContractFactory("StakeFactory");
     Enoch = await ethers.getContractFactory('Enoch');
@@ -40,6 +45,10 @@ describe("====>Staking<====", function () {
     userAddress2 = await accounts[2].getAddress();
 
     console.log("Aho!");
+
+    adminRegistry = await AdminRegistry.deploy(ownerAddress);
+    await adminRegistry.deployed();
+    console.log("AdminRegistry deployed at ", adminRegistry.address);
     
     staking = await Staking.deploy();
     await staking.deployed();
@@ -49,36 +58,38 @@ describe("====>Staking<====", function () {
     await stakeFactory.deployed();
     console.log("Factory deployed at ", stakeFactory.address);
 
-    enoch = await Enoch.deploy();
+    enoch = await Enoch.deploy(adminRegistry.address);
     await enoch.deployed();
-    console.log("DKToken deployed at ", enoch.address);
+    console.log("Enoch deployed at ", enoch.address);
 
-    premiumNFT = await PremiumNFT.deploy("Knight Templer Distillery", "KTD");
+    premiumNFT = await PremiumNFT.deploy("Knight Templer Distillery", "KTD", adminRegistry.address);
     await premiumNFT.deployed();
-    console.log("Barrel deployed at ", premiumNFT.address);
+    console.log("PremiumNFT deployed at ", premiumNFT.address);
 
-    await staking.initialize(premiumNFT.address, enoch.address, 90, 3)
-    await stakeFactory.initialize(staking.address);
-
-    // try deploying one contract from factory
+    // await staking.initialize(premiumNFT.address, enoch.address, 90, 3)
+    await stakeFactory.initialize(staking.address, adminRegistry.address);
 
 
   });
 
-  it ("Kuch to krna chahinye", async () => {
-    console.log("Helle from tests!");
-  });
 
-  it ("Check my ERC-20 bal && Mint NFT", async () => {
-    let tx = await enoch.connect(owner).balanceOf(ownerAddress);
-    console.log("Helle from tests!");
-    console.log("balance", tx);
+  it ("Should set up staking contract", async () => {
+    let tx = await stakeFactory.connect(owner).setupStakeContract(premiumNFT.address, enoch.address, 90, 3, adminRegistry.address);
+    
+    const receipt = await tx.wait();
+    let event = receipt.events?.find((event:any) => event.event === "StakeCreated");
+    console.log("event: ", event?.args);
 
-    let tx2 = await premiumNFT.connect(owner).mint(ownerAddress, 1);
-    console.log("Helle from tests!");
+    StakingInstance = await Staking.attach(event?.args?._stake);
+    console.log("Staking Instance", StakingInstance);
 
-    let tx3 = await premiumNFT.connect(owner).balanceOf(ownerAddress);
-    console.log("Barrel Bal.", tx3);
+    console.log("Let's fetch some public values from StakingInstance");
+
+    let rewardToken = await StakingInstance.rewardToken();
+    console.log("reward Token", rewardToken);
+    
+    
+
   });
 
   it ("Chalo stake karte hai", async () => {
