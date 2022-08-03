@@ -16,8 +16,8 @@ describe("====>Staking<====", () => {
 
     it('should get the Staking Period', async () => {
         const staking_period = await StakingInstance.STAKING_PERIOD();
-        console.log(staking_period);
         expect(staking_period.toString()).to.equal('0');
+        console.log(staking_period);
     })
 
     it('should get the Reward Composition', async () => {
@@ -33,7 +33,7 @@ describe("====>Staking<====", () => {
     })
 
     it('should get the address of stakers', async () => {
-        
+        await StakingInstance.stake();
     })
     
     it('should get the APY', async () => {
@@ -49,30 +49,33 @@ describe("====>Staking<====", () => {
             // suppose x**y; x = 1.90, y = 0.25;
             // x**y = 1.1741
             // REWARD_CONSTANT = 11741
-    let r = 0.90;
-    r += 1; 
-    console.log("r", r);
+    let x = 0.90;
+    x += 1; 
+    console.log("x", x);
     let y = 0.25;
     console.log("y", y);
     
-    let val = (r**y).toPrecision(5);
+    let val = (x**y).toPrecision(5);
     console.log("exponent", val);
     
     const reward_constant = val*10**4;
     console.log('Reward Constant', reward_constant);
+    expect(reward_constant.toString()).to.equal('11741');
     })
 
 
     it('should get the Reward Constant', async () => {
-        let r = 0.90;
-    r += 1;
-    console.log("r", r);
+    let x = 0.90;
+    x += 1;
+    console.log("x", x);
     let y = 0.25;
     console.log("y", y);
     
-    let val = (r**y).toPrecision(5);
+    let val = (x**y).toPrecision(5);
     console.log("exponent", val);
+    const reward_constant = val*10**4;
     console.log('Reward Constant', reward_constant);
+    expect(reward_constant.toString()).to.equal('11741');
     })
 
 })
