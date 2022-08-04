@@ -20,17 +20,17 @@ describe("====>Staking<====", () => {
         console.log(staking_period);
     })
 
-    it('should get the Reward Composition', async () => {
+    // it('should get the Reward Composition', async () => {
         
-    })
+    // })
 
-    it('should get the Total Pool Size', async () => {
+    // it('should get the Total Pool Size', async () => {
         
-    })
+    // })
 
-    it('should get the volume in 24 hours', async () => {
+    // it('should get the volume in 24 hours', async () => {
         
-    })
+    // })
 
     it('should get the address of stakers', async () => {
         await StakingInstance.stake();
