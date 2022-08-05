@@ -1,4 +1,5 @@
 import { expect } from "chai";
+import { assert } from "chai";
 import { ethers } from "hardhat";
 import { Signer } from "ethers";
 import { log } from "console";
@@ -143,16 +144,19 @@ describe("===================>Staking<==================",function () {
         let tx5 = await StakingInstance.connect(owner)._calculateRewards(100);
         console.log("Rewards Calculated");
 
-        let tx6 = await StakingInstance.connect(owner).claimReward(ownerAddress, 1);
-        console.log("Rewards claimed!");
+        let tx6 = await expect(StakingInstance.connect(owner).claimReward(ownerAddress, 1)).to.be.rejectedWith("User cannot claim rewards before due time!");
+        console.log("User cannot claim rewards before due time!");
 
-        const receipt2 = await tx6.wait();
-        const event2 = receipt2.events?.find((event:any) => event.event === "RewardsClaimed");
-        console.log("\nHere are the events emitted out of 'RewardsClaimed' :\n");
-        console.log("User is: ", event2?.args._user.toString());
-        console.log("Staked Token ID is: ", event2?.args._stakedTokenId.toString());
-        console.log("Reward Amount is: ", event2?.args._rewardAmount.toString());
-        console.log("Timestamp is: ", event2?.args._timestamp.toString());
+        // let tx7 = await StakingInstance.connect(owner).claimReward(ownerAddress, 1);
+        // console.log("Rewards claimed!");
+
+        // const receipt2 = await tx7.wait();
+        // const event2 = receipt2.events?.find((event:any) => event.event === "RewardsClaimed");
+        // console.log("\nHere are the events emitted out of 'RewardsClaimed' :\n");
+        // console.log("User is: ", event2?.args._user.toString());
+        // console.log("Staked Token ID is: ", event2?.args._stakedTokenId.toString());
+        // console.log("Reward Amount is: ", event2?.args._rewardAmount.toString());
+        // console.log("Timestamp is: ", event2?.args._timestamp.toString());
 
     });
 

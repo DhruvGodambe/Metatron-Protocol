@@ -2,6 +2,7 @@ require("@nomiclabs/hardhat-waffle");
 require("@nomiclabs/hardhat-etherscan");
 require("dotenv").config();
 import "@openzeppelin/hardhat-upgrades";
+require('@nomicfoundation/hardhat-toolbox');
 
 import { task } from "hardhat/config";
 import { config as dotEnvConfig } from "dotenv";
