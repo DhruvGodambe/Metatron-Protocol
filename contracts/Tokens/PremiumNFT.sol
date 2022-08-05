@@ -41,8 +41,6 @@ contract PremiumNFT is Stakable, ERC721URIStorage {
         _mint(_owner, newItemId);
         _setTokenURI(newItemId, tokenURI);
 
-        tokenStaked[newItemId] = false;
-
         return newItemId;
     }
 

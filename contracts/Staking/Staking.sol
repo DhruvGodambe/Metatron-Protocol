@@ -141,7 +141,7 @@ contract Staking is
         );
 
         // transfer the tokens to this contract
-        IPremiumNFT(stakingToken).transferFrom(msg.sender, address(this), _tokenId);
+        IPremiumNFT(stakingToken).transferFrom(_user, address(this), _tokenId);
 
         // keep track of how much this user has staked
         UserInfo[_user][_tokenId].stakingTimestamp = block.timestamp;
@@ -196,7 +196,9 @@ contract Staking is
             UserInfo[_user][_tokenId].claimedRewards
         );
 
-        // minimumClaimableToken = 2 // set this var
+        // dummy test time conditions keeping for 15 sec
+        // require((block.timestamp - UserInfo[_user][_tokenId].stakingTimestamp) >= 7 && (block.timestamp - UserInfo[_user][_tokenId].lastRewardAccumulatedTime) >= 7, "User cannot claim rewards before due time!");
+
         require(remainingRewards > maxUnclaimableToken, "You have claimed your rewards!");
 
         // one month = 2592000
@@ -212,7 +214,8 @@ contract Staking is
 
         if (UserInfo[_user][_tokenId].totalClaimableRewards.sub(UserInfo[_user][_tokenId].claimedRewards) <= 2) {
             // burn the token
-            IPremiumNFT(stakingToken).burn(_tokenId);
+            // change the token state
+            IPremiumNFT(stakingToken).stakeToken(_tokenId);
 
             // all rewards claimed by the user
         }
