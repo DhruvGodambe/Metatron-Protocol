@@ -10,27 +10,27 @@ async function main() {
     await adminRegistry.deployed();
     console.log("AdminRegistry deployed at ", adminRegistry.address);
 
-    // const Staking = await hre.ethers.getContractFactory("Staking");
-    // const staking = await Staking.deploy();
-    // await staking.deployed();
-    // console.log("Staking deployed at ", staking.address);
+    const Staking = await hre.ethers.getContractFactory("Staking");
+    const staking = await Staking.deploy();
+    await staking.deployed();
+    console.log("Staking deployed at ", staking.address);
 
-    // const StakeFactory = await ethers.getContractFactory('StakeFactory');
-    // const stakeFactory = await StakeFactory.deploy();
-    // await stakeFactory.deployed();
-    // console.log("Stake Factory deployed at ", stakeFactory.address);
+    const StakeFactory = await ethers.getContractFactory('StakeFactory');
+    const stakeFactory = await StakeFactory.deploy();
+    await stakeFactory.deployed();
+    console.log("Stake Factory deployed at ", stakeFactory.address);
 
-    // const Enoch = await ethers.getContractFactory('Enoch');
-    // const enoch = await Enoch.deploy(adminRegistry.address);
-    // await enoch.deployed();
-    // console.log("Enoch deplyed at ", enoch.address);
+    const Enoch = await ethers.getContractFactory('Enoch');
+    const enoch = await Enoch.deploy(adminRegistry.address);
+    await enoch.deployed();
+    console.log("Enoch deplyed at ", enoch.address);
 
     const PremiumNFT = await ethers.getContractFactory('PremiumNFT');
     const premiumNFT = await PremiumNFT.deploy("Knight Templer Distillery", "KTD", adminRegistry.address);
     await premiumNFT.deployed();
     console.log("PremiumNFT deplyed at ", premiumNFT.address);
 
-    // await stakeFactory.initialize(staking.address, adminRegistry.address);
+    await stakeFactory.initialize(staking.address, adminRegistry.address);
 
     // console.log("Hola!");
 
