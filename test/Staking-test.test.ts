@@ -1,8 +1,6 @@
 import { expect } from "chai";
-// import { assert } from "chai";
 import { ethers } from "hardhat";
 import { Signer } from "ethers";
-// import { log } from "console";
 
 const { expectRevert, time } = require("@openzeppelin/test-helpers");
 
@@ -83,7 +81,6 @@ describe("===================>Staking<==================",function () {
         console.log("Staking Instance created\n");
         
     });
-
 
     it('should STAKE', async () => {
         console.log("\n=> Setting Up Staking Contract from stakeFactory");
@@ -186,13 +183,13 @@ describe("===================>Staking<==================",function () {
     let txn1 = await premiumNFT.ownerOf(1);
     console.log("NFT Owner: ", txn1);
     
-    await new Promise((res) => setTimeout(() => res(null), 8000));
+    await new Promise((res) => setTimeout(() => res(null), 10000));
     
-    console.log("\n=> Let's make the rewards claimable after 15 seconds each\n");
+    console.log("\n=> Let's make the rewards claimable\n");
     
     console.log("~ CLAIMING FIRST INSTALLMENT");
 
-    console.log("\nNOTE: This test is failing because the rewards claiming time has been set to 'One Month' in the Staking contract under claimReward function. Please make it 15 secs. Comment the One Month's (line 205) and uncomment the 15 secs (line 200);  \n");
+    console.log("\nNOTE: This test might fail because the rewards claiming time has been set to 'One Month' in the Staking contract under claimReward function. Please make it 7 secs. Comment the One Month's (line 205) and uncomment the 7 secs (line 200);  \n");
     
     let firstTx = await StakingInstance.connect(owner).claimReward(ownerAddress, 1);
     
@@ -209,7 +206,7 @@ describe("===================>Staking<==================",function () {
 
     // --------------------------------------
 
-    await new Promise((res) => setTimeout(() => res(null), 8000));
+    await new Promise((res) => setTimeout(() => res(null), 10000));
 
     console.log("CLAIMING SECOND INSTALLMENT");
     
@@ -228,7 +225,7 @@ describe("===================>Staking<==================",function () {
     
     // --------------------------------------
     
-    await new Promise((res) => setTimeout(() => res(null), 8000));
+    await new Promise((res) => setTimeout(() => res(null), 10000));
     
     
     console.log("CLAIMING THIRD INSTALLMENT");
@@ -260,7 +257,7 @@ describe("===================>Staking<==================",function () {
     let txn2 = await premiumNFT.ownerOf(1);
     console.log("\n NFT owner", txn2);
     
-    await new Promise((res) => setTimeout(() => res(null), 8000));
+    await new Promise((res) => setTimeout(() => res(null), 5000));
 
     console.log("\nCLAIMING FOURTH INSTALLMENT");
     

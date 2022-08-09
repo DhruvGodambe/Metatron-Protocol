@@ -4,6 +4,7 @@ const hre = require("hardhat");
 async function main() {
 
     const [account, account2] = await ethers.getSigners();
+    console.log("account", account.address);
 
     const AdminRegistry = await ethers.getContractFactory("AdminRegistry");
     const adminRegistry = await AdminRegistry.deploy(account.address);
@@ -31,21 +32,20 @@ async function main() {
     console.log("PremiumNFT deplyed at ", premiumNFT.address);
 
     await stakeFactory.initialize(staking.address, adminRegistry.address);
+    console.log("Initialized");
 
-    // console.log("Hola!");
+    // console.log("Deploying Staking from Factory!");
 
-    // let's try deploying Staking from Factory
-    // let tx = await stakeFactory.setupStakeContract(premiumNFT.address, enoch.address, 90, 3, adminRegistry.address, {
-    //     gasLimit: 10000000,
-    //     gasPrice: 100000000000
-    // });
-    // console.log("new stake instance ", tx);
+    let apy = 90;
+    let staking_months = 3;
 
-    // const receipt = await tx.wait();
-    // let event = receipt.events?.find((event) => event.event === "StakeCreated");
-    // console.log("contract: ", event?.args._stake);
+    let tx = await stakeFactory.setupStakeContract(premiumNFT.address, enoch.address, apy, staking_months, adminRegistry.address)
+    console.log("new stake instance ", tx);
 
-    // console.log("Heyaa!");
+    const receipt = await tx.wait();
+    let event = receipt.events?.find((event) => event.event === "StakeCreated");
+    console.log("contract: ", event?.args._stake);
+
 }
 
 
