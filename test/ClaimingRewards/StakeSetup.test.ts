@@ -84,7 +84,7 @@ describe("===================>Staking<==================",function () {
         const event5 = receipt5.events?.find((event:any) => event.event === "NFTStaked");
         console.log("Staker: ", event5?.args.user.toString());
         console.log("Token ID: ", event5?.args.tokenId.toString());
-        console.log("Initial Balance: ", event5?.args.initialBalance.toString());
+        console.log("NFT value: ", event5?.args.nftValue.toString());
         console.log("Timestamp: ", event5?.args.timestamp.toString());
 
         let ownerBal1 = await enoch.balanceOf(ownerAddress);
@@ -94,7 +94,7 @@ describe("===================>Staking<==================",function () {
         let tx7 = await StakingInstance.getStakedInfo(ownerAddress, 1);
         console.log(
         "Staking Timestamp",tx7[0].toString(), "\n",
-        "NFT amount",tx7[1].toString(), "\n",
+        "NFT Value in 10**4",tx7[1].toString(), "\n",
         "Total Claimable Rewards",tx7[2].toString(), "\n",
         "Claimed Rewards",tx7[3].toString(), "\n",
         "Reward Installment",tx7[4].toString(), "\n",

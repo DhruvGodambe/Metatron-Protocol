@@ -195,7 +195,7 @@ contract Staking is
         );
 
         // dummy test time conditions keeping for 3 mins i.e 180 sec.
-        // require((block.timestamp - UserInfo[_user][_tokenId].stakingTimestamp) >= 180 && (block.timestamp - UserInfo[_user][_tokenId].lastRewardAccumulatedTime) >= 180, "User cannot claim rewards before due time!");
+        require((block.timestamp - UserInfo[_user][_tokenId].stakingTimestamp) >= 180 && (block.timestamp - UserInfo[_user][_tokenId].lastRewardAccumulatedTime) >= 180, "User cannot claim rewards before due time!");
 
         require(remainingRewards > maxUnclaimableToken, "You have claimed your rewards!");
 

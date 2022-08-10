@@ -73,7 +73,7 @@ describe("===================>Staking<==================",function () {
         let event = receipt.events?.find((event:any) => event.event === "StakeCreated");
         console.log("Staking Contract Created, here are the addresses: ");
     
-        console.log("Stake Contract address: ", event?.args._stake.toString());
+        console.log("Proxy Contract address: ", event?.args._stake.toString());
         console.log("Staking Token address: ", event?.args._stakingToken.toString());
         console.log("Reward Token address: ", event?.args._rewardToken.toString());
 
@@ -85,20 +85,21 @@ describe("===================>Staking<==================",function () {
     it('should STAKE', async () => {
         console.log("\n=> Setting Up Staking Contract from stakeFactory");
         let tx = await stakeFactory.connect(owner).setupStakeContract(premiumNFT.address, enoch.address, 90, 3, adminRegistry.address);
-    
+
         const receipt = await tx.wait();
         let event = receipt.events?.find((event:any) => event.event === "StakeCreated");
-        console.log("\nStaking Contract Created: ");
-        
+        console.log("\n Proxy contract: ", event?.args._stake);
+
 
         StakingInstance = await Staking.attach(event?.args?._stake);
+        console.log("\n=> Creating Staking contract's Instance");
         let stakingAddress: any = event?.args?._stake;
-        
+
         console.log("\nHere are the steps involved in staking: \n");
-        
+
         let tx1 = await premiumNFT.connect(owner).mint(ownerAddress);
         console.log("Minting done");
-        
+
         let tx2 = await premiumNFT.connect(owner).approve(stakingAddress, 1);
         console.log("Approve done");
 
@@ -114,7 +115,7 @@ describe("===================>Staking<==================",function () {
         
         console.log("User staking the NFT is: ", event2?.args.user);
         console.log("Token ID is: ", event2?.args.tokenId.toString());
-        console.log("Initial Balance is: ", event2?.args.initialBalance.toString());
+        console.log("NFT Value: ", event2?.args.nftValue.toString());
         console.log("Timestamp is: ", event2?.args.timestamp.toString());
 
     });
@@ -161,7 +162,7 @@ describe("===================>Staking<==================",function () {
     const event2 = receipt2.events?.find((event:any) => event.event === "NFTStaked");
     console.log("Staker: ", event2?.args.user.toString());
     console.log("Token ID: ", event2?.args.tokenId.toString());
-    console.log("Initial Balance: ", event2?.args.initialBalance.toString());
+    console.log("NFT Value: ", event2?.args.nftValue.toString());
     console.log("Timestamp: ", event2?.args.timestamp.toString());
     
     let ownerBal1 = await enoch.balanceOf(ownerAddress);
@@ -171,7 +172,7 @@ describe("===================>Staking<==================",function () {
     let tx7 = await StakingInstance.getStakedInfo(ownerAddress, 1);
     console.log(
       "Staking Timestamp",tx7[0].toString(), "\n",
-      "Staked Value",tx7[1].toString(), "\n",
+      "NFT Value in 10**4",tx7[1].toString(), "\n",
       "Total Claimable Rewards",tx7[2].toString(), "\n",
       "Claimed Rewards",tx7[3].toString(), "\n",
       "Reward Installment",tx7[4].toString(), "\n",
@@ -183,7 +184,7 @@ describe("===================>Staking<==================",function () {
     let txn1 = await premiumNFT.ownerOf(1);
     console.log("NFT Owner: ", txn1);
     
-    await new Promise((res) => setTimeout(() => res(null), 10000));
+    await new Promise((res) => setTimeout(() => res(null), 3000));
     
     console.log("\n=> Let's make the rewards claimable\n");
     
@@ -197,7 +198,7 @@ describe("===================>Staking<==================",function () {
     let tx8 = await StakingInstance.getStakedInfo(ownerAddress, 1);
     console.log(
       " 1. Staking Timestamp",tx8[0].toString(), "\n",
-      "2. Staked Value",tx8[1].toString(), "\n",
+      "2. NFT Value in 10**4",tx8[1].toString(), "\n",
       "3. Total Claimable Rewards",tx8[2].toString(), "\n",
       "4. Claimed Rewards",tx8[3].toString(), "\n",
       "5. Reward Installment",tx8[4].toString(), "\n",
@@ -206,7 +207,7 @@ describe("===================>Staking<==================",function () {
 
     // --------------------------------------
 
-    await new Promise((res) => setTimeout(() => res(null), 10000));
+    await new Promise((res) => setTimeout(() => res(null), 3000));
 
     console.log("CLAIMING SECOND INSTALLMENT");
     
@@ -216,7 +217,7 @@ describe("===================>Staking<==================",function () {
     let tx9 = await StakingInstance.getStakedInfo(ownerAddress, 1);
     console.log(
       " 1. Staking Timestamp",tx9[0].toString(), "\n",
-      "2.Staked Value",tx9[1].toString(), "\n",
+      "2. NFT Value in 10**4",tx9[1].toString(), "\n",
       "3. Total Claimable Rewards",tx9[2].toString(), "\n",
       "4. Claimed Rewards",tx9[3].toString(), "\n",
       "5. Reward Installment",tx9[4].toString(), "\n",
@@ -225,7 +226,7 @@ describe("===================>Staking<==================",function () {
     
     // --------------------------------------
     
-    await new Promise((res) => setTimeout(() => res(null), 10000));
+    await new Promise((res) => setTimeout(() => res(null), 3000));
     
     
     console.log("CLAIMING THIRD INSTALLMENT");
@@ -236,7 +237,7 @@ describe("===================>Staking<==================",function () {
     let tx10 = await StakingInstance.getStakedInfo(ownerAddress, 1);
     console.log(
       " 1. Staking Timestamp",tx10[0].toString(), "\n",
-      "2. Staked Value",tx10[1].toString(), "\n",
+      "2. NFT Value in 10**4",tx10[1].toString(), "\n",
       "3. Total Claimable Rewards",tx10[2].toString(), "\n",
       "4. Claimed Rewards",tx10[3].toString(), "\n",
       "5. Reward Installment",tx10[4].toString(), "\n",
@@ -256,8 +257,8 @@ describe("===================>Staking<==================",function () {
     // owner of staked NFT
     let txn2 = await premiumNFT.ownerOf(1);
     console.log("\n NFT owner", txn2);
-    
-    await new Promise((res) => setTimeout(() => res(null), 5000));
+
+    await new Promise((res) => setTimeout(() => res(null), 3000));
 
     console.log("\nCLAIMING FOURTH INSTALLMENT");
     
@@ -284,10 +285,7 @@ describe("===================>Staking<==================",function () {
 
         let tx2 = await StakingInstance.connect(owner)._calculateRewards(100);
         console.log("Rewards Calculated");
-        const receipt2 = await tx2.wait();
-        const event2 = receipt2.events?.find((event:any) => event.event === "MsgSender");
-        console.log("\nHere is the event emitted out of 'MsgSender' :\n");
-        console.log("Sender's address is: ", event2?.args._sender.toString());
+        
     });
     
 
@@ -335,7 +333,7 @@ describe("===================>Staking<==================",function () {
         let tx5 = await StakingInstance.connect(owner).getStakedInfo(ownerAddress, 1);
         console.log(
             " 1.Staking timestamp is:",tx5[0].toString(), "\n",
-            "2. Staked Value is:",tx5[1].toString(), "\n",
+            "2. NFT Value is:",tx5[1].toString(), "\n",
             "3. Total Claimable rewards is:",tx5[2].toString(), "\n",
             "4. ClaimedRewards is:",tx5[3].toString(), "\n",
             "5. Reward Installment is:",tx5[4].toString(), "\n",

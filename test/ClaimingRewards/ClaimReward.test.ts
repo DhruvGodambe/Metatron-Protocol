@@ -9,10 +9,10 @@ describe("Staking contract", function () {
         console.log('Owner Address: ', ownerAddress);
 
 
-        let stakingProxyAddress = '0xDecf1675a22E96a74A07b96c054857DFFB3647c6';
+        let stakingProxyAddress = '0x75537828f2ce51be7289709686A69CbFDbB714F1';
         let stakingInstance = new ethers.Contract(stakingProxyAddress, stakingABI.abi, owner);
 
-        let PremiumNFTAddress = '0x02df3a3F960393F5B349E40A599FEda91a7cc1A7';
+        let PremiumNFTAddress = '0xDc64a140Aa3E981100a9becA4E685f962f0cF6C9';
         console.log("Staked NFT is deployed at: ", PremiumNFTAddress);
 
 
@@ -29,7 +29,7 @@ describe("Staking contract", function () {
         let tx8 = await stakingInstance.getStakedInfo(ownerAddress, 1);
         console.log(
         " 1. Staking Timestamp",tx8[0].toString(), "\n",
-        "2. NFT amount",tx8[1].toString(), "\n",
+        "2. NFT Value",tx8[1].toString(), "\n",
         "3. Total Claimable Rewards",tx8[2].toString(), "\n",
         "4. Claimed Rewards",tx8[3].toString(), "\n",
         "5. Reward Installment",tx8[4].toString(), "\n",
