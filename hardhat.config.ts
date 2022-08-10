@@ -1,4 +1,5 @@
-require("@nomiclabs/hardhat-waffle");
+// require("@nomiclabs/hardhat-waffle");
+import "@nomicfoundation/hardhat-chai-matchers";
 require("@nomiclabs/hardhat-etherscan");
 require("dotenv").config();
 import "@openzeppelin/hardhat-upgrades";
