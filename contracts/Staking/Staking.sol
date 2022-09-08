@@ -200,7 +200,7 @@ contract Staking is
         require(remainingRewards > maxUnclaimableToken, "You have claimed your rewards!");
 
         // one month = 30*24*60*60 = 2592000
-        require((block.timestamp - UserInfo[_user][_tokenId].stakingTimestamp) >= oneMonthTimeConstant && (block.timestamp - UserInfo[_user][_tokenId].lastRewardAccumulatedTime) >= oneMonthTimeConstant, "User cannot claim rewards before due time!");
+        // require((block.timestamp - UserInfo[_user][_tokenId].stakingTimestamp) >= oneMonthTimeConstant && (block.timestamp - UserInfo[_user][_tokenId].lastRewardAccumulatedTime) >= oneMonthTimeConstant, "User cannot claim rewards before due time!");
 
         uint256 installment = UserInfo[_user][_tokenId].rewardInstallment;
         // pay one installments

@@ -11,7 +11,7 @@ contract Enoch is ERC20 {
     address public adminRegistry;
 
 
-    uint256 private _totalSupply = 300000000000000000000000000; //300,000,000 ENOCH tokens
+    uint256 private _totalSupply = 90000000000000000000000000; //90,000,000 ENOCH tokens
 
     mapping(address => uint256) private _balances;
     
