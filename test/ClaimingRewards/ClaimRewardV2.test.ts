@@ -9,7 +9,7 @@ describe("StakingV2 contract", function () {
         console.log('Owner Address: ', ownerAddress);
 
 
-        let stakingProxyAddress = '0xd43F5E24C6b2edc1dFDE8548cDdaBeFFA6eCc822';
+        let stakingProxyAddress = '0x1d3591a131f6C1951dae5a4dE3AfEF0Fc1d63e64';
         let stakingInstance = new ethers.Contract(stakingProxyAddress, stakingV2ABI.abi, owner);
 
         let PremiumNFTAddress = '0xDc64a140Aa3E981100a9becA4E685f962f0cF6C9';
