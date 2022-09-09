@@ -1,5 +1,5 @@
 import { ethers } from "hardhat";
-import stakingABI  from "../../artifacts/contracts/Staking/StakingV2.sol/StakingV2.json";
+import stakingV2ABI  from "../../artifacts/contracts/Staking/StakingV2.sol/StakingV2.json";
 
 describe("StakingV2 contract", function () {
 
@@ -9,7 +9,7 @@ describe("StakingV2 contract", function () {
         console.log('Owner Address: ', ownerAddress);
 
 
-        let stakingProxyAddress = '0x75537828f2ce51be7289709686A69CbFDbB714F1';
+        let stakingProxyAddress = '0xd43F5E24C6b2edc1dFDE8548cDdaBeFFA6eCc822';
         let stakingInstance = new ethers.Contract(stakingProxyAddress, stakingV2ABI.abi, owner);
 
         let PremiumNFTAddress = '0xDc64a140Aa3E981100a9becA4E685f962f0cF6C9';

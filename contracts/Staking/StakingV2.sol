@@ -195,7 +195,9 @@ contract StakingV2 is
         );
 
         // dummy test time conditions keeping for 30 sec.
-        require((block.timestamp - UserInfo[_user][_tokenId].stakingTimestamp) >= 0 && (block.timestamp - UserInfo[_user][_tokenId].lastRewardAccumulatedTime) >= 30, "User cannot claim rewards before due time!");
+        // require((block.timestamp - UserInfo[_user][_tokenId].stakingTimestamp) >= 30 && (block.timestamp - UserInfo[_user][_tokenId].lastRewardAccumulatedTime) >= 30, "User cannot claim rewards before due time!");
+        require((block.timestamp - UserInfo[_user][_tokenId].stakingTimestamp) >= 30 && (block.timestamp - UserInfo[_user][_tokenId].lastRewardAccumulatedTime) >= 30, "User cannot claim rewards before due time!");
+        
 
         require(remainingRewards > maxUnclaimableToken, "You have claimed your rewards!");
 
