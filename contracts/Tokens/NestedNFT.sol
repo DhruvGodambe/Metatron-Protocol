@@ -49,6 +49,11 @@ contract NestedNFT is ERC721URIStorage {
         return newItemId;
     }
 
+    function redeem(uint256 _tokenId) public {
+        require(msg.sender == ownerOf(_tokenId), "Sender doesn't owns the voucher");
+        IERC20(enoch).transfer(msg.sender, nftValue[_tokenId]);
+    }
+
     function burn(uint256 _tokenId) public {
         _burn(_tokenId);
     }
