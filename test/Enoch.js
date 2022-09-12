@@ -63,4 +63,8 @@ describe("Enoch", () => {
     //     balance0 = await EnochInstance.balanceOf(accounts[0].address)
     //     console.log('balance of account 0 after:', balance0.toString());
     // })
+<<<<<<< HEAD
 })
+=======
+})
+>>>>>>> 5de5d7725babc9598ef034234c82510ac9204ba4

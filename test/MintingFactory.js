@@ -1,3 +1,7 @@
+<<<<<<< HEAD
+=======
+
+>>>>>>> 5de5d7725babc9598ef034234c82510ac9204ba4
 const abi = require('../../artifacts/contracts/NFTMarketplace/MintingAndStorage/ERC721NFTContract.sol/ERC721NFTContract.json');
 
 const { expect, assert } = require("chai");

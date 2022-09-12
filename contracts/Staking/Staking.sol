@@ -46,14 +46,12 @@ contract Staking is
     event NFTStaked(
         address indexed user,
         uint256 indexed tokenId,
-        uint256 initialBalance,
+        uint256 nftValue,
         uint256 timestamp
     );
 
     // emitted when the user collects all the rewards
     event RewardsClaimed(address indexed _user, uint256 _stakedTokenId, uint256 _rewardAmount, uint256 _timestamp);
-
-    event MsgSender(address _sender);
 
     modifier onlyAdmin() {
         require(
@@ -65,7 +63,7 @@ contract Staking is
 
     struct StakingDetails {
         uint256 stakingTimestamp;
-        uint256 stakedAmount;
+        uint256 NFTvalue;
         uint256 totalClaimableRewards; 
         uint256 claimedRewards;
         uint256 rewardInstallment;
@@ -105,7 +103,7 @@ contract Staking is
     //        |                             |     update stake info      |
     //        |                             | --------------------------->
     //        |                             |   _calculateRewards()      |
-    //        |                             |stakedAmount*REWARD_CONSTANT|
+    //        |                             |NFTvalue*REWARD_CONSTANT|
     //        |                             | --------------------------->
     //        |                             |   update reward info       |
     //        |                             |----.                       |
@@ -124,7 +122,7 @@ contract Staking is
     function stake(
         address _user,
         uint256 _tokenId,
-        uint256 _initialBalance
+        uint256 _nftValue
     ) external whenNotPaused onlyAdmin {
 
         // check token stake update, if false, then only stake
@@ -145,16 +143,16 @@ contract Staking is
 
         // keep track of how much this user has staked
         UserInfo[_user][_tokenId].stakingTimestamp = block.timestamp;
-        UserInfo[_user][_tokenId].stakedAmount = _initialBalance.mul(PRECISION_CONSTANT);
+        UserInfo[_user][_tokenId].NFTvalue = _nftValue.mul(PRECISION_CONSTANT);
 
         // do calcn here and store in mapping
         (uint256 _totalRewards, uint256 _rewardInstallment) = _calculateRewards(
-            _initialBalance
+            _nftValue
         );
         UserInfo[_user][_tokenId].totalClaimableRewards = _totalRewards;
         UserInfo[_user][_tokenId].rewardInstallment = _rewardInstallment;
 
-        emit NFTStaked(_user, _tokenId, _initialBalance, block.timestamp);
+        emit NFTStaked(_user, _tokenId, _nftValue, block.timestamp);
     }
 
 
@@ -196,13 +194,13 @@ contract Staking is
             UserInfo[_user][_tokenId].claimedRewards
         );
 
-        // dummy test time conditions keeping for 7 sec
-        // require((block.timestamp - UserInfo[_user][_tokenId].stakingTimestamp) >= 7 && (block.timestamp - UserInfo[_user][_tokenId].lastRewardAccumulatedTime) >= 7, "User cannot claim rewards before due time!");
+        // dummy test time conditions keeping for 3 mins i.e 180 sec.
+        require((block.timestamp - UserInfo[_user][_tokenId].stakingTimestamp) >= 30 && (block.timestamp - UserInfo[_user][_tokenId].lastRewardAccumulatedTime) >= 30, "User cannot claim rewards before due time!");
 
         require(remainingRewards > maxUnclaimableToken, "You have claimed your rewards!");
 
         // one month = 30*24*60*60 = 2592000
-        require((block.timestamp - UserInfo[_user][_tokenId].stakingTimestamp) >= oneMonthTimeConstant && (block.timestamp - UserInfo[_user][_tokenId].lastRewardAccumulatedTime) >= oneMonthTimeConstant, "User cannot claim rewards before due time!");
+        // require((block.timestamp - UserInfo[_user][_tokenId].stakingTimestamp) >= oneMonthTimeConstant && (block.timestamp - UserInfo[_user][_tokenId].lastRewardAccumulatedTime) >= oneMonthTimeConstant, "User cannot claim rewards before due time!");
 
         uint256 installment = UserInfo[_user][_tokenId].rewardInstallment;
         // pay one installments
@@ -242,16 +240,12 @@ contract Staking is
     //
 
     function _calculateRewards(
-        uint256 _nftInitialBalance
-    ) public returns (uint256, uint256) {
+        uint256 _nftValue
+    ) public view returns (uint256, uint256) {
     
-        uint256 totalRewards = _nftInitialBalance.mul(REWARD_CONSTANT);
+        uint256 totalRewards = _nftValue.mul(REWARD_CONSTANT);
 
         uint256 rewardInstallment = totalRewards.div(STAKING_MONTHS);
-
-        console.log("Sender: ", msg.sender);
-
-        emit MsgSender(msg.sender);
 
         return (totalRewards, rewardInstallment);
     }
@@ -280,7 +274,7 @@ contract Staking is
         // return all details
         return (
             UserInfo[_user][_tokenId].stakingTimestamp,
-            UserInfo[_user][_tokenId].stakedAmount,
+            UserInfo[_user][_tokenId].NFTvalue,
             UserInfo[_user][_tokenId].totalClaimableRewards,
             UserInfo[_user][_tokenId].claimedRewards,
             UserInfo[_user][_tokenId].rewardInstallment,
