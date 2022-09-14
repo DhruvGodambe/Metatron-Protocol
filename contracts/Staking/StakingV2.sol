@@ -194,10 +194,8 @@ contract StakingV2 is
             UserInfo[_user][_tokenId].claimedRewards
         );
 
-        // dummy test time conditions keeping for 30 sec.
-        // require((block.timestamp - UserInfo[_user][_tokenId].stakingTimestamp) >= 30 && (block.timestamp - UserInfo[_user][_tokenId].lastRewardAccumulatedTime) >= 30, "User cannot claim rewards before due time!");
-        require((block.timestamp - UserInfo[_user][_tokenId].stakingTimestamp) >= 0 && (block.timestamp - UserInfo[_user][_tokenId].lastRewardAccumulatedTime) >= 30, "User cannot claim rewards before due time!");
-        
+        // dummy test time conditions keeping claiming just after staking and next after 3 mins i.e 180 sec.
+        require((block.timestamp - UserInfo[_user][_tokenId].stakingTimestamp) >= 0 && (block.timestamp - UserInfo[_user][_tokenId].lastRewardAccumulatedTime) >= 180, "User cannot claim rewards before due time!");
 
         require(remainingRewards > maxUnclaimableToken, "You have claimed your rewards!");
 
@@ -208,7 +206,8 @@ contract StakingV2 is
         // pay one installments
         UserInfo[_user][_tokenId].claimedRewards += installment;
         UserInfo[_user][_tokenId].lastWithdrawalTime = block.timestamp;
-        UserInfo[_user][_tokenId].lastRewardAccumulatedTime += 30;
+        // UserInfo[_user][_tokenId].lastRewardAccumulatedTime += oneMonthTimeConstant;
+        UserInfo[_user][_tokenId].lastRewardAccumulatedTime += 180;
         // transfer
         Enoch(rewardToken).mint(msg.sender, installment);
 

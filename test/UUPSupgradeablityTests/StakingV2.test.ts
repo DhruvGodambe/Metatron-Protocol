@@ -1,5 +1,4 @@
 import { expect } from "chai";
-import { assert } from "chai";
 import { ethers } from "hardhat";
 import { upgrades } from "hardhat";
 import { Signer } from "ethers";
@@ -22,8 +21,6 @@ describe("Contract Version 2 test", function () {
 
     stakingV2 = await upgrades.deployProxy(StakingV2, ["0xCf7Ed3AccA5a467e9e704C703E8D87F634fB0Fc9","0xDc64a140Aa3E981100a9becA4E685f962f0cF6C9","80","12","0xaC099D7d6057B7871D1076f2600e1163643d0822"], { initializer: 'initialize', kind: 'uups'});
     await stakingV2.deployed();
-
-    stakingV2 = await upgrades.upgradeProxy(stakingV1, stakingV2, {call: {fn: 'reInitialize'}});
   });
 
 
@@ -39,17 +36,6 @@ describe("Contract Version 2 test", function () {
     expect(await stakingV1.adminRegistry()).to.equal("0x5FbDB2315678afecb367f032d93F642f64180aa3");
   });
 
-
-  // const reportError = ({message}: {message: "stakingV1._calculateRewards is not a function"}) => {
-  //   // send the error to our logging service...
-  // }
-
-  // it("Old contract cannnot calculate rewards", async function () {
-  //   try {
-  //     stakingV1._calculateRewards(5)
-  //   } catch (error) {
-  //     assert(reportError({message: error.message}))
-  //   }
   
   it("New contract APY is 80", async function () {
     expect(await stakingV2.APY()).to.equal(80);
