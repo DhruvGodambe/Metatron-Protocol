@@ -35,6 +35,10 @@ contract NestedNFT is ERC721URIStorage {
         _;
     }
 
+    // basically a NFT credit voucher like thing is minted which ultimately approves 
+    // user for certain number of ERC-20 tokens to spend.
+    // He can then redeem this voucher and get those tokens into his wallet and spend
+    // them for his use.
     function mint(address _owner, uint256 _amount) public onlyAdmin returns (uint256) {
         _tokenIds.increment();
         uint256 newItemId = _tokenIds.current();
