@@ -27,6 +27,8 @@ contract NestedNFT is ERC721URIStorage {
     // nft Id => number of Enoch
     mapping(uint256 => uint256) nftValue;
 
+    event VoucherRedeemed(address _user, uint256 _value);
+
     modifier onlyAdmin() {
         require(
             IAdminRegistry(adminRegistry).isAdmin(msg.sender),
@@ -49,13 +51,20 @@ contract NestedNFT is ERC721URIStorage {
         _mint(_owner, newItemId);
         _setTokenURI(newItemId, tokenURI);
         nftValue[newItemId] = _amount;
+        // IERC20(enoch).approve(_owner, _amount);
+        IERC20(enoch).increaseAllowance(_owner, _amount);
 
         return newItemId;
     }
 
     function redeem(uint256 _tokenId) public {
         require(msg.sender == ownerOf(_tokenId), "Sender doesn't owns the voucher");
-        IERC20(enoch).transfer(msg.sender, nftValue[_tokenId]);
+        require(balanceOf(address(this)) >= nftValue[_tokenId], "Contract doesn't have sufficient funds");
+        IERC20(enoch).transferFrom(address(this), msg.sender, nftValue[_tokenId]);
+        // burn the nft
+        burn(_tokenId);
+
+        emit VoucherRedeemed(msg.sender, nftValue[_tokenId]);
     }
 
     function burn(uint256 _tokenId) public {
@@ -66,4 +75,7 @@ contract NestedNFT is ERC721URIStorage {
         baseURI = _uri;
     }
 
+    function getValueOf(uint256 _tokenId) public view returns (uint256) {
+        return nftValue[_tokenId];
+    }
 }
