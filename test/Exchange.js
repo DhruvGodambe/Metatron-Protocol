@@ -1,4 +1,7 @@
+<<<<<<< HEAD
+=======
 
+>>>>>>> 5de5d7725babc9598ef034234c82510ac9204ba4
 const { ethers } = require("hardhat");
 const { expect, assert } = require("chai");
 const { wethAbi } = require("../../artifacts/contracts/NFTMarketplace/Exchange/Interface/IERC20.sol/IERC20.json");
@@ -79,4 +82,7 @@ describe("ExchangeCore", () => {
 
 
 })
+<<<<<<< HEAD
+=======
 
+>>>>>>> 5de5d7725babc9598ef034234c82510ac9204ba4
