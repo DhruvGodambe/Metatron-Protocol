@@ -9,11 +9,8 @@ describe("Staking contract", function () {
         console.log('Owner Address: ', ownerAddress);
 
 
-<<<<<<< HEAD
-        let stakingProxyAddress = '0x75537828f2ce51be7289709686A69CbFDbB714F1';
-=======
-        let stakingProxyAddress = '0xC5999Ef9Fe837eDB1fE6611983fb1Bf8ceB477d4';
->>>>>>> 5de5d7725babc9598ef034234c82510ac9204ba4
+        let stakingProxyAddress = '0xeC4cFde48EAdca2bC63E94BB437BbeAcE1371bF3';
+
         let stakingInstance = new ethers.Contract(stakingProxyAddress, stakingABI.abi, owner);
 
         let PremiumNFTAddress = '0xDc64a140Aa3E981100a9becA4E685f962f0cF6C9';
@@ -24,11 +21,7 @@ describe("Staking contract", function () {
 
         console.log("~ CLAIMING INSTALLMENTS");
 
-<<<<<<< HEAD
         console.log("\nNOTE: This test might fail because the rewards claiming time has been set to 'One Month' in the 'Staking.sol' contract under 'claimReward' function. Please make it 180 secs. Comment the One Month's (line 205) and uncomment the 180 secs (line 200);  \n");
-=======
-        console.log("\nNOTE: This test might fail because the rewards claiming time has been set to 'One Month' in the 'Staking.sol' contract under 'claimReward' function. Please make it 30 secs. Comment the One Month's (line 205) and uncomment the 30 secs (line 200);  \n");
->>>>>>> 5de5d7725babc9598ef034234c82510ac9204ba4
 
         let tx = await stakingInstance.connect(owner).claimReward(ownerAddress, 1);
         const Tx = await tx.wait();
@@ -49,8 +42,4 @@ describe("Staking contract", function () {
 
   });
 
-<<<<<<< HEAD
 });
-=======
-});
->>>>>>> 5de5d7725babc9598ef034234c82510ac9204ba4
