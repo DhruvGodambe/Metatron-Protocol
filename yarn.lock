@@ -1382,7 +1382,7 @@
     "buffer-layout" "^1.2.0"
     "dotenv" "10.0.0"
 
-"@solana/web3.js@^1.21.0", "@solana/web3.js@^1.24.0":
+"@solana/web3.js@^1.21.0", "@solana/web3.js@^1.24.0", "@solana/web3.js@^1.63.1":
   "integrity" "sha512-wgEdGVK5FTS2zENxbcGSvKpGZ0jDS6BUdGu8Gn6ns0CzgJkK83u4ip3THSnBPEQ5i/jrqukg998BwV1H67+qiQ=="
   "resolved" "https://registry.npmjs.org/@solana/web3.js/-/web3.js-1.63.1.tgz"
   "version" "1.63.1"
