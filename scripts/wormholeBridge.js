@@ -1,3 +1,15 @@
+const {
+    attestFromSolana,
+    createWrappedOnEth,
+    parseSequenceFromLogSolana,
+    getSignedVAA,
+    getEmitterAddressSolana,
+    transferFromSolana,
+    redeemOnEth
+  } = require("@certusone/wormhole-sdk");
+  
+const { Connection} = require("@solana/web3.js")
+  
 const SOLANA_HOST = "http://solana-devnet:8899";
 const SOL_BRIDGE_ADDRESS = "3u8hJUVTA4jH1wYAyUur7FFZVQ8H635K3tSHHF4ssjQ5";
 const SOL_TOKEN_BRIDGE_ADDRESS = "DZnkkTmCiFWfYTfT41X3Rd1kDgozqzxWaHqsw6W4x2oe";
@@ -10,7 +22,7 @@ const ETH_TOKEN_BRIDGE_ADDRESS = "0xF890982f9310df57d00f659cf4fd87e65adEd8d7";
 
 const fromAddress = "0x259989150c6302D5A7AeEc4DA49ABfe1464C58fE";
 const amount = 100;
-const targetAddress = "";
+const targetAddress = "0x259989150c6302D5A7AeEc4DA49ABfe1464C58fE";
 const CHAIN_ID_ETH = 2;
 const originAddress = "";
 const originChain = "ETH";
@@ -74,3 +86,5 @@ const transferSolanaToETH = async () => {
     // Redeem on Ethereum
     await redeemOnEth(ETH_TOKEN_BRIDGE_ADDRESS, signer, signedVAA);
 }
+
+solanaToETH();

@@ -2,6 +2,7 @@
   "name": "hardhat-project",
   "dependencies": {
     "@alch/alchemy-web3": "^1.4.4",
+    "@certusone/wormhole-sdk": "^0.6.5",
     "@nomicfoundation/hardhat-chai-matchers": "^1.0.2",
     "@nomiclabs/hardhat-ethers": "^2.0.0",
     "@openzeppelin/contracts": "^4.6.0",
