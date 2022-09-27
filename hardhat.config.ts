@@ -38,22 +38,22 @@ module.exports = {
     //   chainId: 4,
     //   blockConfirmations: 6,
     // },
-    // goerli: {
-    //   url: process.env.GOERLI_RPC_URL,
-    //   accounts: [process.env.PRIVATE_KEY_1, process.env.PRIVATE_KEY_2],
-    //   chainId: 5,
-    //   blockConfirmations: 6,
-    // },
-
-    mumbai: {
-      url: `https://polygon-mumbai.g.alchemy.com/v2/1lo5rOEtPbYlohlrOYiNa9xTUc2Qm8uD`,
-      accounts: ['4fc7459f2cbdf22e0456f3e6fb980903bdcfa52ce068defba7bc73978069847a'],
-      chainId: 80001,
+    goerli: {
+      url: process.env.GOERLI_RPC_URL,
+      accounts: [process.env.PRIVATE_KEY_3],
+      chainId: 5,
       blockConfirmations: 6,
-      // gas: 100000000000,
-      // gasPrice: 100000000000,
-      // blockGasLimit: 8000000,
     },
+
+    // mumbai: {
+    //   url: `https://polygon-mumbai.g.alchemy.com/v2/1lo5rOEtPbYlohlrOYiNa9xTUc2Qm8uD`,
+    //   accounts: ['4fc7459f2cbdf22e0456f3e6fb980903bdcfa52ce068defba7bc73978069847a'],
+    //   chainId: 80001,
+    //   blockConfirmations: 6,
+    //   // gas: 100000000000,
+    //   // gasPrice: 100000000000,
+    //   // blockGasLimit: 8000000,
+    // },
   },
   solidity: {
     compilers: [
@@ -105,6 +105,6 @@ module.exports = {
     timeout: 40000,
   },
   etherscan: {
-    apiKey: "2ZVVD7T3GP2KAFVMXHD5KES3RN67WI6456"
+    apiKey: "7ADQVGNSBRPGF84Q1XK4MX2FW4ZJ7JDHUS"
   }
 };
