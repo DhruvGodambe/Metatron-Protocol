@@ -1,16 +1,18 @@
-// require("@nomiclabs/hardhat-waffle");
-import "@nomicfoundation/hardhat-chai-matchers";
+require("@nomiclabs/hardhat-waffle");
 require("@nomiclabs/hardhat-etherscan");
+require("@openzeppelin/hardhat-upgrades");
 require("dotenv").config();
-import "@openzeppelin/hardhat-upgrades";
 require('@nomicfoundation/hardhat-toolbox');
-
-import { task } from "hardhat/config";
+require("@nomicfoundation/hardhat-chai-matchers");
+// const { config, as, dotEnvConfig } = require("dotenv");
+const { task } = require("hardhat/config");
 import { config as dotEnvConfig } from "dotenv";
 dotEnvConfig();
+
+
 // This is a sample Hardhat task. To learn how to create your own go to
 // https://hardhat.org/guides/create-task.html
-task("accounts", "Prints the list of accounts", async (taskArgs, hre) => {
+task("accounts", "Prints the list of accounts", async (taskArgs:any, hre:any) => {
   const accounts = await hre.ethers.getSigners();
 
   for (const account of accounts) {
@@ -39,8 +41,8 @@ module.exports = {
     //   blockConfirmations: 6,
     // },
     goerli: {
-      url: process.env.GOERLI_RPC_URL,
-      accounts: [process.env.PRIVATE_KEY_3],
+      url: 'https://ethereum-goerli-rpc.allthatnode.com/',
+      accounts: ['4fc7459f2cbdf22e0456f3e6fb980903bdcfa52ce068defba7bc73978069847a'],
       chainId: 5,
       blockConfirmations: 6,
     },
