@@ -100,6 +100,8 @@ export type { Enoch } from "./contracts/Tokens/Enoch";
 export { Enoch__factory } from "./factories/contracts/Tokens/Enoch__factory";
 export type { Enoch1 } from "./contracts/Tokens/Enoch1";
 export { Enoch1__factory } from "./factories/contracts/Tokens/Enoch1__factory";
+export type { IEnoch1 } from "./contracts/Tokens/IEnoch1";
+export { IEnoch1__factory } from "./factories/contracts/Tokens/IEnoch1__factory";
 export type { IPremiumNFT } from "./contracts/Tokens/IPremiumNFT";
 export { IPremiumNFT__factory } from "./factories/contracts/Tokens/IPremiumNFT__factory";
 export type { Love } from "./contracts/Tokens/Love";

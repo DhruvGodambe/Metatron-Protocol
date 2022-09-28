@@ -1,4 +1,6 @@
 import { getEmitterAddressEth, parseSequenceFromLogEth, tryNativeToHexString } from "@certusone/wormhole-sdk";
+const ExToken1Goerliabi = require("../artifacts/contracts/Tokens/Example1Goerli.sol/Example1Goerli.json");
+const ExToken2Polygonabi = require("../artifacts/contracts/Tokens/Example2Polygon.sol/Example2Polygon.json");
 
 const hre = require("hardhat");
 // import '@nomiclabs/hardhat-ethers';
@@ -16,6 +18,27 @@ const main = async () => {
     
     const goerliBridgeAddress = "0xF890982f9310df57d00f659cf4fd87e65adEd8d7";
     const mumbaiBridgeAddress = "0x377D55a7928c046E18eEbb61977e714d2a76472a";
+
+    // const exToken1Goerli  = new ethers.Contract("0xF890982f9310df57d00f659cf4fd87e65adEd8d7", ExToken1Goerliabi.abi, provider);
+  
+//   const exToken2Polygon  = new ethers.Contract("0x377D55a7928c046E18eEbb61977e714d2a76472a", ExToken2Polygonabi.abi, provider);
+  
+  //This method can also be used to create instance of deployed contract
+  const contractAddressGoerli = "0xF890982f9310df57d00f659cf4fd87e65adEd8d7";
+  const myContract = await hre.ethers.getContractAt("TokenBridge", contractAddressGoerli);
+  
+  //This method can also be used to create instance of deployed contract
+  // const contractAddressPolygon = "0x377D55a7928c046E18eEbb61977e714d2a76472a";
+  // const myContract = await hre.ethers.getContractAt("ContractKaName", contractAddressPolygon);
+
+  console.log(await myContract.WETH());
+
+    // exToken1Goerli.attestToken("0xF890982f9310df57d00f659cf4fd87e65adEd8d7",uint32 nonce); //Call function here
+    // console.log("Functions are working for this contract deployed in Goerli");
+    
+    // exToken2Polygon.attestToken("0x377D55a7928c046E18eEbb61977e714d2a76472a",uint32 nonce); //Call function here
+    // console.log("Functions are working for this contract deployed in Polygon");
+
 
     // function -> approve to token bridge
     const bridgeAmt = ethers.utils.parseUnits("500", "18");

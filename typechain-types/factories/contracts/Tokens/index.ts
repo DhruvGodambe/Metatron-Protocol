@@ -4,6 +4,7 @@
 export { Enoch__factory } from "./Enoch__factory";
 export { Enoch1__factory } from "./Enoch1__factory";
 export { IERC20__factory } from "./IERC20__factory";
+export { IEnoch1__factory } from "./IEnoch1__factory";
 export { IPremiumNFT__factory } from "./IPremiumNFT__factory";
 export { Love__factory } from "./Love__factory";
 export { NestedNFT__factory } from "./NestedNFT__factory";
