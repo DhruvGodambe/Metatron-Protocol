@@ -1,5 +1,7 @@
 const {
     attestFromSolana,
+    attestFromEth,
+    createWra
     createWrappedOnEth,
     parseSequenceFromLogSolana,
     getSignedVAA,
@@ -26,6 +28,7 @@ const targetAddress = "BDUeqeWkJGcb58LpRfv9Ump3PHTKQRzmJjfjVUaWaQc8";
 const CHAIN_ID_ETH = 2;
 const originAddress = "";
 const originChain = "ETH";
+
 
 const solanaToETH = async () => {
     console.log(connection);
