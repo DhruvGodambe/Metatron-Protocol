@@ -47,15 +47,16 @@ module.exports = {
       blockConfirmations: 6,
     },
 
-    // mumbai: {
-    //   url: `https://polygon-mumbai.g.alchemy.com/v2/1lo5rOEtPbYlohlrOYiNa9xTUc2Qm8uD`,
-    //   accounts: ['4fc7459f2cbdf22e0456f3e6fb980903bdcfa52ce068defba7bc73978069847a'],
-    //   chainId: 80001,
-    //   blockConfirmations: 6,
-    //   // gas: 100000000000,
-    //   // gasPrice: 100000000000,
-    //   // blockGasLimit: 8000000,
-    // },
+    mumbai: {
+      url: `
+      https://polygon-testnet-rpc.allthatnode.com:8545`,
+      accounts: ['4fc7459f2cbdf22e0456f3e6fb980903bdcfa52ce068defba7bc73978069847a'],
+      chainId: 80001,
+      blockConfirmations: 6,
+      // gas: 100000000000,
+      // gasPrice: 100000000000,
+      // blockGasLimit: 8000000,
+    },
   },
   solidity: {
     compilers: [

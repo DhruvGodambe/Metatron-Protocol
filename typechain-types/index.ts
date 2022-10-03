@@ -112,3 +112,7 @@ export type { PremiumNFT } from "./contracts/Tokens/PremiumNFT";
 export { PremiumNFT__factory } from "./factories/contracts/Tokens/PremiumNFT__factory";
 export type { SoulBound } from "./contracts/Tokens/SoulBound";
 export { SoulBound__factory } from "./factories/contracts/Tokens/SoulBound__factory";
+export type { BridgeInteract } from "./contracts/WormholeBridge/BridgeInteract";
+export { BridgeInteract__factory } from "./factories/contracts/WormholeBridge/BridgeInteract__factory";
+export type { ITokenBridge } from "./contracts/WormholeBridge/ITokenBridge";
+export { ITokenBridge__factory } from "./factories/contracts/WormholeBridge/ITokenBridge__factory";

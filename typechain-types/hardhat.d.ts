@@ -240,6 +240,14 @@ declare module "hardhat/types/runtime" {
       name: "SoulBound",
       signerOrOptions?: ethers.Signer | FactoryOptions
     ): Promise<Contracts.SoulBound__factory>;
+    getContractFactory(
+      name: "BridgeInteract",
+      signerOrOptions?: ethers.Signer | FactoryOptions
+    ): Promise<Contracts.BridgeInteract__factory>;
+    getContractFactory(
+      name: "ITokenBridge",
+      signerOrOptions?: ethers.Signer | FactoryOptions
+    ): Promise<Contracts.ITokenBridge__factory>;
 
     getContractAt(
       name: "IERC1822ProxiableUpgradeable",
@@ -526,6 +534,16 @@ declare module "hardhat/types/runtime" {
       address: string,
       signer?: ethers.Signer
     ): Promise<Contracts.SoulBound>;
+    getContractAt(
+      name: "BridgeInteract",
+      address: string,
+      signer?: ethers.Signer
+    ): Promise<Contracts.BridgeInteract>;
+    getContractAt(
+      name: "ITokenBridge",
+      address: string,
+      signer?: ethers.Signer
+    ): Promise<Contracts.ITokenBridge>;
 
     // default types
     getContractFactory(

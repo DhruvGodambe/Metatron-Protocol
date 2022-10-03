@@ -7,3 +7,4 @@ export * as registry from "./Registry";
 export * as staking from "./Staking";
 export * as test from "./Test";
 export * as tokens from "./Tokens";
+export * as wormholeBridge from "./WormholeBridge";

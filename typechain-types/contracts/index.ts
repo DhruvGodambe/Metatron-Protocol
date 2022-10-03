@@ -13,3 +13,5 @@ import type * as test from "./Test";
 export type { test };
 import type * as tokens from "./Tokens";
 export type { tokens };
+import type * as wormholeBridge from "./WormholeBridge";
+export type { wormholeBridge };
