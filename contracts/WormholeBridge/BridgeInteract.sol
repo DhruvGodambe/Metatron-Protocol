@@ -7,7 +7,7 @@ import "./ITokenBridge.sol";
 contract BridgeInteract {
     address public _tokenBridge;
     
-    constructor(address tokenBridge) public {
+    constructor(address tokenBridge) {
         _tokenBridge =  tokenBridge;
     }
 

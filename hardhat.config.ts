@@ -48,8 +48,7 @@ module.exports = {
     },
 
     mumbai: {
-      url: `
-      https://polygon-testnet-rpc.allthatnode.com:8545`,
+      url: `https://polygon-testnet-rpc.allthatnode.com:8545`,
       accounts: ['4fc7459f2cbdf22e0456f3e6fb980903bdcfa52ce068defba7bc73978069847a'],
       chainId: 80001,
       blockConfirmations: 6,

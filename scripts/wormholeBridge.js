@@ -1,7 +1,7 @@
 const {
     attestFromSolana,
     attestFromEth,
-    createWra
+    createWra,
     createWrappedOnEth,
     parseSequenceFromLogSolana,
     getSignedVAA,
