@@ -1,3 +1,5 @@
+//Run this script in Mumbai testnet
+
 import { getEmitterAddressEth, parseSequenceFromLogEth, tryNativeToHexString } from "@certusone/wormhole-sdk";
 
 const hre = require("hardhat");
@@ -22,10 +24,10 @@ const main = async () => {
         BridgeInteractAddressGoerli
     );
 
-      
+    // IMPORTANT: NEED TX HASH 
     const provider = new ethers.providers.JsonRpcProvider("https://ethereum-goerli-rpc.allthatnode.com/");
     const txReceipt = await provider.waitForTransaction(
-      "0xd4fe7eff9b2d2d247a43c307ad6c642f55b42ca63831f4268d36bdc19937148d"
+      "0xaee2e3d9747a7640e826a04ec335a40a38b18b2ba4f1cf8a7f8c4b61dd31b072" //Paste the tx hash of transfer function call from EthereumToPolygon1.ts script after executing
     );
     console.log(txReceipt);
 
@@ -33,6 +35,9 @@ const main = async () => {
     /*
     * MUMBAI
     */
+
+    console.log("\n<------------------Getting VAA------------------------->");
+
     // function -> Getting VAA
     // STEP-3
     const restAddress = "https://wormhole-v2-testnet-api.certus.one";
@@ -58,6 +63,8 @@ const main = async () => {
     console.log(Buffer.from(vaaBytes.vaaBytes, "base64"));
     console.log(vaaBytes.vaaBytes);
     
+
+    console.log("\n<------------------Complete Transfer function------------------------->");
 
     // function -> redeem
     // STEP-4

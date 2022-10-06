@@ -3,8 +3,7 @@ require("@nomiclabs/hardhat-etherscan");
 require("@openzeppelin/hardhat-upgrades");
 require("dotenv").config();
 require('@nomicfoundation/hardhat-toolbox');
-require("@nomicfoundation/hardhat-chai-matchers");
-// const { config, as, dotEnvConfig } = require("dotenv");
+//require("@nomicfoundation/hardhat-chai-matchers");
 const { task } = require("hardhat/config");
 import { config as dotEnvConfig } from "dotenv";
 dotEnvConfig();
@@ -42,14 +41,14 @@ module.exports = {
     // },
     goerli: {
       url: 'https://ethereum-goerli-rpc.allthatnode.com/',
-      accounts: ['4fc7459f2cbdf22e0456f3e6fb980903bdcfa52ce068defba7bc73978069847a'],
+      accounts: ['80ece692ca12026fc0e22c8a30fede47908513e49d86eddb8598f02e51f23f19'],
       chainId: 5,
       blockConfirmations: 6,
     },
 
     mumbai: {
       url: `https://polygon-testnet-rpc.allthatnode.com:8545`,
-      accounts: ['4fc7459f2cbdf22e0456f3e6fb980903bdcfa52ce068defba7bc73978069847a'],
+      accounts: ['80ece692ca12026fc0e22c8a30fede47908513e49d86eddb8598f02e51f23f19'],
       chainId: 80001,
       blockConfirmations: 6,
       // gas: 100000000000,
