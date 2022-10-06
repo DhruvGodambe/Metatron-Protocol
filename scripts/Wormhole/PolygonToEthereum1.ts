@@ -22,7 +22,7 @@ const main = async () => {
       BridgeInteractAddressGoerli
       );
 
-    
+
     //     address token,
     //     uint256 amount,
     //     uint16 recipientChain,

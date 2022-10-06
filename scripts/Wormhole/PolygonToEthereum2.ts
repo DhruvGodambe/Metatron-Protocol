@@ -26,7 +26,7 @@ const main = async () => {
       
     const provider = new ethers.providers.JsonRpcProvider("https://polygon-testnet-rpc.allthatnode.com:8545");
     const txReceipt = await provider.waitForTransaction(
-      "0xfc843072a01b6df5db43034f2febfa2d59ebc2c0801fdaf5196e2fc1472a5970"
+      "0x6fca144fb272a076990ddbb16c8b15a74731dc943075082bd2310c3471fbc695"
     );
     console.log(txReceipt);
 
@@ -49,7 +49,7 @@ const main = async () => {
     let vaaBytes = await (await fetch(vaaURL)).json();
     while (!vaaBytes.vaaBytes) {
         console.log("VAA not found, retrying in 5s!");
-        await new Promise((r) => setTimeout(r, 5000)); //Timeout to let Guardiand pick up log and have VAA ready
+        await new Promise((r) => setTimeout(r, 5000)); //Timeout to let Guardian pick up log and have VAA ready
         vaaBytes = await (await fetch(vaaURL)).json();
     }
 
