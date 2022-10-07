@@ -7,7 +7,7 @@ const {ethers} = require("hardhat");
 
 const main = async () => {
     
-    const enochAddress = "0xC7cB566FB6f662E4543E28D3DeADdE2a3b9637Eb";
+    const enochAddressGoerli = "0xC7cB566FB6f662E4543E28D3DeADdE2a3b9637Eb";
     const goerliBridgeAddress = "0xF890982f9310df57d00f659cf4fd87e65adEd8d7";
     const mumbaiBridgeAddress = "0x377D55a7928c046E18eEbb61977e714d2a76472a";
 
@@ -26,19 +26,19 @@ const main = async () => {
     // IMPORTANT: NEED TX HASH 
     const provider = new ethers.providers.JsonRpcProvider("https://ethereum-goerli-rpc.allthatnode.com/");
     const txReceipt = await provider.waitForTransaction(
-      "0xaee2e3d9747a7640e826a04ec335a40a38b18b2ba4f1cf8a7f8c4b61dd31b072" //Paste the tx hash of transfer function call from EthereumToPolygon1.ts script after executing
+      "0x71f60b11926baa924bd7818fd6be32d0e53c14e51086228adbaec73187b8f93b" //Paste the tx hash of transfer function call from EthereumToPolygon1.ts script after executing
     );
     console.log(txReceipt);
 
 
     /*
-    * MUMBAI
+    * Execute on MUMBAI
     */
 
     console.log("\n<------------------Getting VAA------------------------->");
 
     // function -> Getting VAA
-    // STEP-3
+    // STEP-3  //Core Bridge --> Goerli
     const restAddress = "https://wormhole-v2-testnet-api.certus.one";
     const chainId = 2;
     const bridgeAddress = "0x706abc4E45D419950511e474C7B9Ed348A4a716c";

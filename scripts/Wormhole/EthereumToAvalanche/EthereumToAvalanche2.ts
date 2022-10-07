@@ -12,7 +12,7 @@ const main = async () => {
     const fujiBridgeAddress = "0x61E44E506Ca5659E6c0bba9b678586fA2d729756";    //Token Bridge
 
     const BridgeInteractAddressGoerli = "0x7EB3798B9d3283F5342119a697B3FAfBF3378FCe";  // deployed BridgeInteract address
-    const BridgeInteractAddressFuji = "0xaCeaA44b90A52b5834EB0f8Fc0df3C784C7574ca";    // deployed BridgeInteract address
+    const BridgeInteractAddressFuji = "0x930CcF606e0d1eeC7ce9142C33171229791C0dA3";    // deployed BridgeInteract address
 
     const BridgeInteract = await ethers.getContractFactory("BridgeInteract");
     const bridgeInteractFuji = await BridgeInteract.attach(
@@ -26,7 +26,7 @@ const main = async () => {
     // IMPORTANT: NEED TX HASH 
     const provider = new ethers.providers.JsonRpcProvider("https://ethereum-goerli-rpc.allthatnode.com/");
     const txReceipt = await provider.waitForTransaction(
-      "0x0e4f798bfbbfbf05a6b178ccc98295f3309043ccebe268809c38b9a985e5f310" //Paste the tx hash after executing transfer function from EthereumToPolygon1.ts script 
+      "0xced046fa496356f8f2cee24059f7ce46b9e4df4b946f59e6ae669edcb2cfe7bb" //Paste the tx hash after executing transfer function from EthereumToPolygon1.ts script 
     );
     console.log(txReceipt);
 

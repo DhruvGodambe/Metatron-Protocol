@@ -1,9 +1,8 @@
-require("@nomiclabs/hardhat-waffle");
 require("@nomiclabs/hardhat-etherscan");
 require("@openzeppelin/hardhat-upgrades");
 require("dotenv").config();
 require('@nomicfoundation/hardhat-toolbox');
-// require("@nomicfoundation/hardhat-chai-matchers");
+require("@nomicfoundation/hardhat-chai-matchers");
 const { task } = require("hardhat/config");
 import { config as dotEnvConfig } from "dotenv";
 dotEnvConfig();

@@ -12,7 +12,7 @@ const main = async () => {
     const fujiBridgeAddress = "0x61E44E506Ca5659E6c0bba9b678586fA2d729756";   //Token Bridge
 
     const BridgeInteractAddressGoerli = "0x7EB3798B9d3283F5342119a697B3FAfBF3378FCe"; // The deployed contract address
-    const BridgeInteractAddressFuji = "0xaCeaA44b90A52b5834EB0f8Fc0df3C784C7574ca";   // The deployed contract address
+    const BridgeInteractAddressFuji = "0x930CcF606e0d1eeC7ce9142C33171229791C0dA3";   // The deployed contract address
 
     const BridgeInteract = await ethers.getContractFactory("BridgeInteract");
     const bridgeInteractMumbai = await BridgeInteract.attach(
@@ -27,7 +27,7 @@ const main = async () => {
     // IMPORTANT: NEED TX HASH
     const provider = new ethers.providers.JsonRpcProvider("https://api.avax-test.network/ext/bc/C/rpc");
     const txReceipt = await provider.waitForTransaction(
-      "0xd0e819b3d2742a67ac7346e46c75665592222a89ebe4429d7f11cc5edf3cccb3" //Paste the tx hash of transfer function call from EthereumToPolygon1.ts script after executing
+      "0xa6e17b64f3806c1799ddda6a2e1dec1f92ccf0a48b7d34214c4f65b6fdaa6f78" //Paste the tx hash of transfer function call from EthereumToPolygon1.ts script after executing
     );
     console.log(txReceipt);
 

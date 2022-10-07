@@ -11,7 +11,7 @@ const main = async () => {
     const goerliBridgeAddress = "0xF890982f9310df57d00f659cf4fd87e65adEd8d7";  //Token Bridge
     const fujiBridgeAddress = "0x61E44E506Ca5659E6c0bba9b678586fA2d729756";    //Token Bridge
 
-    const BridgeInteractAddressFuji = "0xaCeaA44b90A52b5834EB0f8Fc0df3C784C7574ca"; // deployed BridgeInteract address
+    const BridgeInteractAddressFuji = "0x930CcF606e0d1eeC7ce9142C33171229791C0dA3"; // deployed BridgeInteract address
     const BridgeInteractAddressGoerli = "0x7EB3798B9d3283F5342119a697B3FAfBF3378FCe"; // deployed BridgeInteract address
 
     
