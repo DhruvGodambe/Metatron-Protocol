@@ -3,7 +3,6 @@
 import { getEmitterAddressEth, parseSequenceFromLogEth, tryNativeToHexString } from "@certusone/wormhole-sdk";
 
 const hre = require("hardhat");
-// import '@nomiclabs/hardhat-ethers';
 const {ethers} = require("hardhat");    
 
 const main = async () => {
@@ -34,9 +33,7 @@ const main = async () => {
 
       //Approve
       const bridgeAmt = ethers.utils.parseUnits("7000", "18");
-      const approveTx = await enochMumbai.approve(mumbaiBridgeAddress, bridgeAmt,{
-        gasLimit: 2000000,
-      });
+      const approveTx = await enochMumbai.approve(mumbaiBridgeAddress, bridgeAmt);
       const approveTxReceipt = await approveTx.wait();
       console.log(approveTxReceipt);
 
@@ -44,12 +41,12 @@ const main = async () => {
       console.log("\n<------------------Transfer Tokens Function------------------------->");
 
 
-    //     address token,
-    //     uint256 amount,
-    //     uint16 recipientChain, Target chains's wormhole ChainID (Core Bridge)
-    //     bytes32 recipient,
-    //     uint256 arbiterFee,
-    //     uint32 nonce
+    //     address token, --->Enoch token's address in source chain
+    //     uint256 amount,  --->Amount of Enoch tokens
+    //     uint16 recipientChain, ---> Target chains's wormhole ChainID (Core Bridge)
+    //     bytes32 recipient, --->Sender's Account Address
+    //     uint256 arbiterFee, ---->Put 0
+    //     uint32 nonce ---->Current nonce
 
     /*
     * EXECUTE ON MUMBAI

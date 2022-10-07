@@ -3,7 +3,7 @@ require("@nomiclabs/hardhat-etherscan");
 require("@openzeppelin/hardhat-upgrades");
 require("dotenv").config();
 require('@nomicfoundation/hardhat-toolbox');
-//require("@nomicfoundation/hardhat-chai-matchers");
+// require("@nomicfoundation/hardhat-chai-matchers");
 const { task } = require("hardhat/config");
 import { config as dotEnvConfig } from "dotenv";
 dotEnvConfig();
@@ -51,9 +51,13 @@ module.exports = {
       accounts: ['80ece692ca12026fc0e22c8a30fede47908513e49d86eddb8598f02e51f23f19'],
       chainId: 80001,
       blockConfirmations: 6,
-      // gas: 100000000000,
-      // gasPrice: 100000000000,
-      // blockGasLimit: 8000000,
+    },
+    
+    fuji: {
+      url: `https://api.avax-test.network/ext/bc/C/rpc`,
+      accounts: ['80ece692ca12026fc0e22c8a30fede47908513e49d86eddb8598f02e51f23f19'],
+      chainId: 43113,
+      blockConfirmations: 6,
     },
   },
   solidity: {

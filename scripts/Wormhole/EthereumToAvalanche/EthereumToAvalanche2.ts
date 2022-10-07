@@ -1,50 +1,48 @@
-//Run this script in Goerli testnet
+//Run this script in Fuji (Avalanche) testnet
 
 import { getEmitterAddressEth, parseSequenceFromLogEth, tryNativeToHexString } from "@certusone/wormhole-sdk";
 
 const hre = require("hardhat");
-// import '@nomiclabs/hardhat-ethers';
 const {ethers} = require("hardhat");    
 
 const main = async () => {
     
-    const enochAddress = "0xfdf8262ffa014c84bd4818b0daa0abe7b2ab03f6";
-    const goerliBridgeAddress = "0xF890982f9310df57d00f659cf4fd87e65adEd8d7";
-    const mumbaiBridgeAddress = "0x377D55a7928c046E18eEbb61977e714d2a76472a";
+    const enochAddressGoerli = "0xC7cB566FB6f662E4543E28D3DeADdE2a3b9637Eb";
+    const goerliBridgeAddress = "0xF890982f9310df57d00f659cf4fd87e65adEd8d7";  //Token Bridge
+    const fujiBridgeAddress = "0x61E44E506Ca5659E6c0bba9b678586fA2d729756";    //Token Bridge
 
-    const BridgeInteractAddressMumbai = "0x24901bee51b1254147Fd74a03739C457E7578338";
-    const BridgeInteractAddressGoerli = "0x7EB3798B9d3283F5342119a697B3FAfBF3378FCe";
+    const BridgeInteractAddressGoerli = "0x7EB3798B9d3283F5342119a697B3FAfBF3378FCe";  // deployed BridgeInteract address
+    const BridgeInteractAddressFuji = "0xaCeaA44b90A52b5834EB0f8Fc0df3C784C7574ca";    // deployed BridgeInteract address
 
     const BridgeInteract = await ethers.getContractFactory("BridgeInteract");
-    const bridgeInteractMumbai = await BridgeInteract.attach(
-        BridgeInteractAddressMumbai // The deployed contract address
+    const bridgeInteractFuji = await BridgeInteract.attach(
+        BridgeInteractAddressFuji 
     );
 
     const bridgeInteractGoerli = await BridgeInteract.attach(
         BridgeInteractAddressGoerli
     );
 
-    
-    // IMPORTANT: NEED TX HASH
-    const provider = new ethers.providers.JsonRpcProvider("https://polygon-testnet-rpc.allthatnode.com:8545");
+    // IMPORTANT: NEED TX HASH 
+    const provider = new ethers.providers.JsonRpcProvider("https://ethereum-goerli-rpc.allthatnode.com/");
     const txReceipt = await provider.waitForTransaction(
-      "0xd0e819b3d2742a67ac7346e46c75665592222a89ebe4429d7f11cc5edf3cccb3" //Paste the tx hash of transfer function call from EthereumToPolygon1.ts script after executing
+      "0x0e4f798bfbbfbf05a6b178ccc98295f3309043ccebe268809c38b9a985e5f310" //Paste the tx hash after executing transfer function from EthereumToPolygon1.ts script 
     );
     console.log(txReceipt);
 
 
     /*
-    * GOERLI
+    * Execute on FUJI
     */
 
     console.log("\n<------------------Getting VAA------------------------->");
 
     // function -> Getting VAA
-    // STEP-3
+    // STEP-3 //Core Bridge --> Goerli
     const restAddress = "https://wormhole-v2-testnet-api.certus.one";
-    const chainId = 5;
-    const bridgeAddress = "0x0CBE91CF822c73C2315FB05100C2F714765d5c20";
-    const emitterAddr = getEmitterAddressEth(mumbaiBridgeAddress);
+    const chainId = 2;
+    const bridgeAddress = "0x706abc4E45D419950511e474C7B9Ed348A4a716c";
+    const emitterAddr = getEmitterAddressEth(goerliBridgeAddress);
     console.log("Emitter Address:   ", emitterAddr);
     
     const seq = parseSequenceFromLogEth(txReceipt, bridgeAddress);
@@ -54,7 +52,7 @@ const main = async () => {
     let vaaBytes = await (await fetch(vaaURL)).json();
     while (!vaaBytes.vaaBytes) {
         console.log("VAA not found, retrying in 5s!");
-        await new Promise((r) => setTimeout(r, 5000)); //Timeout to let Guardian pick up log and have VAA ready
+        await new Promise((r) => setTimeout(r, 5000)); //Timeout to let Guardiand pick up log and have VAA ready
         vaaBytes = await (await fetch(vaaURL)).json();
     }
 
@@ -69,8 +67,8 @@ const main = async () => {
 
     // function -> redeem
     // STEP-4
-    // targetTokenBridge - 0xF890982f9310df57d00f659cf4fd87e65adEd8d7
-    const completeTransferTx = await bridgeInteractGoerli.completeTransfer(
+    // targetTokenBridge Fuji - 0x61E44E506Ca5659E6c0bba9b678586fA2d729756
+    const completeTransferTx = await bridgeInteractFuji.completeTransfer(
         Buffer.from(vaaBytes.vaaBytes, "base64")
     );
 

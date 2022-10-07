@@ -1,39 +1,39 @@
-//Run this script in Mumbai testnet
+//Run this script in Goerli testnet
 
 import { getEmitterAddressEth, parseSequenceFromLogEth, tryNativeToHexString } from "@certusone/wormhole-sdk";
 
 const hre = require("hardhat");
-// import '@nomiclabs/hardhat-ethers';
 const {ethers} = require("hardhat");    
 
 const main = async () => {
     
-    const enochAddress = "0xC7cB566FB6f662E4543E28D3DeADdE2a3b9637Eb";
-    const goerliBridgeAddress = "0xF890982f9310df57d00f659cf4fd87e65adEd8d7";
-    const mumbaiBridgeAddress = "0x377D55a7928c046E18eEbb61977e714d2a76472a";
+    const enochAddressFuji = "0x6a194738c7C560d8b43988fBb8cb8AC5308646D4";
+    const goerliBridgeAddress = "0xF890982f9310df57d00f659cf4fd87e65adEd8d7"; //Token Bridge
+    const fujiBridgeAddress = "0x61E44E506Ca5659E6c0bba9b678586fA2d729756";   //Token Bridge
 
-    const BridgeInteractAddressMumbai = "0x24901bee51b1254147Fd74a03739C457E7578338";
-    const BridgeInteractAddressGoerli = "0x7EB3798B9d3283F5342119a697B3FAfBF3378FCe";
+    const BridgeInteractAddressGoerli = "0x7EB3798B9d3283F5342119a697B3FAfBF3378FCe"; // The deployed contract address
+    const BridgeInteractAddressFuji = "0xaCeaA44b90A52b5834EB0f8Fc0df3C784C7574ca";   // The deployed contract address
 
     const BridgeInteract = await ethers.getContractFactory("BridgeInteract");
     const bridgeInteractMumbai = await BridgeInteract.attach(
-        BridgeInteractAddressMumbai // The deployed contract address
+        BridgeInteractAddressFuji 
     );
 
     const bridgeInteractGoerli = await BridgeInteract.attach(
         BridgeInteractAddressGoerli
     );
 
-    // IMPORTANT: NEED TX HASH 
-    const provider = new ethers.providers.JsonRpcProvider("https://ethereum-goerli-rpc.allthatnode.com/");
+    
+    // IMPORTANT: NEED TX HASH
+    const provider = new ethers.providers.JsonRpcProvider("https://api.avax-test.network/ext/bc/C/rpc");
     const txReceipt = await provider.waitForTransaction(
-      "0xaee2e3d9747a7640e826a04ec335a40a38b18b2ba4f1cf8a7f8c4b61dd31b072" //Paste the tx hash of transfer function call from EthereumToPolygon1.ts script after executing
+      "0xd0e819b3d2742a67ac7346e46c75665592222a89ebe4429d7f11cc5edf3cccb3" //Paste the tx hash of transfer function call from EthereumToPolygon1.ts script after executing
     );
     console.log(txReceipt);
 
 
     /*
-    * MUMBAI
+    * Execute on GOERLI
     */
 
     console.log("\n<------------------Getting VAA------------------------->");
@@ -41,9 +41,9 @@ const main = async () => {
     // function -> Getting VAA
     // STEP-3
     const restAddress = "https://wormhole-v2-testnet-api.certus.one";
-    const chainId = 2;
-    const bridgeAddress = "0x706abc4E45D419950511e474C7B9Ed348A4a716c";
-    const emitterAddr = getEmitterAddressEth(goerliBridgeAddress);
+    const chainId = 6; //Wormhole Chain ID - Core Bridge
+    const bridgeAddress = "0x7bbcE28e64B3F8b84d876Ab298393c38ad7aac4C"; //Fuji
+    const emitterAddr = getEmitterAddressEth(fujiBridgeAddress);
     console.log("Emitter Address:   ", emitterAddr);
     
     const seq = parseSequenceFromLogEth(txReceipt, bridgeAddress);
@@ -53,7 +53,7 @@ const main = async () => {
     let vaaBytes = await (await fetch(vaaURL)).json();
     while (!vaaBytes.vaaBytes) {
         console.log("VAA not found, retrying in 5s!");
-        await new Promise((r) => setTimeout(r, 5000)); //Timeout to let Guardiand pick up log and have VAA ready
+        await new Promise((r) => setTimeout(r, 5000)); //Timeout to let Guardian pick up log and have VAA ready
         vaaBytes = await (await fetch(vaaURL)).json();
     }
 
@@ -68,8 +68,8 @@ const main = async () => {
 
     // function -> redeem
     // STEP-4
-    // targetTokenBridge - 0x377D55a7928c046E18eEbb61977e714d2a76472a
-    const completeTransferTx = await bridgeInteractMumbai.completeTransfer(
+    // targetTokenBridge - 0xF890982f9310df57d00f659cf4fd87e65adEd8d7
+    const completeTransferTx = await bridgeInteractGoerli.completeTransfer(
         Buffer.from(vaaBytes.vaaBytes, "base64")
     );
 
