@@ -58,6 +58,13 @@ module.exports = {
       chainId: 43113,
       blockConfirmations: 6,
     },
+
+    bsc: {
+      url: `https://data-seed-prebsc-1-s1.binance.org:8545`,
+      accounts: ['80ece692ca12026fc0e22c8a30fede47908513e49d86eddb8598f02e51f23f19'],
+      chainId: 97,
+      blockConfirmations: 6,
+    },
   },
   solidity: {
     compilers: [
