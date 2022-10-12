@@ -39,14 +39,14 @@ module.exports = {
     //   blockConfirmations: 6,
     // },
     goerli: {
-      url: 'https://ethereum-goerli-rpc.allthatnode.com/',
+      url: 'https://rpc.goerli.mudit.blog/',
       accounts: ['80ece692ca12026fc0e22c8a30fede47908513e49d86eddb8598f02e51f23f19'],
       chainId: 5,
       blockConfirmations: 6,
     },
 
     mumbai: {
-      url: `https://polygon-testnet-rpc.allthatnode.com:8545`,
+      url: `https://matic-mumbai.chainstacklabs.com`,
       accounts: ['80ece692ca12026fc0e22c8a30fede47908513e49d86eddb8598f02e51f23f19'],
       chainId: 80001,
       blockConfirmations: 6,

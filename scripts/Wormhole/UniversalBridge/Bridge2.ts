@@ -7,8 +7,10 @@ import { getEmitterAddressEth, parseSequenceFromLogEth, tryNativeToHexString } f
 
 const hre = require("hardhat");
 const {ethers} = require("hardhat");
+const fs = require('fs');
 const AddressBook = require("../BridgeAddresses.json");
 const ChainIDBook = require("../ChainIDWormhole.json");
+//import txreceiptfile here -->txreceipt
 
 const bytes32FromAddress = (address:any) => {
   let bytes32 = ethers.utils.formatBytes32String(address);
@@ -67,10 +69,12 @@ const completeTransfer = async (
 
 
           // IMPORTANT: NEED TX HASH 
-    const provider = new ethers.providers.JsonRpcProvider("https://ethereum-goerli-rpc.allthatnode.com/");
-    const txReceipt = await provider.waitForTransaction(
-      "0xced046fa496356f8f2cee24059f7ce46b9e4df4b946f59e6ae669edcb2cfe7bb" //Paste the tx hash after executing transfer function from EthereumToPolygon1.ts script 
-    );
+    // const provider = new ethers.providers.JsonRpcProvider("https://ethereum-goerli-rpc.allthatnode.com/");
+    // const txReceipt = await provider.waitForTransaction(
+    //   //This will be dynamic. txreceipt.tx
+    //   "0xced046fa496356f8f2cee24059f7ce46b9e4df4b946f59e6ae669edcb2cfe7bb" //Paste the tx hash after executing transfer function from EthereumToPolygon1.ts script 
+    // );
+    const txReceipt = fs.readFileSync("txReceiptfile.txt", "utf8");
     console.log(txReceipt);
 
 

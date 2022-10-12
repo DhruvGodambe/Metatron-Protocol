@@ -1,5 +1,5 @@
 /*
-Register Tokens from UI in the target chain before transferring tokens
+Register Tokens on the target chain from UI before transferring tokens
 https://wormhole-foundation.github.io/example-token-bridge-ui/#/register
 Run this script in Source testnet by :
 npx hardhat run .\scripts\Wormhole\UniversalBridge\Bridge1.ts --network <source chain>
@@ -9,12 +9,18 @@ import { getEmitterAddressEth, parseSequenceFromLogEth, tryNativeToHexString } f
 
 const hre = require("hardhat");
 const {ethers} = require("hardhat");
+const fs = require('fs');
+import Web3 from 'web3';
+var web3 = new Web3();
 const AddressBook = require("../BridgeAddresses.json");
 const ChainIDBook = require("../ChainIDWormhole.json");
 
 
 const bytes32FromAddress = (address:any) => {
-  let bytes32 = ethers.utils.formatBytes32String(address);
+  // let bytes32 = web3.utils.padLeft(web3.utils.hexToBytes(address), 32);
+  // let bytes32 = ethers.utils.formatBytes32String(address);
+  let bytes32 = ethers.utils.hexZeroPad(address,32);
+  console.log("bytes32 recipient address:",bytes32);
   return bytes32;
 }
 
@@ -33,11 +39,9 @@ const bridgeTransfer = async (
           let sourceBridgeAddress;
           let tokenAddress;
           let chainID;
-          
+          //Update testnets with mainnet.
           if(sourceChain == "Goerli"){
-            //Load the enoch ethereum contract abi
             tokenAddress = await Enoch1.attach(AddressBook.tokenAddresses.goerli);
-            //Assign the correct abi to the bridge interact source variable
             bridgeInteractSource = await BridgeInteract.attach(AddressBook.bridgeInteractAddresses.goerli);
             sourceBridgeAddress = AddressBook.coreBridgeAddresses.goerliBridgeAddress;
           }
@@ -56,7 +60,8 @@ const bridgeTransfer = async (
             bridgeInteractSource = await BridgeInteract.attach(AddressBook.bridgeInteractAddresses.bsc);
             sourceBridgeAddress = AddressBook.coreBridgeAddresses.bscBridgeAddress;
           }
-          else if(targetChain == "Goerli"){
+          
+          if(targetChain == "Goerli"){
             chainID = ChainIDBook.wormholeChainIDs.goerli;
           }
           else if(targetChain == "Mumbai"){
@@ -72,9 +77,7 @@ const bridgeTransfer = async (
 
         console.log("<------------------Approve Function------------------------->");
         // approveAmt = ethers.utils.parseUnits("8000", "18");
-        const approveTx = await tokenAddress.approve(sourceBridgeAddress, approveAmt,{
-          gasLimit: 2000000,
-        });
+        const approveTx = await tokenAddress.approve(sourceBridgeAddress, approveAmt);
         const approveTxReceipt = await approveTx.wait();
         console.log(approveTxReceipt);
 
@@ -82,22 +85,41 @@ const bridgeTransfer = async (
         console.log("<------------------Transfer Function------------------------->");
 
           const transferTx = await bridgeInteractSource.transfer(
-            tokenAddress,
+            // tokenAddress,
+            "0xfdf8262ffa014c84bd4818b0daa0abe7b2ab03f6 ",
             transferAmt,
             chainID,
             bytes32FromAddress(recipientAddress),
-            0,
+            0, //arbiterFee(this is always zero)
             nonce
             );
 
             const transferTxReceipt = await transferTx.wait();
             console.log(transferTxReceipt);
+            
+            console.log("/n<----------------Fetching transfer receipt------------------->");
+            
+            //fs.write file(location, content) -->txReceiptfile
+            let data = transferTxReceipt;
+            console.log(data);
+            fs.writeFile("txReceiptFile.txt", data, (err:any) => {
+              if (err)
+                console.log(err);
+              else {
+                console.log("File written successfully\n");
+                console.log("The written has the following contents:");
+                console.log(fs.readFileSync("txReceiptFile.txt", "utf8"));
+              }
+            });
 
 }
 
 
 const main = async () => {
 
+      console.log("Starting the bridge transfer...");
+      await bridgeTransfer("Mumbai", "Goerli", 7000, 6000, "0xaC099D7d6057B7871D1076f2600e1163643d0822", 75);
+      
       // console.log("<------------------Approve Function------------------------->");
       // //Approve function
       //   const bridgeAmt = ethers.utils.parseUnits("8000", "18");
