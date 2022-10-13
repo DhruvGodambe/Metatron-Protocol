@@ -10,10 +10,12 @@ import { getEmitterAddressEth, parseSequenceFromLogEth, tryNativeToHexString } f
 const hre = require("hardhat");
 const {ethers} = require("hardhat");
 const fs = require('fs');
-import Web3 from 'web3';
-var web3 = new Web3();
+const { writeFileSync } = require("fs");
+const { readFileSync } = require("fs");
+const path = require('path');
 const AddressBook = require("../BridgeAddresses.json");
 const ChainIDBook = require("../ChainIDWormhole.json");
+const txReceipt = require("../UniversalBridge/txReceiptfile.json");
 
 
 const bytes32FromAddress = (address:any) => {
@@ -37,26 +39,31 @@ const bridgeTransfer = async (
 
           let bridgeInteractSource;
           let sourceBridgeAddress;
+          let token;
           let tokenAddress;
           let chainID;
           //Update testnets with mainnet.
           if(sourceChain == "Goerli"){
-            tokenAddress = await Enoch1.attach(AddressBook.tokenAddresses.goerli);
+            token = await Enoch1.attach(AddressBook.tokenAddresses.goerli);
+            tokenAddress = AddressBook.tokenAddresses.goerli;
             bridgeInteractSource = await BridgeInteract.attach(AddressBook.bridgeInteractAddresses.goerli);
             sourceBridgeAddress = AddressBook.coreBridgeAddresses.goerliBridgeAddress;
           }
           else if(sourceChain == "Mumbai"){
-            tokenAddress = await Enoch1.attach(AddressBook.tokenAddresses.mumbai);
+            token = await Enoch1.attach(AddressBook.tokenAddresses.mumbai);
+            tokenAddress = AddressBook.tokenAddresses.mumbai;
             bridgeInteractSource = await BridgeInteract.attach(AddressBook.bridgeInteractAddresses.mumbai);
             sourceBridgeAddress = AddressBook.coreBridgeAddresses.mumbaiBridgeAddress;
           }
           else if(sourceChain == "Fuji"){
-            tokenAddress = await Enoch1.attach(AddressBook.tokenAddresses.fuji);
+            token = await Enoch1.attach(AddressBook.tokenAddresses.fuji);
+            tokenAddress = AddressBook.tokenAddresses.fuji;
             bridgeInteractSource = await BridgeInteract.attach(AddressBook.bridgeInteractAddresses.fuji);
             sourceBridgeAddress = AddressBook.coreBridgeAddresses.fujiBridgeAddress;
           }
           else if(sourceChain == "BSC"){
-            tokenAddress = await Enoch1.attach(AddressBook.tokenAddresses.bsc);
+            token = await Enoch1.attach(AddressBook.tokenAddresses.bsc);
+            tokenAddress = AddressBook.tokenAddresses.bsc;
             bridgeInteractSource = await BridgeInteract.attach(AddressBook.bridgeInteractAddresses.bsc);
             sourceBridgeAddress = AddressBook.coreBridgeAddresses.bscBridgeAddress;
           }
@@ -77,16 +84,16 @@ const bridgeTransfer = async (
 
         console.log("<------------------Approve Function------------------------->");
         // approveAmt = ethers.utils.parseUnits("8000", "18");
-        const approveTx = await tokenAddress.approve(sourceBridgeAddress, approveAmt);
+        const approveTx = await token.approve(sourceBridgeAddress, approveAmt);
         const approveTxReceipt = await approveTx.wait();
         console.log(approveTxReceipt);
+        console.log("Amount of Approved tokens are:  ", approveAmt);
 
 
         console.log("<------------------Transfer Function------------------------->");
 
           const transferTx = await bridgeInteractSource.transfer(
-            // tokenAddress,
-            "0xfdf8262ffa014c84bd4818b0daa0abe7b2ab03f6 ",
+            tokenAddress,
             transferAmt,
             chainID,
             bytes32FromAddress(recipientAddress),
@@ -96,21 +103,62 @@ const bridgeTransfer = async (
 
             const transferTxReceipt = await transferTx.wait();
             console.log(transferTxReceipt);
+            console.log("Amount of Transferred tokens is:  ", transferAmt);
             
-            console.log("/n<----------------Fetching transfer receipt------------------->");
+            console.log("<----------------Fetching transfer receipt------------------->");
             
-            //fs.write file(location, content) -->txReceiptfile
-            let data = transferTxReceipt;
-            console.log(data);
-            fs.writeFile("txReceiptFile.txt", data, (err:any) => {
-              if (err)
-                console.log(err);
-              else {
-                console.log("File written successfully\n");
-                console.log("The written has the following contents:");
-                console.log(fs.readFileSync("txReceiptFile.txt", "utf8"));
+            
+            let data = transferTxReceipt.transactionHash;
+            // let data = "Hi! This is a bot....";
+            console.log("Transfer Tx hash is: ", data);
+            
+            /*await fs.readFile(path.join(__dirname, 'hello.txt'), 'utf8', (err:any, data:any) => {
+            
+              if(err)
+              console.log("Can't read file");
+              else{
+                console.log(data);
               }
-            });
+            })
+            */
+            
+            
+            console.log("Writing a new file to store tx Receipt...");
+            
+            await writeFileSync(
+              path.join(__dirname, 'txReceiptfile.json'),
+              JSON.stringify(
+                {
+                  data
+                },
+                null,
+                2
+                )
+                );
+
+            console.log("Written in a json file (txReceiptfile.json)successfully!");
+
+            console.log("Last Tx Hash fetched from txReceiptfile.json is: ",txReceipt.data);
+
+            
+            // fs.writeFile(path.join(__dirname, 'txReceiptfile.txt'), data, (err:any) => {
+                  
+                  //   if (err){
+                    //     console.log("Can't write file");
+                    //   }
+                    //   else {
+                      //     console.log("File written successfully\n");
+                      //     // console.log("The written has the following contents:");
+                      //     // console.log(fs.readFileSync("D:\metatronProtocol_Clone\metatronprotocol\scripts\Wormhole\UniversalBridge\txReceiptfile.txt", "utf8"));
+                      //   }
+                      // });
+            
+            
+            // const data1 = await readFileSync(
+            //   path.join(__dirname, 'txReceiptfile.json')
+            // );
+            // console.log(data1);
+
 
 }
 
@@ -118,7 +166,7 @@ const bridgeTransfer = async (
 const main = async () => {
 
       console.log("Starting the bridge transfer...");
-      await bridgeTransfer("Mumbai", "Goerli", 7000, 6000, "0xaC099D7d6057B7871D1076f2600e1163643d0822", 75);
+      await bridgeTransfer("Fuji", "Mumbai", 7000, 6000, "0xaC099D7d6057B7871D1076f2600e1163643d0822", 78);
       
       // console.log("<------------------Approve Function------------------------->");
       // //Approve function

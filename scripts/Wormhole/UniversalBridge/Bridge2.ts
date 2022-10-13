@@ -10,7 +10,7 @@ const {ethers} = require("hardhat");
 const fs = require('fs');
 const AddressBook = require("../BridgeAddresses.json");
 const ChainIDBook = require("../ChainIDWormhole.json");
-//import txreceiptfile here -->txreceipt
+const txHash = require("../UniversalBridge/txReceiptfile.json");
 
 const bytes32FromAddress = (address:any) => {
   let bytes32 = ethers.utils.formatBytes32String(address);
@@ -26,6 +26,7 @@ const completeTransfer = async (
 
       let bridgeInteractSource;
       let bridgeInteractTarget;
+      let bridgeInteractTargetAddress;
       let sourceCoreChainID;
       let sourceCoreBridgeAddress;
       let tokenBridgeAddress;
@@ -54,29 +55,34 @@ const completeTransfer = async (
         tokenBridgeAddress = AddressBook.tokenBridgeAddresses.bscBridgeAddress;
         bridgeInteractSource = await BridgeInteract.attach(AddressBook.bridgeInteractAddresses.bsc);
       }
-      else if(targetChain == "Goerli"){
+      
+      if(targetChain == "Goerli"){
         bridgeInteractTarget = await BridgeInteract.attach(AddressBook.bridgeInteractAddresses.goerli);
+        bridgeInteractTargetAddress = AddressBook.bridgeInteractAddresses.goerli;
       }
       else if(targetChain == "Mumbai"){
         bridgeInteractTarget = await BridgeInteract.attach(AddressBook.bridgeInteractAddresses.mumbai);
+        bridgeInteractTargetAddress = AddressBook.bridgeInteractAddresses.mumbai;
       }
       else if(targetChain == "Fuji"){
         bridgeInteractTarget = await BridgeInteract.attach(AddressBook.bridgeInteractAddresses.fuji);
+        bridgeInteractTargetAddress = AddressBook.bridgeInteractAddresses.fuji;
       }
       else if(targetChain == "BSC"){
         bridgeInteractTarget = await BridgeInteract.attach(AddressBook.bridgeInteractAddresses.bsc);
+        bridgeInteractTargetAddress = AddressBook.bridgeInteractAddresses.fuji;
       }
 
 
           // IMPORTANT: NEED TX HASH 
-    // const provider = new ethers.providers.JsonRpcProvider("https://ethereum-goerli-rpc.allthatnode.com/");
-    // const txReceipt = await provider.waitForTransaction(
-    //   //This will be dynamic. txreceipt.tx
-    //   "0xced046fa496356f8f2cee24059f7ce46b9e4df4b946f59e6ae669edcb2cfe7bb" //Paste the tx hash after executing transfer function from EthereumToPolygon1.ts script 
-    // );
-    const txReceipt = fs.readFileSync("txReceiptfile.txt", "utf8");
-    console.log(txReceipt);
+    const transferHash = txHash.data;
+    console.log("Tx Hash fetched from txReceiptfile.json is: ",transferHash);
 
+    const provider = new ethers.providers.JsonRpcProvider("https://api.avax-test.network/ext/bc/C/rpc");
+    console.log("Provider set");
+    
+    const txReceipt = await provider.waitForTransaction(transferHash);
+    console.log(txReceipt);
 
     console.log("\n<------------------Getting VAA------------------------->");
 
@@ -96,22 +102,27 @@ const completeTransfer = async (
         vaaBytes = await (await fetch(vaaURL)).json();
     }
 
-    console.log(vaaBytes);
-    console.log(typeof vaaBytes.vaaBytes);
+    console.log("VAA Bytes is: ",vaaBytes);
+    console.log("Type of VAA Bytes is: ",typeof vaaBytes.vaaBytes);
     
-    console.log(Buffer.from(vaaBytes.vaaBytes, "base64"));
-    console.log(vaaBytes.vaaBytes);
+    console.log("Buffer of the above string is: ",Buffer.from(vaaBytes.vaaBytes, "base64"));
+    console.log("vaaBytes.vaaBytes of the above buffer is: ",vaaBytes.vaaBytes);
 
 
     console.log("\n<------------------Complete Transfer function------------------------->");
 
     // STEP-4:  REDEEM
+    console.log("Executing Complete Transfer function");
+    
     const completeTransferTx = await bridgeInteractTarget.completeTransfer(
         Buffer.from(vaaBytes.vaaBytes, "base64")
     );
 
+    console.log("Complete Transfer function executed, Waiting for Receipt");
+
     const receipt = await completeTransferTx.wait();
-    console.log(receipt);
+    console.log("Complete Transfer function receipt:  ",receipt);
+    console.log("Tx hash of completeTransfer is: ", receipt.transactionHash);
 
 
 }
@@ -121,7 +132,9 @@ const completeTransfer = async (
 const main = async () => {
 
     
-    
+  console.log("Starting the Complete Transfer...");
+
+  await completeTransfer("Fuji", "Mumbai");
 
   /*  console.log("\n<------------------Complete Transfer function------------------------->");
 
