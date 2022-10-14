@@ -1,5 +1,5 @@
 /*
-Register Tokens on the target chain from UI before transferring tokens
+Register Tokens on the target chain from wormhole UI before transferring tokens
 https://wormhole-foundation.github.io/example-token-bridge-ui/#/register
 Run this script in Source testnet by :
 npx hardhat run .\scripts\Wormhole\UniversalBridge\Bridge1.ts --network <source chain>
@@ -166,7 +166,7 @@ const bridgeTransfer = async (
 const main = async () => {
 
       console.log("Starting the bridge transfer...");
-      await bridgeTransfer("Fuji", "Mumbai", 7000, 6000, "0xaC099D7d6057B7871D1076f2600e1163643d0822", 78);
+      await bridgeTransfer("Mumbai", "Fuji", 7000, 6000, "0xaC099D7d6057B7871D1076f2600e1163643d0822", 79);
       
       // console.log("<------------------Approve Function------------------------->");
       // //Approve function
