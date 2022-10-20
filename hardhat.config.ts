@@ -38,32 +38,34 @@ module.exports = {
     //   chainId: 4,
     //   blockConfirmations: 6,
     // },
+
     goerli: {
       url: 'https://rpc.goerli.mudit.blog/',
       accounts: ['80ece692ca12026fc0e22c8a30fede47908513e49d86eddb8598f02e51f23f19'],
       chainId: 5,
-      blockConfirmations: 6,
+      // blockConfirmations: 6,
     },
 
     mumbai: {
       url: `https://matic-mumbai.chainstacklabs.com`,
       accounts: ['80ece692ca12026fc0e22c8a30fede47908513e49d86eddb8598f02e51f23f19'],
       chainId: 80001,
-      blockConfirmations: 6,
+      // blockConfirmations: 6,
     },
-    
+
     fuji: {
       url: `https://api.avax-test.network/ext/bc/C/rpc`,
-      accounts: ['80ece692ca12026fc0e22c8a30fede47908513e49d86eddb8598f02e51f23f19'],
+      // accounts: ['80ece692ca12026fc0e22c8a30fede47908513e49d86eddb8598f02e51f23f19'],
+      accounts: [process.env.PRIVATE_KEY_3],
       chainId: 43113,
-      blockConfirmations: 6,
+      // blockConfirmations: 6,
     },
 
     bsc: {
       url: `https://data-seed-prebsc-1-s1.binance.org:8545`,
       accounts: ['80ece692ca12026fc0e22c8a30fede47908513e49d86eddb8598f02e51f23f19'],
       chainId: 97,
-      blockConfirmations: 6,
+      // blockConfirmations: 6,
     },
   },
   solidity: {

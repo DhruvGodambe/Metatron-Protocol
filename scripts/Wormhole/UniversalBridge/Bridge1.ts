@@ -16,6 +16,8 @@ const path = require('path');
 const AddressBook = require("../BridgeAddresses.json");
 const ChainIDBook = require("../ChainIDWormhole.json");
 const txReceipt = require("../UniversalBridge/txReceiptfile.json");
+const newABI = require("../ABI/tokenBridgeABI.json");
+
 
 
 const bytes32FromAddress = (address:any) => {
@@ -34,6 +36,11 @@ const bridgeTransfer = async (
       recipientAddress:any,
       nonce:any
       ) => {
+
+        const signers = await ethers.getSigners();
+        const signer = signers[0];
+
+
           const Enoch1 = await ethers.getContractFactory("Enoch1");
           const BridgeInteract = await ethers.getContractFactory("BridgeInteract");
 
@@ -42,30 +49,35 @@ const bridgeTransfer = async (
           let token;
           let tokenAddress;
           let chainID;
+          let provider;
           //Update testnets with mainnet.
           if(sourceChain == "Goerli"){
             token = await Enoch1.attach(AddressBook.tokenAddresses.goerli);
             tokenAddress = AddressBook.tokenAddresses.goerli;
-            bridgeInteractSource = await BridgeInteract.attach(AddressBook.bridgeInteractAddresses.goerli);
-            sourceBridgeAddress = AddressBook.coreBridgeAddresses.goerliBridgeAddress;
+            provider = new ethers.providers.JsonRpcProvider("https://rpc.goerli.mudit.blog/")
+            bridgeInteractSource = await new ethers.Contract(AddressBook.tokenBridgeAddresses.goerliBridgeAddress, newABI, provider);
+            sourceBridgeAddress = AddressBook.tokenBridgeAddresses.goerliBridgeAddress;
           }
           else if(sourceChain == "Mumbai"){
             token = await Enoch1.attach(AddressBook.tokenAddresses.mumbai);
             tokenAddress = AddressBook.tokenAddresses.mumbai;
-            bridgeInteractSource = await BridgeInteract.attach(AddressBook.bridgeInteractAddresses.mumbai);
-            sourceBridgeAddress = AddressBook.coreBridgeAddresses.mumbaiBridgeAddress;
+            provider = new ethers.providers.JsonRpcProvider("https://matic-mumbai.chainstacklabs.com")
+            bridgeInteractSource = await new ethers.Contract(AddressBook.tokenBridgeAddresses.mumbaiBridgeAddress, newABI, provider);
+            sourceBridgeAddress = AddressBook.tokenBridgeAddresses.mumbaiBridgeAddress;
           }
           else if(sourceChain == "Fuji"){
             token = await Enoch1.attach(AddressBook.tokenAddresses.fuji);
             tokenAddress = AddressBook.tokenAddresses.fuji;
-            bridgeInteractSource = await BridgeInteract.attach(AddressBook.bridgeInteractAddresses.fuji);
-            sourceBridgeAddress = AddressBook.coreBridgeAddresses.fujiBridgeAddress;
+            provider = new ethers.providers.JsonRpcProvider("https://api.avax-test.network/ext/bc/C/rpc")
+            bridgeInteractSource = await new ethers.Contract(AddressBook.tokenBridgeAddresses.fujiBridgeAddress, newABI, provider);
+            sourceBridgeAddress = AddressBook.tokenBridgeAddresses.fujiBridgeAddress;
           }
           else if(sourceChain == "BSC"){
             token = await Enoch1.attach(AddressBook.tokenAddresses.bsc);
             tokenAddress = AddressBook.tokenAddresses.bsc;
-            bridgeInteractSource = await BridgeInteract.attach(AddressBook.bridgeInteractAddresses.bsc);
-            sourceBridgeAddress = AddressBook.coreBridgeAddresses.bscBridgeAddress;
+            provider = new ethers.providers.JsonRpcProvider("https://data-seed-prebsc-1-s1.binance.org:8545")
+            bridgeInteractSource = await new ethers.Contract(AddressBook.tokenBridgeAddresses.bscBridgeAddress, newABI, provider);
+            sourceBridgeAddress = AddressBook.tokenBridgeAddresses.bscBridgeAddress;
           }
           
           if(targetChain == "Goerli"){
@@ -84,15 +96,22 @@ const bridgeTransfer = async (
 
         console.log("<------------------Approve Function------------------------->");
         // approveAmt = ethers.utils.parseUnits("8000", "18");
+        console.log("Source bridge address: ",sourceBridgeAddress);
+        console.log("Approve amt : ",approveAmt);
+        
         const approveTx = await token.approve(sourceBridgeAddress, approveAmt);
-        const approveTxReceipt = await approveTx.wait();
+        const approveTxReceipt = await approveTx.wait(1);
         console.log(approveTxReceipt);
         console.log("Amount of Approved tokens are:  ", approveAmt);
 
 
         console.log("<------------------Transfer Function------------------------->");
+          
 
-          const transferTx = await bridgeInteractSource.transfer(
+        console.log("Here",tokenAddress,transferAmt,chainID,bytes32FromAddress(recipientAddress),nonce);
+
+
+          const transferTx = await bridgeInteractSource.connect(signer).transferTokens(
             tokenAddress,
             transferAmt,
             chainID,
@@ -101,7 +120,7 @@ const bridgeTransfer = async (
             nonce
             );
 
-            const transferTxReceipt = await transferTx.wait();
+            const transferTxReceipt = await transferTx.wait(1);
             console.log(transferTxReceipt);
             console.log("Amount of Transferred tokens is:  ", transferAmt);
             
@@ -166,7 +185,8 @@ const bridgeTransfer = async (
 const main = async () => {
 
       console.log("Starting the bridge transfer...");
-      await bridgeTransfer("Mumbai", "Fuji", 7000, 6000, "0xaC099D7d6057B7871D1076f2600e1163643d0822", 79);
+      
+      await bridgeTransfer("Fuji", "Mumbai", "1000000000000000000000", "1000000000000000000000", "0xaC099D7d6057B7871D1076f2600e1163643d0822", 93);
       
       // console.log("<------------------Approve Function------------------------->");
       // //Approve function

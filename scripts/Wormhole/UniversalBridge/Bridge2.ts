@@ -12,16 +12,15 @@ const AddressBook = require("../BridgeAddresses.json");
 const ChainIDBook = require("../ChainIDWormhole.json");
 const txHash = require("../UniversalBridge/txReceiptfile.json");
 const RPCURL = require("../RPC.json");
+const newABI = require("../ABI/tokenBridgeABI.json");
 
-const bytes32FromAddress = (address:any) => {
-  let bytes32 = ethers.utils.formatBytes32String(address);
-  return bytes32;
-}
 
 const completeTransfer = async (
   sourceChain:any, 
   targetChain:any,
   ) => {
+        const signers = await ethers.getSigners();
+        const signer = signers[0];
       
       const BridgeInteract = await ethers.getContractFactory("BridgeInteract");
 
@@ -63,20 +62,24 @@ const completeTransfer = async (
       }
       
       if(targetChain == "Goerli"){
-        bridgeInteractTarget = await BridgeInteract.attach(AddressBook.bridgeInteractAddresses.goerli);
-        bridgeInteractTargetAddress = AddressBook.bridgeInteractAddresses.goerli;
+        const provider =new ethers.providers.JsonRpcProvider("https://rpc.goerli.mudit.blog/")
+        bridgeInteractTarget = await new ethers.Contract(AddressBook.tokenBridgeAddresses.goerliBridgeAddress, newABI, provider);
+        bridgeInteractTargetAddress = AddressBook.tokenBridgeAddresses.goerliBridgeAddress;
       }
       else if(targetChain == "Mumbai"){
-        bridgeInteractTarget = await BridgeInteract.attach(AddressBook.bridgeInteractAddresses.mumbai);
-        bridgeInteractTargetAddress = AddressBook.bridgeInteractAddresses.mumbai;
+        const provider =new ethers.providers.JsonRpcProvider("https://matic-mumbai.chainstacklabs.com")
+        bridgeInteractTarget = await new ethers.Contract(AddressBook.tokenBridgeAddresses.mumbaiBridgeAddress, newABI, provider);
+        bridgeInteractTargetAddress = AddressBook.tokenBridgeAddresses.mumbaiBridgeAddress;
       }
       else if(targetChain == "Fuji"){
-        bridgeInteractTarget = await BridgeInteract.attach(AddressBook.bridgeInteractAddresses.fuji);
-        bridgeInteractTargetAddress = AddressBook.bridgeInteractAddresses.fuji;
+        const provider =new ethers.providers.JsonRpcProvider("https://api.avax-test.network/ext/bc/C/rpc")
+        bridgeInteractTarget = await new ethers.Contract(AddressBook.tokenBridgeAddresses.fujiBridgeAddress, newABI, provider);
+        bridgeInteractTargetAddress = AddressBook.tokenBridgeAddresses.fujiBridgeAddress;
       }
       else if(targetChain == "BSC"){
-        bridgeInteractTarget = await BridgeInteract.attach(AddressBook.bridgeInteractAddresses.bsc);
-        bridgeInteractTargetAddress = AddressBook.bridgeInteractAddresses.fuji;
+        const provider =new ethers.providers.JsonRpcProvider("https://data-seed-prebsc-1-s1.binance.org:8545")
+        bridgeInteractTarget = await new ethers.Contract(AddressBook.tokenBridgeAddresses.bscBridgeAddress, newABI, provider);
+        bridgeInteractTargetAddress = AddressBook.tokenBridgeAddresses.bscBridgeAddress;
       }
 
 
@@ -120,7 +123,7 @@ const completeTransfer = async (
     // STEP-4:  REDEEM
     console.log("Executing Complete Transfer function");
     
-    const completeTransferTx = await bridgeInteractTarget.completeTransfer(
+    const completeTransferTx = await bridgeInteractTarget.connect(signer).completeTransfer(
         Buffer.from(vaaBytes.vaaBytes, "base64")
     );
 
@@ -140,7 +143,7 @@ const main = async () => {
     
   console.log("Starting the Complete Transfer...");
 
-  await completeTransfer("Mumbai", "Fuji");
+  await completeTransfer("Goerli", "Mumbai");
 
   /*  console.log("\n<------------------Complete Transfer function------------------------->");
 
