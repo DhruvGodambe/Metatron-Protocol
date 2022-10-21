@@ -22,7 +22,7 @@ const completeTransfer = async (
         const signers = await ethers.getSigners();
         const signer = signers[0];
       
-      const BridgeInteract = await ethers.getContractFactory("BridgeInteract");
+      
 
       let bridgeInteractSource;
       let bridgeInteractTarget;
@@ -31,53 +31,54 @@ const completeTransfer = async (
       let sourceCoreBridgeAddress;
       let tokenBridgeAddress;
       let sourceRPCurl;
+      let targetRPCurl;
       
       if(sourceChain == "Goerli"){
         sourceCoreChainID = ChainIDBook.wormholeChainIDs.goerli;
         sourceCoreBridgeAddress = AddressBook.coreBridgeAddresses.goerliBridgeAddress;
         tokenBridgeAddress = AddressBook.tokenBridgeAddresses.goerliBridgeAddress;
-        bridgeInteractSource = await BridgeInteract.attach(AddressBook.bridgeInteractAddresses.goerli);
         sourceRPCurl = RPCURL.RPCurl.goerli;
       }
       else if(sourceChain == "Mumbai"){
         sourceCoreChainID = ChainIDBook.wormholeChainIDs.mumbai;
         sourceCoreBridgeAddress = AddressBook.coreBridgeAddresses.mumbaiBridgeAddress;
         tokenBridgeAddress = AddressBook.tokenBridgeAddresses.mumbaiBridgeAddress;
-        bridgeInteractSource = await BridgeInteract.attach(AddressBook.bridgeInteractAddresses.mumbai);
         sourceRPCurl = RPCURL.RPCurl.mumbai;
       }
       else if(sourceChain == "Fuji"){
         sourceCoreChainID = ChainIDBook.wormholeChainIDs.fuji;
         sourceCoreBridgeAddress = AddressBook.coreBridgeAddresses.fujiBridgeAddress;
         tokenBridgeAddress = AddressBook.tokenBridgeAddresses.fujiBridgeAddress;
-        bridgeInteractSource = await BridgeInteract.attach(AddressBook.bridgeInteractAddresses.fuji);
         sourceRPCurl = RPCURL.RPCurl.fuji;
       }
       else if(sourceChain == "BSC"){
         sourceCoreChainID = ChainIDBook.wormholeChainIDs.bsc;
         sourceCoreBridgeAddress = AddressBook.coreBridgeAddresses.bscBridgeAddress;
         tokenBridgeAddress = AddressBook.tokenBridgeAddresses.bscBridgeAddress;
-        bridgeInteractSource = await BridgeInteract.attach(AddressBook.bridgeInteractAddresses.bsc);
         sourceRPCurl = RPCURL.RPCurl.bsc;
       }
       
       if(targetChain == "Goerli"){
-        const provider =new ethers.providers.JsonRpcProvider("https://rpc.goerli.mudit.blog/")
+        targetRPCurl = RPCURL.RPCurl.goerli;
+        const provider =new ethers.providers.JsonRpcProvider(targetRPCurl);
         bridgeInteractTarget = await new ethers.Contract(AddressBook.tokenBridgeAddresses.goerliBridgeAddress, newABI, provider);
         bridgeInteractTargetAddress = AddressBook.tokenBridgeAddresses.goerliBridgeAddress;
       }
       else if(targetChain == "Mumbai"){
-        const provider =new ethers.providers.JsonRpcProvider("https://matic-mumbai.chainstacklabs.com")
+        targetRPCurl = RPCURL.RPCurl.mumbai;
+        const provider =new ethers.providers.JsonRpcProvider(targetRPCurl);
         bridgeInteractTarget = await new ethers.Contract(AddressBook.tokenBridgeAddresses.mumbaiBridgeAddress, newABI, provider);
         bridgeInteractTargetAddress = AddressBook.tokenBridgeAddresses.mumbaiBridgeAddress;
       }
       else if(targetChain == "Fuji"){
-        const provider =new ethers.providers.JsonRpcProvider("https://api.avax-test.network/ext/bc/C/rpc")
+        targetRPCurl = RPCURL.RPCurl.fuji;
+        const provider =new ethers.providers.JsonRpcProvider(targetRPCurl)
         bridgeInteractTarget = await new ethers.Contract(AddressBook.tokenBridgeAddresses.fujiBridgeAddress, newABI, provider);
         bridgeInteractTargetAddress = AddressBook.tokenBridgeAddresses.fujiBridgeAddress;
       }
       else if(targetChain == "BSC"){
-        const provider =new ethers.providers.JsonRpcProvider("https://data-seed-prebsc-1-s1.binance.org:8545")
+        targetRPCurl = RPCURL.RPCurl.bsc;
+        const provider =new ethers.providers.JsonRpcProvider(targetRPCurl)
         bridgeInteractTarget = await new ethers.Contract(AddressBook.tokenBridgeAddresses.bscBridgeAddress, newABI, provider);
         bridgeInteractTargetAddress = AddressBook.tokenBridgeAddresses.bscBridgeAddress;
       }
@@ -91,11 +92,12 @@ const completeTransfer = async (
     console.log("Provider set");
     
     const txReceipt = await provider.waitForTransaction(transferHash);
+    console.log("HELLO");
     console.log(txReceipt);
 
     console.log("\n<------------------Getting VAA------------------------->");
 
-    const restAddress = "https://wormhole-v2-testnet-api.certus.one";
+    const restAddress = RPCURL.WormholeRestAddress;
     const emitterAddr = getEmitterAddressEth(tokenBridgeAddress);
     console.log("Emitter Address :   ", emitterAddr);
     
@@ -143,7 +145,8 @@ const main = async () => {
     
   console.log("Starting the Complete Transfer...");
 
-  await completeTransfer("Goerli", "Mumbai");
+//await completeTransfer("Source Chain", "Target Chain");
+  await completeTransfer("Mumbai", "Fuji");
 
   /*  console.log("\n<------------------Complete Transfer function------------------------->");
 

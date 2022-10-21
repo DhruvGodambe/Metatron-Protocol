@@ -1,8 +1,10 @@
 {
     "RPCurl" : {
-        "goerli" : "https://rpc.goerli.mudit.blog/",
+        "goerli" : "https://goerli.infura.io/v3/680f182649ca427a8fff593b93f71fac",
         "mumbai" : "https://matic-mumbai.chainstacklabs.com",
         "fuji" : "https://api.avax-test.network/ext/bc/C/rpc",
         "bsc" : "https://data-seed-prebsc-1-s1.binance.org:8545"
-    }
+    },
+
+    "WormholeRestAddress" : "https://wormhole-v2-testnet-api.certus.one"
 }

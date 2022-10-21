@@ -6,6 +6,7 @@ require("@nomicfoundation/hardhat-chai-matchers");
 const { task } = require("hardhat/config");
 import { config as dotEnvConfig } from "dotenv";
 dotEnvConfig();
+const RPCURL = require("../metatronprotocol/scripts/Wormhole/RPC.json");
 
 
 // This is a sample Hardhat task. To learn how to create your own go to
@@ -32,40 +33,33 @@ module.exports = {
     },
     hardhat: {},
 
-    // rinkeby: {
-    //   url: process.env.RINKEBY_RPC_URL,
-    //   accounts: [process.env.PRIVATE_KEY_1, process.env.PRIVATE_KEY_2],
-    //   chainId: 4,
-    //   blockConfirmations: 6,
-    // },
 
     goerli: {
-      url: 'https://rpc.goerli.mudit.blog/',
-      accounts: ['80ece692ca12026fc0e22c8a30fede47908513e49d86eddb8598f02e51f23f19'],
+      // url: 'https://goerli.infura.io/v3/680f182649ca427a8fff593b93f71fac',
+      url: RPCURL.RPCurl.goerli,
+      accounts: [process.env.PRIVATE_KEY],
       chainId: 5,
-      // blockConfirmations: 6,
     },
 
     mumbai: {
-      url: `https://matic-mumbai.chainstacklabs.com`,
-      accounts: ['80ece692ca12026fc0e22c8a30fede47908513e49d86eddb8598f02e51f23f19'],
+      // url: `https://matic-mumbai.chainstacklabs.com`,
+      url: RPCURL.RPCurl.mumbai,
+      accounts: [process.env.PRIVATE_KEY],
       chainId: 80001,
-      // blockConfirmations: 6,
     },
 
     fuji: {
-      url: `https://api.avax-test.network/ext/bc/C/rpc`,
-      // accounts: ['80ece692ca12026fc0e22c8a30fede47908513e49d86eddb8598f02e51f23f19'],
-      accounts: [process.env.PRIVATE_KEY_3],
+      // url: `https://api.avax-test.network/ext/bc/C/rpc`,
+      url: RPCURL.RPCurl.fuji,
+      accounts: [process.env.PRIVATE_KEY],
       chainId: 43113,
-      // blockConfirmations: 6,
     },
 
     bsc: {
-      url: `https://data-seed-prebsc-1-s1.binance.org:8545`,
-      accounts: ['80ece692ca12026fc0e22c8a30fede47908513e49d86eddb8598f02e51f23f19'],
+      // url: `https://data-seed-prebsc-1-s1.binance.org:8545`,
+      url: RPCURL.RPCurl.bsc,
+      accounts: [process.env.PRIVATE_KEY],
       chainId: 97,
-      // blockConfirmations: 6,
     },
   },
   solidity: {
@@ -118,6 +112,6 @@ module.exports = {
     timeout: 40000,
   },
   etherscan: {
-    apiKey: "7ADQVGNSBRPGF84Q1XK4MX2FW4ZJ7JDHUS"
+    apiKey: [process.env.ETHERSCAN_API_KEY]
   }
 };

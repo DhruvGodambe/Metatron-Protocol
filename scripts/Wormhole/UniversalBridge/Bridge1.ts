@@ -6,6 +6,8 @@ npx hardhat run .\scripts\Wormhole\UniversalBridge\Bridge1.ts --network <source 
 */
 
 import { getEmitterAddressEth, parseSequenceFromLogEth, tryNativeToHexString } from "@certusone/wormhole-sdk";
+import { BigNumber } from 'ethers';
+import { utils } from 'ethers';
 
 const hre = require("hardhat");
 const {ethers} = require("hardhat");
@@ -16,6 +18,7 @@ const path = require('path');
 const AddressBook = require("../BridgeAddresses.json");
 const ChainIDBook = require("../ChainIDWormhole.json");
 const txReceipt = require("../UniversalBridge/txReceiptfile.json");
+const RPCURL = require("../RPC.json");
 const newABI = require("../ABI/tokenBridgeABI.json");
 
 
@@ -42,41 +45,46 @@ const bridgeTransfer = async (
 
 
           const Enoch1 = await ethers.getContractFactory("Enoch1");
-          const BridgeInteract = await ethers.getContractFactory("BridgeInteract");
+          
 
-          let bridgeInteractSource;
+          let bridgeSource;
           let sourceBridgeAddress;
           let token;
           let tokenAddress;
           let chainID;
+          let sourceRPCurl;
           let provider;
           //Update testnets with mainnet.
           if(sourceChain == "Goerli"){
             token = await Enoch1.attach(AddressBook.tokenAddresses.goerli);
             tokenAddress = AddressBook.tokenAddresses.goerli;
-            provider = new ethers.providers.JsonRpcProvider("https://rpc.goerli.mudit.blog/")
-            bridgeInteractSource = await new ethers.Contract(AddressBook.tokenBridgeAddresses.goerliBridgeAddress, newABI, provider);
+            sourceRPCurl = RPCURL.RPCurl.goerli;
+            provider = new ethers.providers.JsonRpcProvider(sourceRPCurl);
+            bridgeSource = await new ethers.Contract(AddressBook.tokenBridgeAddresses.goerliBridgeAddress, newABI, provider);
             sourceBridgeAddress = AddressBook.tokenBridgeAddresses.goerliBridgeAddress;
           }
           else if(sourceChain == "Mumbai"){
             token = await Enoch1.attach(AddressBook.tokenAddresses.mumbai);
             tokenAddress = AddressBook.tokenAddresses.mumbai;
-            provider = new ethers.providers.JsonRpcProvider("https://matic-mumbai.chainstacklabs.com")
-            bridgeInteractSource = await new ethers.Contract(AddressBook.tokenBridgeAddresses.mumbaiBridgeAddress, newABI, provider);
+            sourceRPCurl = RPCURL.RPCurl.mumbai;
+            provider = new ethers.providers.JsonRpcProvider(sourceRPCurl);
+            bridgeSource = await new ethers.Contract(AddressBook.tokenBridgeAddresses.mumbaiBridgeAddress, newABI, provider);
             sourceBridgeAddress = AddressBook.tokenBridgeAddresses.mumbaiBridgeAddress;
           }
           else if(sourceChain == "Fuji"){
             token = await Enoch1.attach(AddressBook.tokenAddresses.fuji);
             tokenAddress = AddressBook.tokenAddresses.fuji;
-            provider = new ethers.providers.JsonRpcProvider("https://api.avax-test.network/ext/bc/C/rpc")
-            bridgeInteractSource = await new ethers.Contract(AddressBook.tokenBridgeAddresses.fujiBridgeAddress, newABI, provider);
+            sourceRPCurl = RPCURL.RPCurl.fuji;
+            provider = new ethers.providers.JsonRpcProvider(sourceRPCurl)
+            bridgeSource = await new ethers.Contract(AddressBook.tokenBridgeAddresses.fujiBridgeAddress, newABI, provider);
             sourceBridgeAddress = AddressBook.tokenBridgeAddresses.fujiBridgeAddress;
           }
           else if(sourceChain == "BSC"){
             token = await Enoch1.attach(AddressBook.tokenAddresses.bsc);
             tokenAddress = AddressBook.tokenAddresses.bsc;
-            provider = new ethers.providers.JsonRpcProvider("https://data-seed-prebsc-1-s1.binance.org:8545")
-            bridgeInteractSource = await new ethers.Contract(AddressBook.tokenBridgeAddresses.bscBridgeAddress, newABI, provider);
+            sourceRPCurl = RPCURL.RPCurl.bsc;
+            provider = new ethers.providers.JsonRpcProvider(sourceRPCurl)
+            bridgeSource = await new ethers.Contract(AddressBook.tokenBridgeAddresses.bscBridgeAddress, newABI, provider);
             sourceBridgeAddress = AddressBook.tokenBridgeAddresses.bscBridgeAddress;
           }
           
@@ -95,14 +103,15 @@ const bridgeTransfer = async (
 
 
         console.log("<------------------Approve Function------------------------->");
-        // approveAmt = ethers.utils.parseUnits("8000", "18");
-        console.log("Source bridge address: ",sourceBridgeAddress);
-        console.log("Approve amt : ",approveAmt);
+        console.log("Source bridge address : ",sourceBridgeAddress);
+        console.log("Amount of Approved tokens are: : ",approveAmt);
         
         const approveTx = await token.approve(sourceBridgeAddress, approveAmt);
-        const approveTxReceipt = await approveTx.wait(1);
-        console.log(approveTxReceipt);
-        console.log("Amount of Approved tokens are:  ", approveAmt);
+        const approveTxReceipt = await approveTx.wait();
+        console.log("Approve tx : ",approveTx);
+        
+        let data2 = approveTxReceipt.transactionHash;
+        console.log("Approve Tx hash is: ", data2);
 
 
         console.log("<------------------Transfer Function------------------------->");
@@ -111,7 +120,7 @@ const bridgeTransfer = async (
         console.log("Here",tokenAddress,transferAmt,chainID,bytes32FromAddress(recipientAddress),nonce);
 
 
-          const transferTx = await bridgeInteractSource.connect(signer).transferTokens(
+          const transferTx = await bridgeSource.connect(signer).transferTokens(
             tokenAddress,
             transferAmt,
             chainID,
@@ -127,19 +136,7 @@ const bridgeTransfer = async (
             console.log("<----------------Fetching transfer receipt------------------->");
             
             
-            let data = transferTxReceipt.transactionHash;
-            // let data = "Hi! This is a bot....";
-            console.log("Transfer Tx hash is: ", data);
-            
-            /*await fs.readFile(path.join(__dirname, 'hello.txt'), 'utf8', (err:any, data:any) => {
-            
-              if(err)
-              console.log("Can't read file");
-              else{
-                console.log(data);
-              }
-            })
-            */
+            let data = transferTxReceipt.transactionHash;         
             
             
             console.log("Writing a new file to store tx Receipt...");
@@ -154,29 +151,14 @@ const bridgeTransfer = async (
                 2
                 )
                 );
+                
+           console.log("Written in a json file (txReceiptfile.json) successfully! \n");
+                
+            console.log("\nApprove Tx hash is: ", data2);
+            console.log("Amount of tokens Approved are:  ",approveAmt);
+            console.log("New Transfer Tx hash fetched from txReceiptfile.json is: ", data);
+            console.log("Amount of tokens Transferred are:  ", transferAmt);
 
-            console.log("Written in a json file (txReceiptfile.json)successfully!");
-
-            console.log("Last Tx Hash fetched from txReceiptfile.json is: ",txReceipt.data);
-
-            
-            // fs.writeFile(path.join(__dirname, 'txReceiptfile.txt'), data, (err:any) => {
-                  
-                  //   if (err){
-                    //     console.log("Can't write file");
-                    //   }
-                    //   else {
-                      //     console.log("File written successfully\n");
-                      //     // console.log("The written has the following contents:");
-                      //     // console.log(fs.readFileSync("D:\metatronProtocol_Clone\metatronprotocol\scripts\Wormhole\UniversalBridge\txReceiptfile.txt", "utf8"));
-                      //   }
-                      // });
-            
-            
-            // const data1 = await readFileSync(
-            //   path.join(__dirname, 'txReceiptfile.json')
-            // );
-            // console.log(data1);
 
 
 }
@@ -185,26 +167,16 @@ const bridgeTransfer = async (
 const main = async () => {
 
       console.log("Starting the bridge transfer...");
-      
-      await bridgeTransfer("Fuji", "Mumbai", "1000000000000000000000", "1000000000000000000000", "0xaC099D7d6057B7871D1076f2600e1163643d0822", 93);
-      
-      // console.log("<------------------Approve Function------------------------->");
-      // //Approve function
-      //   const bridgeAmt = ethers.utils.parseUnits("8000", "18");
-      //   const approveTx = await bridgeTransfer.tokenAddress.approve(AddressBook.tokenBridgeAddresses.goerli, bridgeAmt,{
-      //     gasLimit: 2000000,
-      //   });
-      //   const approveTxReceipt = await approveTx.wait();
-      //   console.log(approveTxReceipt);
+      //  Calling the bridgeTransfer function here....
+      await bridgeTransfer("Mumbai", "Fuji", "50000000000000000000", "50000000000000000000", "0xaC099D7d6057B7871D1076f2600e1163643d0822", 102);
 
 
-
-        // console.log("<------------------Transfer Tokens Function------------------------->");
+    // console.log("<------------------Transfer Tokens Function------------------------->");
 
     //     address token, --->Enoch token's address in source chain
     //     uint256 amount,  --->Amount of Enoch tokens
     //     uint16 recipientChain, ---> Target chains's wormhole ChainID (Core Bridge)
-    //     bytes32 recipient, --->Sender's Account Address
+    //     bytes32 recipient, ---> Receiver's Account Address
     //     uint256 arbiterFee, ---->Put 0
     //     uint32 nonce ---->Current nonce
 
