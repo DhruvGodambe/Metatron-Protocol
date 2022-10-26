@@ -168,7 +168,7 @@ const main = async () => {
 
       console.log("Starting the bridge transfer...");
       //  Calling the bridgeTransfer function here....
-      await bridgeTransfer("Mumbai", "Fuji", "50000000000000000000", "50000000000000000000", "0xaC099D7d6057B7871D1076f2600e1163643d0822", 102);
+      await bridgeTransfer("Mumbai", "Fuji", "50000000000000000000", "50000000000000000000", "0x7bBD77cd941426D77ddaA623Bc9b1F6f0a07db42", 104);
 
 
     // console.log("<------------------Transfer Tokens Function------------------------->");

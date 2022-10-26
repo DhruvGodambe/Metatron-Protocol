@@ -146,7 +146,7 @@ const main = async () => {
   console.log("Starting the Complete Transfer...");
 
 //await completeTransfer("Source Chain", "Target Chain");
-  await completeTransfer("Mumbai", "Fuji");
+  await completeTransfer("Goerli", "Mumbai");
 
   /*  console.log("\n<------------------Complete Transfer function------------------------->");
 
