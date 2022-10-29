@@ -5,7 +5,7 @@ Run this script in Source testnet by :
 npx hardhat run .\scripts\Wormhole\UniversalBridge\Bridge1.ts --network <source chain>
 */
 
-import { getEmitterAddressEth, parseSequenceFromLogEth, tryNativeToHexString } from "@certusone/wormhole-sdk";
+
 import { BigNumber } from 'ethers';
 import { utils } from 'ethers';
 
