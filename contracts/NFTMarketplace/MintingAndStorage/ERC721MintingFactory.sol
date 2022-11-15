@@ -1,9 +1,11 @@
 // SPDX-License-Identifier: MIT
 pragma solidity ^0.8.4;
 
-import "./ERC721NFTContract.sol";
 
-contract ERC721MintingFactory {
+import "./ERC721NFTContract.sol";
+import "@openzeppelin/contracts-upgradeable/proxy/utils/Initializable.sol";
+
+contract ERC721MintingFactory is Initializable{
     // this contract creates an NFT contract
     // and then it can mint NFT for that contract
     // keeps track of all NFT contracts for the users
@@ -14,12 +16,12 @@ contract ERC721MintingFactory {
     address public adminAddress;
     address public exchangeAddress;
 
-    constructor() public {
+    function inititalize() public initializer {
         adminAddress = msg.sender;
     }
 
     //owner=>collection
-    mapping(address => address[]) public ownerToCollection; 
+    mapping(address => address[]) public ownerToCollection;
     // collection => (owner => token Id)
     mapping(address => mapping(address => uint256)) public collectionToOwnerToId;
     // collection => owner
@@ -28,12 +30,12 @@ contract ERC721MintingFactory {
     // Events
     event NFTContractCreated(string name, string symbol, address nftContract);
     event NFTMinted(address nftContract, uint256 tokenId);
-    event OwnerUpdated(address nftContract, uint256 tokenId, address newOwner);
+    event OwnerUpdated(address nftContract, address newOwner, uint256 tokenId);
     event ExchangeAddressChanged(address oldExchange, address newExchange);
 
     modifier onlyOwner(address _nftContract) {
         require(
-            nftToOwner[_nftContract] == msg.sender,
+            collectionToOwner[_nftContract] == msg.sender,
             "Only Creator can call this!"
         );
         _;
@@ -56,8 +58,8 @@ contract ERC721MintingFactory {
         // create new contract
         address nftContract = address(new ERC721NFTContract(_name, _symbol));
         // update mapping of owner to NFTContracts
-        ownerTocollection[msg.sender].push(nftContract);
-        nftToOwner[nftContract] = msg.sender;
+        ownerToCollection[msg.sender].push(nftContract);
+        collectionToOwner[nftContract] = msg.sender;
 
         emit NFTContractCreated(_name, _symbol, nftContract);
         // return address of new contract
@@ -65,11 +67,11 @@ contract ERC721MintingFactory {
     }
 
     // function => mintNFt
-    // onlyOwner can call it, so need a modifier it
+    // onlyAdmin can call it, so need a modifier it
     // the one in above mapping could call it
     function mintNFT(address _nftContract, string memory _tokenURI)
         public
-        onlyAdmin(_nftContract)
+        onlyAdmin()
     {
         ERC721NFTContract(_nftContract).mintNewNFT(_tokenURI);
         uint256 _tokenId = ERC721NFTContract(_nftContract).getTotalNFTs();
@@ -85,12 +87,12 @@ contract ERC721MintingFactory {
     // adminAddress => fixed, during constructor, the one who deploys factory
     function updateOwner(
         address _nftContract,
-        uint256 _tokenId,
-        address _newOwner
+        address _newOwner,
+        uint256 _tokenId
     ) public onlyExchange {
-        nftToIdToOwner[_nftContract][_tokenId] = _newOwner;
+        collectionToOwnerToId[_nftContract][_newOwner] = _tokenId;
 
-        emit OwnerUpdated(_nftContract, _tokenId, _newOwner);
+        emit OwnerUpdated(_nftContract, _newOwner, _tokenId);
     }
 
     function updateExchangeAddress(address _newExchange) public onlyAdmin {
@@ -100,13 +102,23 @@ contract ERC721MintingFactory {
     }
 
     // lists all NFT collections for a owner
-    function getNFTsForOwner(address user)
+    function getCollectionForOwner(address user)
         public
         view
         returns (address[] memory)
     {
-        return nftToIdToOwner[user];
+        return ownerToCollection[user];
     }
+
+
+    // // lists all NFT IDs for a collection of owner
+    // function getIdsForCollectionToOwner(address _nftContract, address user)
+    //     public
+    //     view
+    //     returns (uint256[] memory)
+    // {
+    //     return collectionToOwnerToId[_nftContract][user];
+    // }
 
     // get total NFTs minted for a contract
     function getTotalNFTsMinted(address _nftContract)
