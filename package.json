@@ -3,7 +3,6 @@
   "dependencies": {
     "@alch/alchemy-web3": "^1.4.4",
     "@certusone/wormhole-sdk": "^0.6.5",
-    "@nomiclabs/hardhat-ethers": "^2.1.1",
     "@openzeppelin/contracts": "^4.6.0",
     "@openzeppelin/contracts-upgradeable": "^4.6.0",
     "@openzeppelin/test-helpers": "^0.5.15",
@@ -26,6 +25,7 @@
   "devDependencies": {
     "@nomicfoundation/hardhat-chai-matchers": "^1.0.3",
     "@nomicfoundation/hardhat-toolbox": "^1.0.2",
+    "@nomiclabs/hardhat-ethers": "^2.2.1",
     "@nomiclabs/hardhat-etherscan": "^3.0.4",
     "@openzeppelin/hardhat-upgrades": "^1.18.0",
     "@types/chai": "^4.3.1",

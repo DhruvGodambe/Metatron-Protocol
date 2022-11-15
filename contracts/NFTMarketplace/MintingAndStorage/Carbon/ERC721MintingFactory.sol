@@ -18,11 +18,12 @@ contract ERC721MintingFactory {
         adminAddress = msg.sender;
     }
 
-    mapping(address => address[]) public ownerToNFTs;
-    // mapping => nft contract => (mapping (token id => owner))
-    mapping(address => mapping(uint256 => address)) public nftToIdToOwner;
-    // nftContract => ownerAddress
-    mapping(address => address) public nftToOwner;
+    //owner=>collection
+    mapping(address => address[]) public ownerToCollection; 
+    // collection => (owner => token Id)
+    mapping(address => mapping(address => uint256)) public collectionToOwnerToId;
+    // collection => owner
+    mapping(address => address) public collectionToOwner;
 
     // Events
     event NFTContractCreated(string name, string symbol, address nftContract);
@@ -30,7 +31,7 @@ contract ERC721MintingFactory {
     event OwnerUpdated(address nftContract, uint256 tokenId, address newOwner);
     event ExchangeAddressChanged(address oldExchange, address newExchange);
 
-    modifier onlyCreatorOwner(address _nftContract) {
+    modifier onlyOwner(address _nftContract) {
         require(
             nftToOwner[_nftContract] == msg.sender,
             "Only Creator can call this!"
@@ -49,13 +50,13 @@ contract ERC721MintingFactory {
     }
 
     function createNFTContract(string memory _name, string memory _symbol)
-        external
+        external onlyAdmin
         returns (address _nftcontract)
     {
         // create new contract
         address nftContract = address(new ERC721NFTContract(_name, _symbol));
         // update mapping of owner to NFTContracts
-        ownerToNFTs[msg.sender].push(nftContract);
+        ownerTocollection[msg.sender].push(nftContract);
         nftToOwner[nftContract] = msg.sender;
 
         emit NFTContractCreated(_name, _symbol, nftContract);
@@ -64,11 +65,11 @@ contract ERC721MintingFactory {
     }
 
     // function => mintNFt
-    // onlyCreatorOwner can call it, so need a modifier it
+    // onlyOwner can call it, so need a modifier it
     // the one in above mapping could call it
     function mintNFT(address _nftContract, string memory _tokenURI)
         public
-        onlyCreatorOwner(_nftContract)
+        onlyAdmin(_nftContract)
     {
         ERC721NFTContract(_nftContract).mintNewNFT(_tokenURI);
         uint256 _tokenId = ERC721NFTContract(_nftContract).getTotalNFTs();
@@ -104,7 +105,7 @@ contract ERC721MintingFactory {
         view
         returns (address[] memory)
     {
-        return ownerToNFTs[user];
+        return nftToIdToOwner[user];
     }
 
     // get total NFTs minted for a contract
