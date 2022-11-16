@@ -1,12 +1,18 @@
+const { ethers, upgrades } = require("hardhat");
+
+
 const main = async () => {
     const nftContractFactory = await hre.ethers.getContractFactory("ERC721MintingFactory");
-    const nftFactory = await nftContractFactory.deploy();
+    console.log("Deploying ERC721 Minting Factory...");
+    const nftFactory = await upgrades.deployProxy(nftContractFactory, {
+        initializer : "initialize",
+    });
     await nftFactory.deployed();
     console.log("Contract deployed to: ", nftFactory.address);
 
-    const [account, account2, account3] = await hre.ethers.getSigners();
+    // const [account, account2, account3] = await hre.ethers.getSigners();
 
-    let creator = account3.address;
+    // let creator = account3.address;
 
     // *****   // accounts3 => creator bana dena
 
