@@ -41,6 +41,7 @@ contract ExchangeCore is Ownable, Pausable {
 
     event OrderCancelled(address nftContract, uint256 tokenId, address buyer);
 
+
     // function putOnDirectSale(address _nftContract, uint256 _tokenId)
     //     public
     //     returns (address, uint256)
@@ -56,6 +57,7 @@ contract ExchangeCore is Ownable, Pausable {
 
     //     return (_nftContract, _tokenId);
     // }
+
 
     // function putOnAuction(address _nftContract, uint256 _tokenId)
     //     public
@@ -76,6 +78,7 @@ contract ExchangeCore is Ownable, Pausable {
     //     uint256 auctionEndTime = block.timestamp + auctionTimeLimit;
     //     return (_nftContract, _tokenId, auctionEndTime);
     // }
+
 
     function validateSeller(
         address _nftContract,
@@ -98,6 +101,7 @@ contract ExchangeCore is Ownable, Pausable {
         return true;
     }
 
+
     function validateBuyer(address _buyer, uint256 _amount)
         internal
         returns (bool)
@@ -113,6 +117,7 @@ contract ExchangeCore is Ownable, Pausable {
         return true;
     }
 
+
     function validateAuctionTime(uint256 _auctionEndTime)
         internal
         view
@@ -121,6 +126,7 @@ contract ExchangeCore is Ownable, Pausable {
         require(_auctionEndTime > block.timestamp, "Auction has ended");
         return true;
     }
+
 
     function executeOrder(
         address _nftContract,
@@ -172,6 +178,7 @@ contract ExchangeCore is Ownable, Pausable {
         emit OrderExecuted(_nftContract, _tokenId, _seller, _buyer);
     }
 
+
     function cancelOrder(
         address _nftContract,
         uint256 _tokenId,
@@ -189,6 +196,7 @@ contract ExchangeCore is Ownable, Pausable {
             emit OrderCancelled(_nftContract, _tokenId, _buyer);
         }
     }
+
 
     function setTradingFeeFactor(uint256 _tradingFeeFactor) public onlyOwner {
         require(_tradingFeeFactor != 0, "Fee cannot be zero");
