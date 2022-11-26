@@ -16,9 +16,6 @@ contract ERC721MintingFactoryV2 is Initializable{
     address public adminAddress;
     address public exchangeAddress;
 
-    function inititalize() public initializer {
-        adminAddress = msg.sender;
-    }
 
     //owner=>collection
     mapping(address => address[]) public ownerToCollection;

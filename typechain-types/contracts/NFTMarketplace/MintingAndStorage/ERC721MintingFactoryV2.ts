@@ -37,7 +37,6 @@ export interface ERC721MintingFactoryV2Interface extends utils.Interface {
     "getCollectionForOwner(address)": FunctionFragment;
     "getIdsForCollectionToOwner(address,address)": FunctionFragment;
     "getTotalNFTsMinted(address)": FunctionFragment;
-    "inititalize()": FunctionFragment;
     "mintNFT(address,string)": FunctionFragment;
     "ownerToCollection(address,uint256)": FunctionFragment;
     "updateExchangeAddress(address)": FunctionFragment;
@@ -54,7 +53,6 @@ export interface ERC721MintingFactoryV2Interface extends utils.Interface {
       | "getCollectionForOwner"
       | "getIdsForCollectionToOwner"
       | "getTotalNFTsMinted"
-      | "inititalize"
       | "mintNFT"
       | "ownerToCollection"
       | "updateExchangeAddress"
@@ -92,10 +90,6 @@ export interface ERC721MintingFactoryV2Interface extends utils.Interface {
   encodeFunctionData(
     functionFragment: "getTotalNFTsMinted",
     values: [PromiseOrValue<string>]
-  ): string;
-  encodeFunctionData(
-    functionFragment: "inititalize",
-    values?: undefined
   ): string;
   encodeFunctionData(
     functionFragment: "mintNFT",
@@ -148,10 +142,6 @@ export interface ERC721MintingFactoryV2Interface extends utils.Interface {
   ): Result;
   decodeFunctionResult(
     functionFragment: "getTotalNFTsMinted",
-    data: BytesLike
-  ): Result;
-  decodeFunctionResult(
-    functionFragment: "inititalize",
     data: BytesLike
   ): Result;
   decodeFunctionResult(functionFragment: "mintNFT", data: BytesLike): Result;
@@ -302,10 +292,6 @@ export interface ERC721MintingFactoryV2 extends BaseContract {
       overrides?: CallOverrides
     ): Promise<[BigNumber]>;
 
-    inititalize(
-      overrides?: Overrides & { from?: PromiseOrValue<string> }
-    ): Promise<ContractTransaction>;
-
     mintNFT(
       _nftContract: PromiseOrValue<string>,
       _tokenURI: PromiseOrValue<string>,
@@ -368,10 +354,6 @@ export interface ERC721MintingFactoryV2 extends BaseContract {
     overrides?: CallOverrides
   ): Promise<BigNumber>;
 
-  inititalize(
-    overrides?: Overrides & { from?: PromiseOrValue<string> }
-  ): Promise<ContractTransaction>;
-
   mintNFT(
     _nftContract: PromiseOrValue<string>,
     _tokenURI: PromiseOrValue<string>,
@@ -433,8 +415,6 @@ export interface ERC721MintingFactoryV2 extends BaseContract {
       _nftContract: PromiseOrValue<string>,
       overrides?: CallOverrides
     ): Promise<BigNumber>;
-
-    inititalize(overrides?: CallOverrides): Promise<void>;
 
     mintNFT(
       _nftContract: PromiseOrValue<string>,
@@ -541,10 +521,6 @@ export interface ERC721MintingFactoryV2 extends BaseContract {
       overrides?: CallOverrides
     ): Promise<BigNumber>;
 
-    inititalize(
-      overrides?: Overrides & { from?: PromiseOrValue<string> }
-    ): Promise<BigNumber>;
-
     mintNFT(
       _nftContract: PromiseOrValue<string>,
       _tokenURI: PromiseOrValue<string>,
@@ -606,10 +582,6 @@ export interface ERC721MintingFactoryV2 extends BaseContract {
     getTotalNFTsMinted(
       _nftContract: PromiseOrValue<string>,
       overrides?: CallOverrides
-    ): Promise<PopulatedTransaction>;
-
-    inititalize(
-      overrides?: Overrides & { from?: PromiseOrValue<string> }
     ): Promise<PopulatedTransaction>;
 
     mintNFT(
