@@ -27,7 +27,9 @@ factoryContractInstance = async () => {
     console.log("Minting Factory Address: ", mintingFactoryAddress);
 }
 
-describe("ERC721MintingFactory", async () => {
+describe("ERC721MintingFactory", () => {
+
+    it()
 
     before(async () => {
         await factoryContractInstance();
