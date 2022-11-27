@@ -16,7 +16,7 @@ contract ERC721MintingFactory is Initializable{
     address public adminAddress;
     address public exchangeAddress;
 
-    function inititalize() public initializer {
+    function initialize() public initializer {
         adminAddress = msg.sender;
     }
 

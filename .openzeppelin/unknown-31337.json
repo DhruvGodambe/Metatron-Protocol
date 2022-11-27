@@ -1,5 +1,9 @@
 {
   "manifestVersion": "3.2",
+  "admin": {
+    "address": "0x9fE46736679d2D9a65F0992F2272dE9f3c7fa6e0",
+    "txHash": "0xec9ca665f9b420a5cbdfe7b4c7ede8a1d2d4b1b8a232d536065fcd163c4a9190"
+  },
   "proxies": [
     {
       "address": "0xe7f1725E7734CE288F8367e1Bb143E90bb3F0512",
@@ -12,28 +16,13 @@
       "kind": "uups"
     },
     {
-      "address": "0xCf7Ed3AccA5a467e9e704C703E8D87F634fB0Fc9",
-      "txHash": "0x45344c83f08e8301370be2181e4694b558c9d335f3e90314477b1f7c21407e64",
-      "kind": "uups"
-    },
-    {
       "address": "0xDc64a140Aa3E981100a9becA4E685f962f0cF6C9",
       "txHash": "0x1a4817133c666dd7a34a7b087699021ea0defa8edd27546cfa8c944e6799558b",
       "kind": "uups"
     },
     {
-      "address": "0x5FC8d32690cc91D4c39d9d3abcBD16989F875707",
-      "txHash": "0x55333260705edcc60f13aee8e1a7d1c13459fb715b67b5a1a812c1070d1fecac",
-      "kind": "uups"
-    },
-    {
       "address": "0x0165878A594ca255338adfa4d48449f69242Eb8F",
       "txHash": "0x8d162c64af7891eee078ca6eddef7652765953ee5009551c306ce907bfe196a3",
-      "kind": "uups"
-    },
-    {
-      "address": "0xa513E6E4b8f2a923D98304ec87F64353C4D5C853",
-      "txHash": "0x7f4d848923be4a66906c451ce99595aced5a8f643d36ef77d35ba70d803f462b",
       "kind": "uups"
     },
     {
@@ -44,11 +33,6 @@
     {
       "address": "0x8A791620dd6260079BF849Dc5567aDC3F2FdC318",
       "txHash": "0x748af4be710455506095ea2826345fb5aeef7058b6b4883da83e4fab19fe3b3c",
-      "kind": "uups"
-    },
-    {
-      "address": "0x610178dA211FEF7D417bC0e6FeD39F05609AD788",
-      "txHash": "0x1115f087f3a60b342c57092ae77fea753b078e977e7d3be9d583e9d039c0ab33",
       "kind": "uups"
     },
     {
@@ -75,13 +59,34 @@
       "address": "0x0B306BF915C4d645ff596e518fAf3F9669b97016",
       "txHash": "0xcebababdf08e1be4a22591641d455e806a65e4d3d91ff3020dfde78c154911b2",
       "kind": "uups"
+    },
+    {
+      "address": "0xCf7Ed3AccA5a467e9e704C703E8D87F634fB0Fc9",
+      "txHash": "0xb28aaf1907dc0961746d0e29d2bf29a4a2dd67ad91771630d506bbd413790af6",
+      "kind": "transparent"
+    },
+    {
+      "address": "0x5FC8d32690cc91D4c39d9d3abcBD16989F875707",
+      "txHash": "0x43f91e65fe969a8c123d37c2fb8747e67a245117bfe0a6a2821094463c415fbc",
+      "kind": "transparent"
+    },
+    {
+      "address": "0xa513E6E4b8f2a923D98304ec87F64353C4D5C853",
+      "txHash": "0xf37afa2a44cc7f6c32ec7e5ece3b02d36872fcf705a334c3f331a2ff1cb11fe5",
+      "kind": "transparent"
+    },
+    {
+      "address": "0x610178dA211FEF7D417bC0e6FeD39F05609AD788",
+      "txHash": "0xfc4f97ee6836f61c48e6aae908dfd70cc90d4dbcf415bdec3a60813318c3b3c4",
+      "kind": "transparent"
     }
   ],
   "impls": {
-    "b8a23a6363449c6e2f3013e8cf65d8b1623f6134dceb109f10deaff467302f89": {
+    "04e539093d54c12b46e9163fb873190998a56a8ccc5ad7c6f556a0e6607a53eb": {
       "address": "0x5FbDB2315678afecb367f032d93F642f64180aa3",
-      "txHash": "0x37506084621d4aae4b5de89640eb140f336e056dca84d2d0f2613ca2676c1a91",
+      "txHash": "0x3d6c2e522cab3e1f5f3e3307f327a7988b68d30ef30e4d1bc2f672db435c95ad",
       "layout": {
+        "solcVersion": "0.8.10",
         "storage": [
           {
             "label": "_initialized",
@@ -101,124 +106,44 @@
             "src": "@openzeppelin\\contracts-upgradeable\\proxy\\utils\\Initializable.sol:67"
           },
           {
-            "label": "__gap",
+            "label": "adminAddress",
+            "offset": 2,
+            "slot": "0",
+            "type": "t_address",
+            "contract": "ERC721MintingFactory",
+            "src": "contracts\\NFTMarketplace\\MintingAndStorage\\ERC721MintingFactory.sol:16"
+          },
+          {
+            "label": "exchangeAddress",
             "offset": 0,
             "slot": "1",
-            "type": "t_array(t_uint256)50_storage",
-            "contract": "ERC1967UpgradeUpgradeable",
-            "src": "@openzeppelin\\contracts-upgradeable\\proxy\\ERC1967\\ERC1967UpgradeUpgradeable.sol:211"
-          },
-          {
-            "label": "__gap",
-            "offset": 0,
-            "slot": "51",
-            "type": "t_array(t_uint256)50_storage",
-            "contract": "UUPSUpgradeable",
-            "src": "@openzeppelin\\contracts-upgradeable\\proxy\\utils\\UUPSUpgradeable.sol:107"
-          },
-          {
-            "label": "_status",
-            "offset": 0,
-            "slot": "101",
-            "type": "t_uint256",
-            "contract": "ReentrancyGuardUpgradeable",
-            "src": "@openzeppelin\\contracts-upgradeable\\security\\ReentrancyGuardUpgradeable.sol:38"
-          },
-          {
-            "label": "__gap",
-            "offset": 0,
-            "slot": "102",
-            "type": "t_array(t_uint256)49_storage",
-            "contract": "ReentrancyGuardUpgradeable",
-            "src": "@openzeppelin\\contracts-upgradeable\\security\\ReentrancyGuardUpgradeable.sol:74"
-          },
-          {
-            "label": "__gap",
-            "offset": 0,
-            "slot": "151",
-            "type": "t_array(t_uint256)50_storage",
-            "contract": "ContextUpgradeable",
-            "src": "@openzeppelin\\contracts-upgradeable\\utils\\ContextUpgradeable.sol:36"
-          },
-          {
-            "label": "_paused",
-            "offset": 0,
-            "slot": "201",
-            "type": "t_bool",
-            "contract": "PausableUpgradeable",
-            "src": "@openzeppelin\\contracts-upgradeable\\security\\PausableUpgradeable.sol:29"
-          },
-          {
-            "label": "__gap",
-            "offset": 0,
-            "slot": "202",
-            "type": "t_array(t_uint256)49_storage",
-            "contract": "PausableUpgradeable",
-            "src": "@openzeppelin\\contracts-upgradeable\\security\\PausableUpgradeable.sol:116"
-          },
-          {
-            "label": "stakingToken",
-            "offset": 0,
-            "slot": "251",
             "type": "t_address",
-            "contract": "Staking",
-            "src": "contracts\\Staking\\Staking.sol:28"
+            "contract": "ERC721MintingFactory",
+            "src": "contracts\\NFTMarketplace\\MintingAndStorage\\ERC721MintingFactory.sol:17"
           },
           {
-            "label": "rewardToken",
+            "label": "ownerToCollection",
             "offset": 0,
-            "slot": "252",
-            "type": "t_address",
-            "contract": "Staking",
-            "src": "contracts\\Staking\\Staking.sol:29"
+            "slot": "2",
+            "type": "t_mapping(t_address,t_array(t_address)dyn_storage)",
+            "contract": "ERC721MintingFactory",
+            "src": "contracts\\NFTMarketplace\\MintingAndStorage\\ERC721MintingFactory.sol:24"
           },
           {
-            "label": "STAKING_MONTHS",
+            "label": "collectionToOwnerToId",
             "offset": 0,
-            "slot": "253",
-            "type": "t_uint256",
-            "contract": "Staking",
-            "src": "contracts\\Staking\\Staking.sol:32"
+            "slot": "3",
+            "type": "t_mapping(t_address,t_mapping(t_address,t_uint256))",
+            "contract": "ERC721MintingFactory",
+            "src": "contracts\\NFTMarketplace\\MintingAndStorage\\ERC721MintingFactory.sol:26"
           },
           {
-            "label": "APY",
+            "label": "collectionToOwner",
             "offset": 0,
-            "slot": "254",
-            "type": "t_uint256",
-            "contract": "Staking",
-            "src": "contracts\\Staking\\Staking.sol:33"
-          },
-          {
-            "label": "REWARD_CONSTANT",
-            "offset": 0,
-            "slot": "255",
-            "type": "t_uint256",
-            "contract": "Staking",
-            "src": "contracts\\Staking\\Staking.sol:34"
-          },
-          {
-            "label": "maxUnclaimableToken",
-            "offset": 0,
-            "slot": "256",
-            "type": "t_uint256",
-            "contract": "Staking",
-            "src": "contracts\\Staking\\Staking.sol:38"
-          },
-          {
-            "label": "adminRegistry",
-            "offset": 0,
-            "slot": "257",
-            "type": "t_address",
-            "contract": "Staking",
-            "src": "contracts\\Staking\\Staking.sol:40"
-          },
-          {
-            "label": "UserInfo",
-            "offset": 0,
-            "slot": "258",
-            "type": "t_mapping(t_address,t_mapping(t_uint256,t_struct(StakingDetails)7895_storage))",
-            "contract": "Staking",
-            "src": "contracts\\Staking\\Staking.sol:44"
+            "slot": "4",
+            "type": "t_mapping(t_address,t_address)",
+            "contract": "ERC721MintingFactory",
+            "src": "contracts\\NFTMarketplace\\MintingAndStorage\\ERC721MintingFactory.sol:28"
           }
         ],
         "types": {
@@ -226,73 +151,237 @@
             "label": "address",
             "numberOfBytes": "20"
           },
-          "t_array(t_uint256)49_storage": {
-            "label": "uint256[49]",
-            "numberOfBytes": "1568"
-          },
-          "t_array(t_uint256)50_storage": {
-            "label": "uint256[50]",
-            "numberOfBytes": "1600"
+          "t_array(t_address)dyn_storage": {
+            "label": "address[]",
+            "numberOfBytes": "32"
           },
           "t_bool": {
             "label": "bool",
             "numberOfBytes": "1"
           },
-          "t_mapping(t_address,t_mapping(t_uint256,t_struct(StakingDetails)7895_storage))": {
-            "label": "mapping(address => mapping(uint256 => struct Staking.StakingDetails))",
+          "t_mapping(t_address,t_address)": {
+            "label": "mapping(address => address)",
             "numberOfBytes": "32"
           },
-          "t_mapping(t_uint256,t_struct(StakingDetails)7895_storage)": {
-            "label": "mapping(uint256 => struct Staking.StakingDetails)",
+          "t_mapping(t_address,t_array(t_address)dyn_storage)": {
+            "label": "mapping(address => address[])",
             "numberOfBytes": "32"
           },
-          "t_struct(StakingDetails)7895_storage": {
-            "label": "struct Staking.StakingDetails",
-            "members": [
-              {
-                "label": "stakingTimestamp",
-                "type": "t_uint256",
-                "offset": 0,
-                "slot": "0"
-              },
-              {
-                "label": "NFTvalue",
-                "type": "t_uint256",
-                "offset": 0,
-                "slot": "1"
-              },
-              {
-                "label": "totalClaimableRewards",
-                "type": "t_uint256",
-                "offset": 0,
-                "slot": "2"
-              },
-              {
-                "label": "claimedRewards",
-                "type": "t_uint256",
-                "offset": 0,
-                "slot": "3"
-              },
-              {
-                "label": "rewardInstallment",
-                "type": "t_uint256",
-                "offset": 0,
-                "slot": "4"
-              },
-              {
-                "label": "lastWithdrawalTime",
-                "type": "t_uint256",
-                "offset": 0,
-                "slot": "5"
-              },
-              {
-                "label": "lastRewardAccumulatedTime",
-                "type": "t_uint256",
-                "offset": 0,
-                "slot": "6"
-              }
-            ],
-            "numberOfBytes": "224"
+          "t_mapping(t_address,t_mapping(t_address,t_uint256))": {
+            "label": "mapping(address => mapping(address => uint256))",
+            "numberOfBytes": "32"
+          },
+          "t_mapping(t_address,t_uint256)": {
+            "label": "mapping(address => uint256)",
+            "numberOfBytes": "32"
+          },
+          "t_uint256": {
+            "label": "uint256",
+            "numberOfBytes": "32"
+          },
+          "t_uint8": {
+            "label": "uint8",
+            "numberOfBytes": "1"
+          }
+        }
+      }
+    },
+    "a961f52e3ac0ed58352beabd4f8f34bc82026d0df4bddaea0ac696b3bb4a9fd4": {
+      "address": "0xe7f1725E7734CE288F8367e1Bb143E90bb3F0512",
+      "txHash": "0x73deb5d1e50f7fcb623c57ebcf7eaed5f042e1cab89152c81590006b1fad10f4",
+      "layout": {
+        "solcVersion": "0.8.10",
+        "storage": [
+          {
+            "label": "_initialized",
+            "offset": 0,
+            "slot": "0",
+            "type": "t_uint8",
+            "contract": "Initializable",
+            "src": "@openzeppelin\\contracts-upgradeable\\proxy\\utils\\Initializable.sol:62",
+            "retypedFrom": "bool"
+          },
+          {
+            "label": "_initializing",
+            "offset": 1,
+            "slot": "0",
+            "type": "t_bool",
+            "contract": "Initializable",
+            "src": "@openzeppelin\\contracts-upgradeable\\proxy\\utils\\Initializable.sol:67"
+          },
+          {
+            "label": "adminAddress",
+            "offset": 2,
+            "slot": "0",
+            "type": "t_address",
+            "contract": "ERC721MintingFactory",
+            "src": "contracts\\NFTMarketplace\\MintingAndStorage\\ERC721MintingFactory.sol:16"
+          },
+          {
+            "label": "exchangeAddress",
+            "offset": 0,
+            "slot": "1",
+            "type": "t_address",
+            "contract": "ERC721MintingFactory",
+            "src": "contracts\\NFTMarketplace\\MintingAndStorage\\ERC721MintingFactory.sol:17"
+          },
+          {
+            "label": "ownerToCollection",
+            "offset": 0,
+            "slot": "2",
+            "type": "t_mapping(t_address,t_array(t_address)dyn_storage)",
+            "contract": "ERC721MintingFactory",
+            "src": "contracts\\NFTMarketplace\\MintingAndStorage\\ERC721MintingFactory.sol:24"
+          },
+          {
+            "label": "collectionToOwnerToId",
+            "offset": 0,
+            "slot": "3",
+            "type": "t_mapping(t_address,t_mapping(t_address,t_uint256))",
+            "contract": "ERC721MintingFactory",
+            "src": "contracts\\NFTMarketplace\\MintingAndStorage\\ERC721MintingFactory.sol:26"
+          },
+          {
+            "label": "collectionToOwner",
+            "offset": 0,
+            "slot": "4",
+            "type": "t_mapping(t_address,t_address)",
+            "contract": "ERC721MintingFactory",
+            "src": "contracts\\NFTMarketplace\\MintingAndStorage\\ERC721MintingFactory.sol:28"
+          }
+        ],
+        "types": {
+          "t_address": {
+            "label": "address",
+            "numberOfBytes": "20"
+          },
+          "t_array(t_address)dyn_storage": {
+            "label": "address[]",
+            "numberOfBytes": "32"
+          },
+          "t_bool": {
+            "label": "bool",
+            "numberOfBytes": "1"
+          },
+          "t_mapping(t_address,t_address)": {
+            "label": "mapping(address => address)",
+            "numberOfBytes": "32"
+          },
+          "t_mapping(t_address,t_array(t_address)dyn_storage)": {
+            "label": "mapping(address => address[])",
+            "numberOfBytes": "32"
+          },
+          "t_mapping(t_address,t_mapping(t_address,t_uint256))": {
+            "label": "mapping(address => mapping(address => uint256))",
+            "numberOfBytes": "32"
+          },
+          "t_mapping(t_address,t_uint256)": {
+            "label": "mapping(address => uint256)",
+            "numberOfBytes": "32"
+          },
+          "t_uint256": {
+            "label": "uint256",
+            "numberOfBytes": "32"
+          },
+          "t_uint8": {
+            "label": "uint8",
+            "numberOfBytes": "1"
+          }
+        }
+      }
+    },
+    "0be6d32968dfabdd1ec43f9f0574ad1c9d9de7d5fdd77835627e7a642dc60ed4": {
+      "address": "0x8A791620dd6260079BF849Dc5567aDC3F2FdC318",
+      "txHash": "0x4423ff67204f3a3d80f104de56e33787be4c8b82a1cce50774dad76a9e76934d",
+      "layout": {
+        "solcVersion": "0.8.10",
+        "storage": [
+          {
+            "label": "_initialized",
+            "offset": 0,
+            "slot": "0",
+            "type": "t_uint8",
+            "contract": "Initializable",
+            "src": "@openzeppelin\\contracts-upgradeable\\proxy\\utils\\Initializable.sol:62",
+            "retypedFrom": "bool"
+          },
+          {
+            "label": "_initializing",
+            "offset": 1,
+            "slot": "0",
+            "type": "t_bool",
+            "contract": "Initializable",
+            "src": "@openzeppelin\\contracts-upgradeable\\proxy\\utils\\Initializable.sol:67"
+          },
+          {
+            "label": "adminAddress",
+            "offset": 2,
+            "slot": "0",
+            "type": "t_address",
+            "contract": "ERC721MintingFactoryV2",
+            "src": "contracts\\NFTMarketplace\\MintingAndStorage\\ERC721MintingFactoryV2.sol:16"
+          },
+          {
+            "label": "exchangeAddress",
+            "offset": 0,
+            "slot": "1",
+            "type": "t_address",
+            "contract": "ERC721MintingFactoryV2",
+            "src": "contracts\\NFTMarketplace\\MintingAndStorage\\ERC721MintingFactoryV2.sol:17"
+          },
+          {
+            "label": "ownerToCollection",
+            "offset": 0,
+            "slot": "2",
+            "type": "t_mapping(t_address,t_array(t_address)dyn_storage)",
+            "contract": "ERC721MintingFactoryV2",
+            "src": "contracts\\NFTMarketplace\\MintingAndStorage\\ERC721MintingFactoryV2.sol:25"
+          },
+          {
+            "label": "collectionToOwnerToId",
+            "offset": 0,
+            "slot": "3",
+            "type": "t_mapping(t_address,t_mapping(t_address,t_uint256))",
+            "contract": "ERC721MintingFactoryV2",
+            "src": "contracts\\NFTMarketplace\\MintingAndStorage\\ERC721MintingFactoryV2.sol:27"
+          },
+          {
+            "label": "collectionToOwner",
+            "offset": 0,
+            "slot": "4",
+            "type": "t_mapping(t_address,t_address)",
+            "contract": "ERC721MintingFactoryV2",
+            "src": "contracts\\NFTMarketplace\\MintingAndStorage\\ERC721MintingFactoryV2.sol:29"
+          }
+        ],
+        "types": {
+          "t_address": {
+            "label": "address",
+            "numberOfBytes": "20"
+          },
+          "t_array(t_address)dyn_storage": {
+            "label": "address[]",
+            "numberOfBytes": "32"
+          },
+          "t_bool": {
+            "label": "bool",
+            "numberOfBytes": "1"
+          },
+          "t_mapping(t_address,t_address)": {
+            "label": "mapping(address => address)",
+            "numberOfBytes": "32"
+          },
+          "t_mapping(t_address,t_array(t_address)dyn_storage)": {
+            "label": "mapping(address => address[])",
+            "numberOfBytes": "32"
+          },
+          "t_mapping(t_address,t_mapping(t_address,t_uint256))": {
+            "label": "mapping(address => mapping(address => uint256))",
+            "numberOfBytes": "32"
+          },
+          "t_mapping(t_address,t_uint256)": {
+            "label": "mapping(address => uint256)",
+            "numberOfBytes": "32"
           },
           "t_uint256": {
             "label": "uint256",

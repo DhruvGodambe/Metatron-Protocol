@@ -1,0 +1,120 @@
+{
+  "manifestVersion": "3.2",
+  "admin": {
+    "address": "0x9705383702c59Faf735f65368aFEEaAa66f75846",
+    "txHash": "0x79522440b92ec6e2ce2a7f060f237fb5c206f7954ae2d9966f2b75922b68aae5"
+  },
+  "proxies": [
+    {
+      "address": "0xF583B37BB5fC4feA16aB2e938AB354D0BeCDd22B",
+      "txHash": "0x0ac7b68081e4260f4ec259f88f0f4e9f9bf8f3503eb265c0381e4d19a6bbb2c4",
+      "kind": "transparent"
+    }
+  ],
+  "impls": {
+    "0be6d32968dfabdd1ec43f9f0574ad1c9d9de7d5fdd77835627e7a642dc60ed4": {
+      "address": "0x75060D41ca690199644ee19c3D5959eAFa64308F",
+      "txHash": "0x58c108cf304345cc055ca15ae78cff8921c5e78482b3f70a171224e1853cb9af",
+      "layout": {
+        "solcVersion": "0.8.10",
+        "storage": [
+          {
+            "label": "_initialized",
+            "offset": 0,
+            "slot": "0",
+            "type": "t_uint8",
+            "contract": "Initializable",
+            "src": "@openzeppelin\\contracts-upgradeable\\proxy\\utils\\Initializable.sol:62",
+            "retypedFrom": "bool"
+          },
+          {
+            "label": "_initializing",
+            "offset": 1,
+            "slot": "0",
+            "type": "t_bool",
+            "contract": "Initializable",
+            "src": "@openzeppelin\\contracts-upgradeable\\proxy\\utils\\Initializable.sol:67"
+          },
+          {
+            "label": "adminAddress",
+            "offset": 2,
+            "slot": "0",
+            "type": "t_address",
+            "contract": "ERC721MintingFactoryV2",
+            "src": "contracts\\NFTMarketplace\\MintingAndStorage\\ERC721MintingFactoryV2.sol:16"
+          },
+          {
+            "label": "exchangeAddress",
+            "offset": 0,
+            "slot": "1",
+            "type": "t_address",
+            "contract": "ERC721MintingFactoryV2",
+            "src": "contracts\\NFTMarketplace\\MintingAndStorage\\ERC721MintingFactoryV2.sol:17"
+          },
+          {
+            "label": "ownerToCollection",
+            "offset": 0,
+            "slot": "2",
+            "type": "t_mapping(t_address,t_array(t_address)dyn_storage)",
+            "contract": "ERC721MintingFactoryV2",
+            "src": "contracts\\NFTMarketplace\\MintingAndStorage\\ERC721MintingFactoryV2.sol:25"
+          },
+          {
+            "label": "collectionToOwnerToId",
+            "offset": 0,
+            "slot": "3",
+            "type": "t_mapping(t_address,t_mapping(t_address,t_uint256))",
+            "contract": "ERC721MintingFactoryV2",
+            "src": "contracts\\NFTMarketplace\\MintingAndStorage\\ERC721MintingFactoryV2.sol:27"
+          },
+          {
+            "label": "collectionToOwner",
+            "offset": 0,
+            "slot": "4",
+            "type": "t_mapping(t_address,t_address)",
+            "contract": "ERC721MintingFactoryV2",
+            "src": "contracts\\NFTMarketplace\\MintingAndStorage\\ERC721MintingFactoryV2.sol:29"
+          }
+        ],
+        "types": {
+          "t_address": {
+            "label": "address",
+            "numberOfBytes": "20"
+          },
+          "t_array(t_address)dyn_storage": {
+            "label": "address[]",
+            "numberOfBytes": "32"
+          },
+          "t_bool": {
+            "label": "bool",
+            "numberOfBytes": "1"
+          },
+          "t_mapping(t_address,t_address)": {
+            "label": "mapping(address => address)",
+            "numberOfBytes": "32"
+          },
+          "t_mapping(t_address,t_array(t_address)dyn_storage)": {
+            "label": "mapping(address => address[])",
+            "numberOfBytes": "32"
+          },
+          "t_mapping(t_address,t_mapping(t_address,t_uint256))": {
+            "label": "mapping(address => mapping(address => uint256))",
+            "numberOfBytes": "32"
+          },
+          "t_mapping(t_address,t_uint256)": {
+            "label": "mapping(address => uint256)",
+            "numberOfBytes": "32"
+          },
+          "t_uint256": {
+            "label": "uint256",
+            "numberOfBytes": "32"
+          },
+          "t_uint8": {
+            "label": "uint8",
+            "numberOfBytes": "1"
+          }
+        }
+      }
+    }
+  }
+}

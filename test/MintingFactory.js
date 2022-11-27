@@ -1,4 +1,4 @@
-const abi = require('../../artifacts/contracts/NFTMarketplace/MintingAndStorage/ERC721NFTContract.sol/ERC721NFTContract.json');
+const abi = require('../artifacts/contracts/NFTMarketplace/MintingAndStorage/ERC721NFTContract.sol/ERC721NFTContract.json');
 
 const { expect, assert } = require("chai");
 const { ethers } = require("hardhat");
@@ -13,6 +13,7 @@ factoryContractInstance = async () => {
     const erc721MintingFactory = await ethers.getContractFactory("AltERC721MintingFactory");
     erc721MintingFactoryInstance = await erc721MintingFactory.deploy();
     await erc721MintingFactoryInstance.deployed();
+    console.log("Deployed!!!");
 
     mintingFactoryAddress = erc721MintingFactoryInstance.address;
     console.log("Minting Factory Address: ", mintingFactoryAddress);
