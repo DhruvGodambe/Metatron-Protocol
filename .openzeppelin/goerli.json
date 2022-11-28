@@ -9,12 +9,280 @@
       "address": "0xF583B37BB5fC4feA16aB2e938AB354D0BeCDd22B",
       "txHash": "0x0ac7b68081e4260f4ec259f88f0f4e9f9bf8f3503eb265c0381e4d19a6bbb2c4",
       "kind": "transparent"
+    },
+    {
+      "address": "0xa317371Dc414F80934B44a676086f921F3233506",
+      "txHash": "0x940baf0cb5991016e56f446dae01b01a25b7c922343bb328600d784e03c2b482",
+      "kind": "transparent"
+    },
+    {
+      "address": "0x59c270D1ABB061956F02b3537c6D182362Fa0Fd7",
+      "txHash": "0x592d9ac189eae795e507ec75e44a4cc467b960685a3b8606ce07a206b5d5bd90",
+      "kind": "transparent"
+    },
+    {
+      "address": "0x6D80C371fe0249e50f08C5dEf960D838AACaAdc9",
+      "txHash": "0x71341831e8aeebba96639fc50dee412730129777bf572142a7111ee28bc53f80",
+      "kind": "transparent"
+    },
+    {
+      "address": "0x6E8D3A5614918eeb0655A2F5EC76CaD7cFF5F1C4",
+      "txHash": "0x8a0e10e0eca1226dd9998f1efdb345e7727dc8aca3cd626d0e15389ec0f02592",
+      "kind": "transparent"
+    },
+    {
+      "address": "0x4775da541Dac7c2802bc4025af5F6FBD867298f1",
+      "txHash": "0x11dda5fdddf75854cb05985ea823e50a03966862dbcc5e5ebdfa2de9857776a6",
+      "kind": "transparent"
+    },
+    {
+      "address": "0xb722D0efd91F909053c73ADf24a18beC1DA5B2b9",
+      "txHash": "0x90fe5adb14631c624d42bc13f3900390c1d9c875558171e9b2f51c405198cd4e",
+      "kind": "transparent"
+    },
+    {
+      "address": "0x852dd00a5955421998867e3D4678475B7a46f2CC",
+      "txHash": "0x6a3b884bcef9a6684ef49713309ccb4488ac55927ee8ce4daa2eea776e764a81",
+      "kind": "transparent"
+    },
+    {
+      "address": "0x35012cc79e78b85a175A29c9a386762Ee66d5c80",
+      "txHash": "0xef1f433b617c4d118ebc8f28af37bfcb004c8e942f978fcd733437ddad998fc2",
+      "kind": "transparent"
+    },
+    {
+      "address": "0xe5Ed8792299d052825Ade90DEb81191c7DE16D61",
+      "txHash": "0xf035ee2d4ce2015442f89713bd28b4ac522cfe0d6b4eccece935ff90f9bee035",
+      "kind": "transparent"
+    },
+    {
+      "address": "0x383a1F67d6a793E08c35bF55b5D3bB5d87B2970F",
+      "txHash": "0x9820be97598c15974175fe5c3b7d5140f8f572b5fadd8fc56b402008e2020715",
+      "kind": "transparent"
+    },
+    {
+      "address": "0xCf71856D5Db248F520d5de654De290F8Abb8bB2A",
+      "txHash": "0xfadb2a070e29bec79d7447a90ba5c9d51dbc0ce732b58c761270009b718561cb",
+      "kind": "transparent"
+    },
+    {
+      "address": "0xAF2d70d149e2eAD46f558ae035881fea7E3e1034",
+      "txHash": "0x9371f7821a67282a650d0fd86f946bb2421464d50dd9479d2d4dcd3d953f48af",
+      "kind": "transparent"
     }
   ],
   "impls": {
     "0be6d32968dfabdd1ec43f9f0574ad1c9d9de7d5fdd77835627e7a642dc60ed4": {
       "address": "0x75060D41ca690199644ee19c3D5959eAFa64308F",
       "txHash": "0x58c108cf304345cc055ca15ae78cff8921c5e78482b3f70a171224e1853cb9af",
+      "layout": {
+        "solcVersion": "0.8.10",
+        "storage": [
+          {
+            "label": "_initialized",
+            "offset": 0,
+            "slot": "0",
+            "type": "t_uint8",
+            "contract": "Initializable",
+            "src": "@openzeppelin\\contracts-upgradeable\\proxy\\utils\\Initializable.sol:62",
+            "retypedFrom": "bool"
+          },
+          {
+            "label": "_initializing",
+            "offset": 1,
+            "slot": "0",
+            "type": "t_bool",
+            "contract": "Initializable",
+            "src": "@openzeppelin\\contracts-upgradeable\\proxy\\utils\\Initializable.sol:67"
+          },
+          {
+            "label": "adminAddress",
+            "offset": 2,
+            "slot": "0",
+            "type": "t_address",
+            "contract": "ERC721MintingFactoryV2",
+            "src": "contracts\\NFTMarketplace\\MintingAndStorage\\ERC721MintingFactoryV2.sol:16"
+          },
+          {
+            "label": "exchangeAddress",
+            "offset": 0,
+            "slot": "1",
+            "type": "t_address",
+            "contract": "ERC721MintingFactoryV2",
+            "src": "contracts\\NFTMarketplace\\MintingAndStorage\\ERC721MintingFactoryV2.sol:17"
+          },
+          {
+            "label": "ownerToCollection",
+            "offset": 0,
+            "slot": "2",
+            "type": "t_mapping(t_address,t_array(t_address)dyn_storage)",
+            "contract": "ERC721MintingFactoryV2",
+            "src": "contracts\\NFTMarketplace\\MintingAndStorage\\ERC721MintingFactoryV2.sol:25"
+          },
+          {
+            "label": "collectionToOwnerToId",
+            "offset": 0,
+            "slot": "3",
+            "type": "t_mapping(t_address,t_mapping(t_address,t_uint256))",
+            "contract": "ERC721MintingFactoryV2",
+            "src": "contracts\\NFTMarketplace\\MintingAndStorage\\ERC721MintingFactoryV2.sol:27"
+          },
+          {
+            "label": "collectionToOwner",
+            "offset": 0,
+            "slot": "4",
+            "type": "t_mapping(t_address,t_address)",
+            "contract": "ERC721MintingFactoryV2",
+            "src": "contracts\\NFTMarketplace\\MintingAndStorage\\ERC721MintingFactoryV2.sol:29"
+          }
+        ],
+        "types": {
+          "t_address": {
+            "label": "address",
+            "numberOfBytes": "20"
+          },
+          "t_array(t_address)dyn_storage": {
+            "label": "address[]",
+            "numberOfBytes": "32"
+          },
+          "t_bool": {
+            "label": "bool",
+            "numberOfBytes": "1"
+          },
+          "t_mapping(t_address,t_address)": {
+            "label": "mapping(address => address)",
+            "numberOfBytes": "32"
+          },
+          "t_mapping(t_address,t_array(t_address)dyn_storage)": {
+            "label": "mapping(address => address[])",
+            "numberOfBytes": "32"
+          },
+          "t_mapping(t_address,t_mapping(t_address,t_uint256))": {
+            "label": "mapping(address => mapping(address => uint256))",
+            "numberOfBytes": "32"
+          },
+          "t_mapping(t_address,t_uint256)": {
+            "label": "mapping(address => uint256)",
+            "numberOfBytes": "32"
+          },
+          "t_uint256": {
+            "label": "uint256",
+            "numberOfBytes": "32"
+          },
+          "t_uint8": {
+            "label": "uint8",
+            "numberOfBytes": "1"
+          }
+        }
+      }
+    },
+    "a961f52e3ac0ed58352beabd4f8f34bc82026d0df4bddaea0ac696b3bb4a9fd4": {
+      "address": "0x159b80C3f8327a129dcC53A6B8E3E38f34f4939e",
+      "txHash": "0xac311c7a23a8859dc34b1ef22013d15ae2dd41f5b4e6872aa9aabe02d4f3e61e",
+      "layout": {
+        "solcVersion": "0.8.10",
+        "storage": [
+          {
+            "label": "_initialized",
+            "offset": 0,
+            "slot": "0",
+            "type": "t_uint8",
+            "contract": "Initializable",
+            "src": "@openzeppelin\\contracts-upgradeable\\proxy\\utils\\Initializable.sol:62",
+            "retypedFrom": "bool"
+          },
+          {
+            "label": "_initializing",
+            "offset": 1,
+            "slot": "0",
+            "type": "t_bool",
+            "contract": "Initializable",
+            "src": "@openzeppelin\\contracts-upgradeable\\proxy\\utils\\Initializable.sol:67"
+          },
+          {
+            "label": "adminAddress",
+            "offset": 2,
+            "slot": "0",
+            "type": "t_address",
+            "contract": "ERC721MintingFactory",
+            "src": "contracts\\NFTMarketplace\\MintingAndStorage\\ERC721MintingFactory.sol:16"
+          },
+          {
+            "label": "exchangeAddress",
+            "offset": 0,
+            "slot": "1",
+            "type": "t_address",
+            "contract": "ERC721MintingFactory",
+            "src": "contracts\\NFTMarketplace\\MintingAndStorage\\ERC721MintingFactory.sol:17"
+          },
+          {
+            "label": "ownerToCollection",
+            "offset": 0,
+            "slot": "2",
+            "type": "t_mapping(t_address,t_array(t_address)dyn_storage)",
+            "contract": "ERC721MintingFactory",
+            "src": "contracts\\NFTMarketplace\\MintingAndStorage\\ERC721MintingFactory.sol:24"
+          },
+          {
+            "label": "collectionToOwnerToId",
+            "offset": 0,
+            "slot": "3",
+            "type": "t_mapping(t_address,t_mapping(t_address,t_uint256))",
+            "contract": "ERC721MintingFactory",
+            "src": "contracts\\NFTMarketplace\\MintingAndStorage\\ERC721MintingFactory.sol:26"
+          },
+          {
+            "label": "collectionToOwner",
+            "offset": 0,
+            "slot": "4",
+            "type": "t_mapping(t_address,t_address)",
+            "contract": "ERC721MintingFactory",
+            "src": "contracts\\NFTMarketplace\\MintingAndStorage\\ERC721MintingFactory.sol:28"
+          }
+        ],
+        "types": {
+          "t_address": {
+            "label": "address",
+            "numberOfBytes": "20"
+          },
+          "t_array(t_address)dyn_storage": {
+            "label": "address[]",
+            "numberOfBytes": "32"
+          },
+          "t_bool": {
+            "label": "bool",
+            "numberOfBytes": "1"
+          },
+          "t_mapping(t_address,t_address)": {
+            "label": "mapping(address => address)",
+            "numberOfBytes": "32"
+          },
+          "t_mapping(t_address,t_array(t_address)dyn_storage)": {
+            "label": "mapping(address => address[])",
+            "numberOfBytes": "32"
+          },
+          "t_mapping(t_address,t_mapping(t_address,t_uint256))": {
+            "label": "mapping(address => mapping(address => uint256))",
+            "numberOfBytes": "32"
+          },
+          "t_mapping(t_address,t_uint256)": {
+            "label": "mapping(address => uint256)",
+            "numberOfBytes": "32"
+          },
+          "t_uint256": {
+            "label": "uint256",
+            "numberOfBytes": "32"
+          },
+          "t_uint8": {
+            "label": "uint8",
+            "numberOfBytes": "1"
+          }
+        }
+      }
+    },
+    "2a0ac48da3562a2c2f5fee981078a944438b8ba53bed15c87e347ab1b042fa9b": {
+      "address": "0x61FC9a75C84533fE4EB66e6685406B31F8D2c51F",
+      "txHash": "0xbf02ac0fe33f83c6cb4115435795a757779dab1ab5486bc53d9d10d377bc077a",
       "layout": {
         "solcVersion": "0.8.10",
         "storage": [
