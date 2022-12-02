@@ -2,10 +2,10 @@
 pragma solidity ^0.8.4;
 
 
-import "./ERC721NFTContract.sol";
+import "./NFTContract.sol";
 import "@openzeppelin/contracts-upgradeable/proxy/utils/Initializable.sol";
 
-contract ERC721MintingFactoryV2 is Initializable{
+contract NFTMintingFactoryV2 is Initializable{
     // this contract creates an NFT contract
     // and then it can mint NFT for that contract
     // keeps track of all NFT contracts for the users
@@ -57,7 +57,7 @@ contract ERC721MintingFactoryV2 is Initializable{
         returns (address _nftcontract)
     {
         // create new contract
-        address nftContract = address(new ERC721NFTContract(_name, _symbol));
+        address nftContract = address(new NFTContract(_name, _symbol));
         // update mapping of owner to NFTContracts
         ownerToCollection[msg.sender].push(nftContract);
         collectionToOwner[nftContract] = msg.sender;
@@ -74,8 +74,8 @@ contract ERC721MintingFactoryV2 is Initializable{
         public
         onlyAdmin()
     {
-        ERC721NFTContract(_nftContract).mintNewNFT(_tokenURI);
-        uint256 _tokenId = ERC721NFTContract(_nftContract).getTotalNFTs();
+        NFTContract(_nftContract).mintNewNFT(_tokenURI);
+        uint256 _tokenId = NFTContract(_nftContract).getTotalNFTs();
 
         emit NFTMinted(_nftContract, _tokenId);
     }
@@ -128,6 +128,6 @@ contract ERC721MintingFactoryV2 is Initializable{
         view
         returns (uint256)
     {
-        return ERC721NFTContract(_nftContract).getTotalNFTs();
+        return NFTContract(_nftContract).getTotalNFTs();
     }
 }

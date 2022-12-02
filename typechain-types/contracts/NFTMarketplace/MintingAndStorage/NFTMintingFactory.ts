@@ -27,7 +27,7 @@ import type {
   PromiseOrValue,
 } from "../../../common";
 
-export interface ERC721MintingFactoryInterface extends utils.Interface {
+export interface NFTMintingFactoryInterface extends utils.Interface {
   functions: {
     "adminAddress()": FunctionFragment;
     "collectionToOwner(address)": FunctionFragment;
@@ -215,12 +215,12 @@ export type OwnerUpdatedEvent = TypedEvent<
 
 export type OwnerUpdatedEventFilter = TypedEventFilter<OwnerUpdatedEvent>;
 
-export interface ERC721MintingFactory extends BaseContract {
+export interface NFTMintingFactory extends BaseContract {
   connect(signerOrProvider: Signer | Provider | string): this;
   attach(addressOrName: string): this;
   deployed(): Promise<this>;
 
-  interface: ERC721MintingFactoryInterface;
+  interface: NFTMintingFactoryInterface;
 
   queryFilter<TEvent extends TypedEvent>(
     event: TypedEventFilter<TEvent>,

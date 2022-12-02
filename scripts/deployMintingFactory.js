@@ -1,25 +1,26 @@
 const { ethers, upgrades } = require("hardhat");
 
-const NFTContractabi = require('../artifacts/contracts/NFTMarketplace/MintingAndStorage/ERC721NFTContract.sol/ERC721NFTContract.json');
+const NFTContractabi = require('../artifacts/contracts/NFTMarketplace/MintingAndStorage/NFTContract.sol/NFTContract.json');
 
 
 const main = async () => {
     [admin] = await ethers.getSigners();
     console.log("Admin address : ", admin.address);
-    let nftContract;
+    // let nftContract;
 
-    const nftContractFactory = await hre.ethers.getContractFactory("ERC721MintingFactory");
+    const mintingFactoryContract = await hre.ethers.getContractFactory("NFTMintingFactory");
     console.log("Deploying ERC721 Minting Factory Proxy...");
-    const nftFactoryProxy = await upgrades.deployProxy(nftContractFactory, {
+    const mintingFactoryProxy = await upgrades.deployProxy(mintingFactoryContract, {
         initializer : "initialize",
     });
-    await nftFactoryProxy.deployed();
-    console.log("Proxy contract deployed at : ", nftFactoryProxy.address);
+    await mintingFactoryProxy.deployed();
+    console.log("Proxy contract deployed at : ", mintingFactoryProxy.address);
+    console.log("Minting Factory Proxy  : ", mintingFactoryProxy);
 
 
     //Minting collection
         // console.log("Creating a collection ...");
-        // let collectionAddress = await nftFactoryProxy.connect(admin).createNFTContract("BlockNormandy", "BN");
+        // let collectionAddress = await mintingFactoryProxy.connect(admin).createNFTContract("BlockNormandy", "BN");
         // console.log("Collection created");
 
         // const receipt = await collectionAddress.wait();

@@ -6,7 +6,7 @@ require("@nomicfoundation/hardhat-chai-matchers");
 const { task } = require("hardhat/config");
 import { config as dotEnvConfig } from "dotenv";
 dotEnvConfig();
-const RPCURL = require("../metatronprotocol/scripts/Wormhole/RPC.json");
+const RPCURL = require("../Metatron-Protocol/scripts/Wormhole/RPC.json");
 
 
 // This is a sample Hardhat task. To learn how to create your own go to
@@ -35,30 +35,30 @@ module.exports = {
 
 
     goerli: {
-      // url: 'https://goerli.infura.io/v3/680f182649ca427a8fff593b93f71fac',
+      // url: "https://eth-goerli.g.alchemy.com/v2/OW3K8LQl3oZeZLxuOTzgbRkFsEBkThgA",
       url: RPCURL.RPCurl.goerli,
-      accounts: [process.env.PRIVATE_KEY],
+      accounts: [process.env.PRIVATE_KEY_1],
       chainId: 5,
     },
 
     mumbai: {
       // url: `https://matic-mumbai.chainstacklabs.com`,
       url: RPCURL.RPCurl.mumbai,
-      accounts: [process.env.PRIVATE_KEY],
+      accounts: [process.env.PRIVATE_KEY_1],
       chainId: 80001,
     },
 
     fuji: {
       // url: `https://api.avax-test.network/ext/bc/C/rpc`,
       url: RPCURL.RPCurl.fuji,
-      accounts: [process.env.PRIVATE_KEY],
+      accounts: [process.env.PRIVATE_KEY_1],
       chainId: 43113,
     },
 
     bsc: {
       // url: `https://data-seed-prebsc-1-s1.binance.org:8545`,
       url: RPCURL.RPCurl.bsc,
-      accounts: [process.env.PRIVATE_KEY],
+      accounts: [process.env.PRIVATE_KEY_1],
       chainId: 97,
     },
   },
