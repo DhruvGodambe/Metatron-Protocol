@@ -118,14 +118,14 @@ contract ExchangeCore is Ownable, Pausable {
     }
 
 
-    function validateAuctionTime(uint256 _auctionEndTime)
-        internal
-        view
-        returns (bool)
-    {
-        require(_auctionEndTime > block.timestamp, "Auction has ended");
-        return true;
-    }
+    // function validateAuctionTime(uint256 _auctionEndTime)
+    //     internal
+    //     view
+    //     returns (bool)
+    // {
+    //     require(_auctionEndTime > block.timestamp, "Auction has ended");
+    //     return true;
+    // }
 
 
     function executeOrder(
@@ -198,15 +198,15 @@ contract ExchangeCore is Ownable, Pausable {
     }
 
 
-    function setTradingFeeFactor(uint256 _tradingFeeFactor) public onlyOwner {
-        require(_tradingFeeFactor != 0, "Fee cannot be zero");
-        tradingFeeFactor = _tradingFeeFactor;
-    }
+//     function setTradingFeeFactor(uint256 _tradingFeeFactor) public onlyOwner {
+//         require(_tradingFeeFactor != 0, "Fee cannot be zero");
+//         tradingFeeFactor = _tradingFeeFactor;
+//     }
 
-    function getTradingFeeFactor() public view returns (uint256) {
-        return tradingFeeFactor;
-    }
-}
+//     function getTradingFeeFactor() public view returns (uint256) {
+//         return tradingFeeFactor;
+//     }
+// }
 
 // function=> placeOrder (nftCollection, tokenId)
 //   primary market - nft's listing price -. min price bid, auction time in web2
