@@ -16,6 +16,7 @@ contract NFTContract is ERC721URIStorage {
         console.log("This is an NFT contract. Whoa!");
     }
 
+
     function mintNewNFT(string memory tokenURI) public returns (uint256) {
         _tokenIds.increment();
         uint256 newItemId = _tokenIds.current();

@@ -71,7 +71,7 @@ contract NFTMintingFactory is Initializable{
     // the one in above mapping could call it
     function mintNFT(address _nftContract, string memory _tokenURI)
         public
-        onlyAdmin()
+        onlyExchange()
     {
         NFTContract(_nftContract).mintNewNFT(_tokenURI);
         uint256 _tokenId = NFTContract(_nftContract).getTotalNFTs();
