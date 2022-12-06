@@ -4,5 +4,6 @@
 export type { Stakable } from "./Stakable";
 export type { StakeFactory } from "./StakeFactory";
 export type { Staking } from "./Staking";
+export type { StakingPool } from "./StakingPool";
 export type { StakingProxy } from "./StakingProxy";
 export type { StakingV2 } from "./StakingV2";
