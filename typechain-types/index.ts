@@ -88,6 +88,12 @@ export type { ERC721MintingFactoryV2 } from "./contracts/NFTMarketplace/MintingA
 export { ERC721MintingFactoryV2__factory } from "./factories/contracts/NFTMarketplace/MintingAndStorage/ERC721MintingFactoryV2__factory";
 export type { ERC721NFTContract } from "./contracts/NFTMarketplace/MintingAndStorage/ERC721NFTContract";
 export { ERC721NFTContract__factory } from "./factories/contracts/NFTMarketplace/MintingAndStorage/ERC721NFTContract__factory";
+export type { NFTContract } from "./contracts/NFTMarketplace/MintingAndStorage/NFTContract";
+export { NFTContract__factory } from "./factories/contracts/NFTMarketplace/MintingAndStorage/NFTContract__factory";
+export type { NFTMintingFactory } from "./contracts/NFTMarketplace/MintingAndStorage/NFTMintingFactory";
+export { NFTMintingFactory__factory } from "./factories/contracts/NFTMarketplace/MintingAndStorage/NFTMintingFactory__factory";
+export type { NFTMintingFactoryV2 } from "./contracts/NFTMarketplace/MintingAndStorage/NFTMintingFactoryV2";
+export { NFTMintingFactoryV2__factory } from "./factories/contracts/NFTMarketplace/MintingAndStorage/NFTMintingFactoryV2__factory";
 export type { AdminRegistry } from "./contracts/Registry/AdminRegistry";
 export { AdminRegistry__factory } from "./factories/contracts/Registry/AdminRegistry__factory";
 export type { IAdminRegistry } from "./contracts/Registry/IAdminRegistry";

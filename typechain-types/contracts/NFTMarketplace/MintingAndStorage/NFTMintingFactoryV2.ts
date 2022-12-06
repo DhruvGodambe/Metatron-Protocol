@@ -27,7 +27,7 @@ import type {
   PromiseOrValue,
 } from "../../../common";
 
-export interface ERC721MintingFactoryInterface extends utils.Interface {
+export interface NFTMintingFactoryV2Interface extends utils.Interface {
   functions: {
     "adminAddress()": FunctionFragment;
     "collectionToOwner(address)": FunctionFragment;
@@ -35,6 +35,8 @@ export interface ERC721MintingFactoryInterface extends utils.Interface {
     "createNFTContract(string,string)": FunctionFragment;
     "exchangeAddress()": FunctionFragment;
     "getCollectionForOwner(address)": FunctionFragment;
+    "getIdsForCollectionToOwner(address,address)": FunctionFragment;
+    "getTotalNFTsMinted(address)": FunctionFragment;
     "initialize()": FunctionFragment;
     "mintNFT(address,string)": FunctionFragment;
     "ownerToCollection(address,uint256)": FunctionFragment;
@@ -50,6 +52,8 @@ export interface ERC721MintingFactoryInterface extends utils.Interface {
       | "createNFTContract"
       | "exchangeAddress"
       | "getCollectionForOwner"
+      | "getIdsForCollectionToOwner"
+      | "getTotalNFTsMinted"
       | "initialize"
       | "mintNFT"
       | "ownerToCollection"
@@ -79,6 +83,14 @@ export interface ERC721MintingFactoryInterface extends utils.Interface {
   ): string;
   encodeFunctionData(
     functionFragment: "getCollectionForOwner",
+    values: [PromiseOrValue<string>]
+  ): string;
+  encodeFunctionData(
+    functionFragment: "getIdsForCollectionToOwner",
+    values: [PromiseOrValue<string>, PromiseOrValue<string>]
+  ): string;
+  encodeFunctionData(
+    functionFragment: "getTotalNFTsMinted",
     values: [PromiseOrValue<string>]
   ): string;
   encodeFunctionData(
@@ -128,6 +140,14 @@ export interface ERC721MintingFactoryInterface extends utils.Interface {
   ): Result;
   decodeFunctionResult(
     functionFragment: "getCollectionForOwner",
+    data: BytesLike
+  ): Result;
+  decodeFunctionResult(
+    functionFragment: "getIdsForCollectionToOwner",
+    data: BytesLike
+  ): Result;
+  decodeFunctionResult(
+    functionFragment: "getTotalNFTsMinted",
     data: BytesLike
   ): Result;
   decodeFunctionResult(functionFragment: "initialize", data: BytesLike): Result;
@@ -215,12 +235,12 @@ export type OwnerUpdatedEvent = TypedEvent<
 
 export type OwnerUpdatedEventFilter = TypedEventFilter<OwnerUpdatedEvent>;
 
-export interface ERC721MintingFactory extends BaseContract {
+export interface NFTMintingFactoryV2 extends BaseContract {
   connect(signerOrProvider: Signer | Provider | string): this;
   attach(addressOrName: string): this;
   deployed(): Promise<this>;
 
-  interface: ERC721MintingFactoryInterface;
+  interface: NFTMintingFactoryV2Interface;
 
   queryFilter<TEvent extends TypedEvent>(
     event: TypedEventFilter<TEvent>,
@@ -267,6 +287,17 @@ export interface ERC721MintingFactory extends BaseContract {
       user: PromiseOrValue<string>,
       overrides?: CallOverrides
     ): Promise<[string[]]>;
+
+    getIdsForCollectionToOwner(
+      _nftContract: PromiseOrValue<string>,
+      user: PromiseOrValue<string>,
+      overrides?: CallOverrides
+    ): Promise<[BigNumber[]]>;
+
+    getTotalNFTsMinted(
+      _nftContract: PromiseOrValue<string>,
+      overrides?: CallOverrides
+    ): Promise<[BigNumber]>;
 
     initialize(
       overrides?: Overrides & { from?: PromiseOrValue<string> }
@@ -323,6 +354,17 @@ export interface ERC721MintingFactory extends BaseContract {
     overrides?: CallOverrides
   ): Promise<string[]>;
 
+  getIdsForCollectionToOwner(
+    _nftContract: PromiseOrValue<string>,
+    user: PromiseOrValue<string>,
+    overrides?: CallOverrides
+  ): Promise<BigNumber[]>;
+
+  getTotalNFTsMinted(
+    _nftContract: PromiseOrValue<string>,
+    overrides?: CallOverrides
+  ): Promise<BigNumber>;
+
   initialize(
     overrides?: Overrides & { from?: PromiseOrValue<string> }
   ): Promise<ContractTransaction>;
@@ -377,6 +419,17 @@ export interface ERC721MintingFactory extends BaseContract {
       user: PromiseOrValue<string>,
       overrides?: CallOverrides
     ): Promise<string[]>;
+
+    getIdsForCollectionToOwner(
+      _nftContract: PromiseOrValue<string>,
+      user: PromiseOrValue<string>,
+      overrides?: CallOverrides
+    ): Promise<BigNumber[]>;
+
+    getTotalNFTsMinted(
+      _nftContract: PromiseOrValue<string>,
+      overrides?: CallOverrides
+    ): Promise<BigNumber>;
 
     initialize(overrides?: CallOverrides): Promise<void>;
 
@@ -474,6 +527,17 @@ export interface ERC721MintingFactory extends BaseContract {
       overrides?: CallOverrides
     ): Promise<BigNumber>;
 
+    getIdsForCollectionToOwner(
+      _nftContract: PromiseOrValue<string>,
+      user: PromiseOrValue<string>,
+      overrides?: CallOverrides
+    ): Promise<BigNumber>;
+
+    getTotalNFTsMinted(
+      _nftContract: PromiseOrValue<string>,
+      overrides?: CallOverrides
+    ): Promise<BigNumber>;
+
     initialize(
       overrides?: Overrides & { from?: PromiseOrValue<string> }
     ): Promise<BigNumber>;
@@ -527,6 +591,17 @@ export interface ERC721MintingFactory extends BaseContract {
 
     getCollectionForOwner(
       user: PromiseOrValue<string>,
+      overrides?: CallOverrides
+    ): Promise<PopulatedTransaction>;
+
+    getIdsForCollectionToOwner(
+      _nftContract: PromiseOrValue<string>,
+      user: PromiseOrValue<string>,
+      overrides?: CallOverrides
+    ): Promise<PopulatedTransaction>;
+
+    getTotalNFTsMinted(
+      _nftContract: PromiseOrValue<string>,
       overrides?: CallOverrides
     ): Promise<PopulatedTransaction>;
 

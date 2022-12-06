@@ -12,7 +12,7 @@ import "./../Interface/IERC20.sol";
 import "./../Interface/IERC721.sol";
 import "./../Interface/IMintingFactory.sol";
 
-contract ExchangeCore is Ownable, Pausable {
+contract ExchangeCoreNew is Ownable, Pausable {
     using SafeMath for uint256;
 
     IMintingFactory internal mintingFactory;
@@ -40,44 +40,6 @@ contract ExchangeCore is Ownable, Pausable {
     );
 
     event OrderCancelled(address nftContract, uint256 tokenId, address buyer);
-
-
-    // function putOnDirectSale(address _nftContract, uint256 _tokenId)
-    //     public
-    //     returns (address, uint256)
-    // {
-    //     // check if the sender owns this nft
-    //     address nftOwner = IERC721(_nftContract).ownerOf(_tokenId);
-    //     require(
-    //         msg.sender == nftOwner,
-    //         "Message sender is not the owner of NFT"
-    //     );
-    //     // then approve this nft to the contract
-    //     // this function in web3, we'll add approve functionality
-
-    //     return (_nftContract, _tokenId);
-    // }
-
-
-    // function putOnAuction(address _nftContract, uint256 _tokenId)
-    //     public
-    //     returns (
-    //         address,
-    //         uint256,
-    //         uint256
-    //     )
-    // {
-    //     // check if sender owns this nft
-    //     address nftOwner = IERC721(_nftContract).ownerOf(_tokenId);
-    //     require(
-    //         msg.sender == nftOwner,
-    //         "Message sender is not the owner of NFT"
-    //     );
-    //     // then approve this nft to the contract
-    //     // then, add auctionTimeLimit to blocktime and that is auctionEndTime
-    //     uint256 auctionEndTime = block.timestamp + auctionTimeLimit;
-    //     return (_nftContract, _tokenId, auctionEndTime);
-    // }
 
 
     function validateSeller(
@@ -118,14 +80,11 @@ contract ExchangeCore is Ownable, Pausable {
     }
 
 
-    // function validateAuctionTime(uint256 _auctionEndTime)
-    //     internal
-    //     view
-    //     returns (bool)
-    // {
-    //     require(_auctionEndTime > block.timestamp, "Auction has ended");
-    //     return true;
-    // }
+    function mintAndTransfer(address _nftContract, string memory _tokenURI, uint256 _tokenId) public {
+        IMintingFactory(mintingFactory).mintNFT(_nftContract, _tokenURI);
+        IERC721(_nftContract).transfer(address(this), msg.sender, _tokenId);
+    }
+
 
 
     function executeOrder(
@@ -133,23 +92,14 @@ contract ExchangeCore is Ownable, Pausable {
         uint256 _tokenId,
         address _buyer,
         address _seller,
-        uint256 _amount,
-        uint256 _auctionEndTime
+        uint256 _amount
     ) public onlyOwner whenNotPaused {
-        // Validating all the requirements
-        bool validTime;
-        if (_auctionEndTime != 0) {
-            validTime = validateAuctionTime(_auctionEndTime);
-        } else {
-            validTime = true;
-        }
 
         bool validSeller = validateSeller(_nftContract, _tokenId, _seller);
         bool validBuyer = validateBuyer(_buyer, _amount);
 
         bool isCancel = cancelledOrders[_buyer][_nftContract][_tokenId];
 
-        require(validTime, "Auction is already over");
         require(validSeller, "Seller isn't valid");
         require(validBuyer, "Buyer isn't valid");
         require(isCancel == false, "Order is cancelled");

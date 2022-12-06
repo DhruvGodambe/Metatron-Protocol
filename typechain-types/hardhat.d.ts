@@ -185,6 +185,18 @@ declare module "hardhat/types/runtime" {
       signerOrOptions?: ethers.Signer | FactoryOptions
     ): Promise<Contracts.ERC721NFTContract__factory>;
     getContractFactory(
+      name: "NFTContract",
+      signerOrOptions?: ethers.Signer | FactoryOptions
+    ): Promise<Contracts.NFTContract__factory>;
+    getContractFactory(
+      name: "NFTMintingFactory",
+      signerOrOptions?: ethers.Signer | FactoryOptions
+    ): Promise<Contracts.NFTMintingFactory__factory>;
+    getContractFactory(
+      name: "NFTMintingFactoryV2",
+      signerOrOptions?: ethers.Signer | FactoryOptions
+    ): Promise<Contracts.NFTMintingFactoryV2__factory>;
+    getContractFactory(
       name: "AdminRegistry",
       signerOrOptions?: ethers.Signer | FactoryOptions
     ): Promise<Contracts.AdminRegistry__factory>;
@@ -484,6 +496,21 @@ declare module "hardhat/types/runtime" {
       address: string,
       signer?: ethers.Signer
     ): Promise<Contracts.ERC721NFTContract>;
+    getContractAt(
+      name: "NFTContract",
+      address: string,
+      signer?: ethers.Signer
+    ): Promise<Contracts.NFTContract>;
+    getContractAt(
+      name: "NFTMintingFactory",
+      address: string,
+      signer?: ethers.Signer
+    ): Promise<Contracts.NFTMintingFactory>;
+    getContractAt(
+      name: "NFTMintingFactoryV2",
+      address: string,
+      signer?: ethers.Signer
+    ): Promise<Contracts.NFTMintingFactoryV2>;
     getContractAt(
       name: "AdminRegistry",
       address: string,

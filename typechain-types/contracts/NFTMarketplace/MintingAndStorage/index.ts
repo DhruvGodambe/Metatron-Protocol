@@ -6,3 +6,6 @@ export type { enoch };
 export type { ERC721MintingFactory } from "./ERC721MintingFactory";
 export type { ERC721MintingFactoryV2 } from "./ERC721MintingFactoryV2";
 export type { ERC721NFTContract } from "./ERC721NFTContract";
+export type { NFTContract } from "./NFTContract";
+export type { NFTMintingFactory } from "./NFTMintingFactory";
+export type { NFTMintingFactoryV2 } from "./NFTMintingFactoryV2";

