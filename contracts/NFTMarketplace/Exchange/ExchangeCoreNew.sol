@@ -81,11 +81,17 @@ contract ExchangeCoreNew is Ownable, Pausable {
 
 
     function mintAndTransfer(address _nftContract, string memory _tokenURI, uint256 _tokenId) public {
-        IMintingFactory(mintingFactory).mintNFT(_nftContract, _tokenURI);
-        IERC721(_nftContract).transfer(address(this), msg.sender, _tokenId);
+        bool success = IMintingFactory(mintingFactory).mintNFT(_nftContract, _tokenURI);
+        if(success){
+           
+            IERC721(_nftContract).transferFrom(address(mintingFactory), msg.sender, _tokenId);
+        }
     }
 
 
+//2 fns: PrimarySale and SecondarySale
+//Primary sale: No tradingfee
+//Sec sale: 4% trading fee
 
     function executeOrder(
         address _nftContract,
@@ -93,7 +99,7 @@ contract ExchangeCoreNew is Ownable, Pausable {
         address _buyer,
         address _seller,
         uint256 _amount
-    ) public onlyOwner whenNotPaused {
+    ) public whenNotPaused {
 
         bool validSeller = validateSeller(_nftContract, _tokenId, _seller);
         bool validBuyer = validateBuyer(_buyer, _amount);
@@ -118,6 +124,8 @@ contract ExchangeCoreNew is Ownable, Pausable {
 
         // transferring the NFT to the buyer
         IERC721(_nftContract).transferFrom(_seller, _buyer, _tokenId);
+        //Use this for second sale
+
         // updating the NFT ownership in our Minting Factory
         IMintingFactory(mintingFactory).updateOwner(
             _nftContract,
