@@ -1,9 +1,8 @@
-// SPDX-License-Identifier: MIT
+//SPDX-License-Identifier: MIT
 pragma solidity ^0.8.10;
 
-import "../Tokens/IERC20.sol";
 import "@openzeppelin/contracts/utils/Counters.sol";
-
+import "../Tokens/IERC20.sol";
 
 error StakingPool__StakeFailed(uint256 required);
 error StakingPool__WithdrawFailed(uint256 required);
@@ -13,22 +12,22 @@ contract StakingPool {
     using Counters for Counters.Counter;
     Counters.Counter private positionId;
 
+    address public owner;
+
     struct UserInfo {
         uint32 positionId;
         uint256 startTime;
         uint256 endTime;
-        uint256 tokenStakedAmount;
-        
+        uint256 tokenStakedAmount;        
     }
-
     // UserInfo[] public userInfo;
 
     IERC20 public immutable stakingToken; //RJToken
     IERC20 public immutable rewardToken; //RWDToken
 
     mapping(address => UserInfo[]) public userPositions; 
-    mapping(address => uint256) public balanceOf; //RJToken balance of a user
-    mapping(address => uint256) public rewards; // User address => rewards already claimed
+    // User address => rewards already claimed
+    mapping(address => uint256) public rewards;
 
     // use openzepplin counter contract
     // uint32 public positionIdCounter;
@@ -42,13 +41,11 @@ contract StakingPool {
         uint256 _timestamp,
         uint256 indexed positionId
     );
-
     event Unstake(
         address indexed _user,
         uint256 indexed _amount,
         uint256 _timestamp
     );
-
     event RewardsClaimed(address indexed _user, uint256 _rewardAmount, uint256 _timestamp);
 
 
@@ -56,7 +53,7 @@ contract StakingPool {
         owner = msg.sender;
         stakingToken = IERC20(_stakingToken); //RJToken
         rewardToken = IERC20(_rewardToken); //RWDToken
-        APY = _APY;
+        APY = _APY; // 20 %
         stakingTimeConstant = _stakingTimeConstant; // e.g. 2HR = 2*60*60 = 7200 sec
     }
 
@@ -77,8 +74,7 @@ contract StakingPool {
             userPositions[msg.sender].positionId = position ; 
             userPositions[msg.sender].startTime = block.timestamp;
             userPositions[msg.sender].tokenStakedAmount += _amount;
-        }    
-
+        }
 
         bool success = stakingToken.transferFrom(
             msg.sender,
@@ -99,14 +95,16 @@ contract StakingPool {
     }
 
     function withdraw() external {
-        uint balance = userPositions[msg.sender].tokenStakedAmount; // create position for balances
-        require(balance > 0, "amount = 0");
+        uint256 balance = userPositions[msg.sender].tokenStakedAmount; // create position for balances
+        require(balance > 0, "you have not staked token");
 
-        require((block.timestamp - startTime[msg.sender]) >= stakingTimeConstant, "User cannot claim rewards before due time!");
+        uint256 postion = userPositions[msg.sender].positionId;
+        require(position > 0 , "you have to stack first")
 
-        balanceOf[msg.sender] = 0;
-        endTime[msg.sender] = block.timestamp;
-       
+        require((block.timestamp - userPositions[msg.sender].startTime) >= stakingTimeConstant, "User cannot claim rewards before due time!");
+
+        // balanceOf[msg.sender] = 0;
+        userPositions[msg.sender].endTime = block.timestamp;
 
         bool success = stakingToken.transfer(msg.sender, balance);
         if (!success) {
@@ -117,19 +115,18 @@ contract StakingPool {
     }
 
     function getReward(address _account) public view returns (uint256) {
-        require(balanceOf[_account] > 0, "amount = 0");
+        uint256 balance = userPositions[msg.sender].tokenStakedAmount;
+        require(balance > 0, "you have not staked token");
 
-        return (balanceOf[_account] *(((block.timestamp - startTime[_account])) * APY) / 100);
+        return (balance *(((block.timestamp - startTime[_account])) * APY) * REWARD_CONSTANT / 100);
         // get user position 
         // based on user positions claculate reward for each position for loop
-        uint256 tokenStakedAmount 
-        tokenStaked 
         // create precision constant = 10000 
         // save it in reward var
     }
 
-    function earnReward(address _account) external {
-        uint256 reward = getReward(_account); // should rename to  calculate reward 
+    function claimReward(address _account) external {
+        uint256 reward = userPositions[_account].tokenStakedAmount 
         bool success = rewardToken.mint(msg.sender, reward);
         if(! success) {
             revert StakingPool__WithdrawFailed({required: reward});
@@ -138,7 +135,7 @@ contract StakingPool {
 
     // get all position of the given user
     function getPositions (address _account) public view returns (uint256) {
-        return 
+        return userPositions[msg.sender]
     }
 
     // user position of _address return array of all user position
