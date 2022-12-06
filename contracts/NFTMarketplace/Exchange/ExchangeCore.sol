@@ -156,7 +156,7 @@ contract ExchangeCore is Ownable, Pausable {
 
         _amount *= 1e18;
 
-        // transfer tradingFee to the exchange
+        // transfer tradingFee to the exchange 4%
         uint256 fee = _amount.mul(tradingFeeFactor).div(tradingFeeFactorMax);
         IERC20(WETH).transferFrom(_buyer, address(this), fee);
 
