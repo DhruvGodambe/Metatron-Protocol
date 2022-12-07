@@ -153,6 +153,10 @@ declare module "hardhat/types/runtime" {
       signerOrOptions?: ethers.Signer | FactoryOptions
     ): Promise<Contracts.ExchangeCore__factory>;
     getContractFactory(
+      name: "ExchangeCoreNew",
+      signerOrOptions?: ethers.Signer | FactoryOptions
+    ): Promise<Contracts.ExchangeCoreNew__factory>;
+    getContractFactory(
       name: "IERC20",
       signerOrOptions?: ethers.Signer | FactoryOptions
     ): Promise<Contracts.IERC20__factory>;
@@ -456,6 +460,11 @@ declare module "hardhat/types/runtime" {
       address: string,
       signer?: ethers.Signer
     ): Promise<Contracts.ExchangeCore>;
+    getContractAt(
+      name: "ExchangeCoreNew",
+      address: string,
+      signer?: ethers.Signer
+    ): Promise<Contracts.ExchangeCoreNew>;
     getContractAt(
       name: "IERC20",
       address: string,

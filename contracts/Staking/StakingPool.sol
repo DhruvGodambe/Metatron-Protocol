@@ -3,6 +3,7 @@ pragma solidity ^0.8.10;
 
 import "@openzeppelin/contracts/utils/Counters.sol";
 import "../Tokens/IERC20.sol";
+import "hardhat/console.sol";
 
 error StakingPool__StakeFailed(uint256 required);
 error StakingPool__WithdrawFailed(uint256 required);
@@ -10,12 +11,12 @@ error StakingPool__WithdrawFailed(uint256 required);
 contract StakingPool {
 
     using Counters for Counters.Counter;
-    Counters.Counter private positionId;
+    Counters.Counter private positionIdCounter;
 
     address public owner;
 
     struct UserInfo {
-        uint32 positionId;
+        uint256 positionId;
         uint256 startTime;
         uint256 endTime;
         uint256 tokenStakedAmount;        
@@ -67,13 +68,16 @@ contract StakingPool {
 
         // check for approval         
         require(stakingToken.allowance(msg.sender, address(this)) >= _amount, "Staking Contract is not approved for this Token or approved amount is not equal to given amount" );  
+        
+        UserInfo memory currentUserInfo = UserInfo(positionIdCounter.current(), block.timestamp, block.timestamp + stakingTimeConstant, _amount);
+        
+        UserInfo[] storage currentUserPositions = userPositions[msg.sender];
 
-        if(userPositions[msg.sender].positionId != 0 && msg.sender != address(0)) {
-            // keep track of how much this user has staked
-            uint256 position = userPositions[msg.sender].positionId.increment();
-            userPositions[msg.sender].positionId = position ; 
-            userPositions[msg.sender].startTime = block.timestamp;
-            userPositions[msg.sender].tokenStakedAmount += _amount;
+        if(currentUserPositions.length > 0) {
+            currentUserPositions.push(currentUserInfo);
+        } else {
+
+            
         }
 
         bool success = stakingToken.transferFrom(
@@ -91,54 +95,58 @@ contract StakingPool {
         //3. update user position for perticular user
         // increment position id counter
 
-        emit Staked(msg.sender, _amount, block.timestamp, position);
+        emit Staked(msg.sender, _amount, block.timestamp, positionIdCounter.current());
+        positionIdCounter.increment();
     }
 
-    function withdraw() external {
-        uint256 balance = userPositions[msg.sender].tokenStakedAmount; // create position for balances
-        require(balance > 0, "you have not staked token");
+    function withdraw(uint256 _positionId) external {
+        // for loop on which user position of msg sender will return an array
+        // in for loop compare every element of every array with positioId of the argument
+        //if the postionid matches with struct use that struct withdrawing further
+        // uint256 balance = userPositions[msg.sender]._positionId.tokenStakedAmount; // create position for balances
+        // require(balance > 0, "you have not staked token");
 
-        uint256 postion = userPositions[msg.sender].positionId;
-        require(position > 0 , "you have to stack first");
+        // uint256 position = userPositions[msg.sender].positionId;
+        // require(position > 0 , "you have to stack first");
 
-        require((block.timestamp - userPositions[msg.sender].startTime) >= stakingTimeConstant, "User cannot claim rewards before due time!");
+        // require((block.timestamp - userPositions[msg.sender].startTime) >= stakingTimeConstant, "User cannot claim rewards before due time!");
 
-        userPositions[msg.sender].endTime = block.timestamp;
+        // userPositions[msg.sender].endTime = block.timestamp;
 
-        bool success = stakingToken.transfer(msg.sender, balance);
-        if (!success) {
-            revert StakingPool__WithdrawFailed({required: balance});
-        }
+        // bool success = stakingToken.transfer(msg.sender, balance);
+        // if (!success) {
+        //     revert StakingPool__WithdrawFailed({required: balance});
+        // }
 
-        emit WithdrawStake(msg.sender, balance, block.timestamp);
+        // emit Unstake(msg.sender, balance, block.timestamp);
     }
 
     function getReward(address _account) public view returns (uint256) {
-        uint256 balance = userPositions[msg.sender].tokenStakedAmount;
-        require(balance > 0, "you have not staked token");
+        // uint256 balance = userPositions[msg.sender].tokenStakedAmount;
+        // require(balance > 0, "you have not staked token");
 
-        // get user position 
-        for(i = 0; i<= userPositions[msg.sender].positionId; i++) {
-        return (userPositions[msg.sender].i.tokenStakedAmount *(((block.timestamp - startTime[_account])) * APY) * REWARD_CONSTANT / 100);
+        // // get user position 
+        // for(uint i = 0; i<= userPositions[msg.sender].positionId; i++) {
+        // return (userPositions[msg.sender].i.tokenStakedAmount *(((block.timestamp - userPositions[_account].startTime)) * APY) / PRECISION_CONSTANT);
 
         }
         // based on user positions claculate reward for each position for loop
         // create precision constant = 10000 
         // save it in reward var
-    }
+    
 
-    function claimReward(address _account, uint _positionId) external {
-        uint256 reward = userPositions[_account]._positionId.tokenStakedAmount * ((((block.timestamp - startTime[_account]) ) * APY) * REWARD_CONSTANT / 100);
-        bool success = rewardToken.mint(msg.sender, reward);
-        if(! success) {
-            revert StakingPool__WithdrawFailed({required: reward});
-        }
+    // function claimReward(address _account, uint _positionId) external {
+    //     uint256 reward = userPositions[_account]._positionId.tokenStakedAmount * ((((block.timestamp - userPositions[_account].startTime) ) * APY) / PRECISION_CONSTANT );
+    //     bool success = rewardToken.mint(msg.sender, reward);
+    //     if(! success) {
+    //         revert StakingPool__WithdrawFailed({required: reward});
+    //     }
         
-        emit RewardsClaimed(_account, reward, block.timestap);
-    }
+    //     emit RewardsClaimed(_account, reward, block.timestap);
+    // }
 
-    // get all position of the given user
-    function getPositions (address _account) public view returns (uint256[]) {
-        return userPositions[msg.sender];
-    }
+    // // get all position of the given user
+    // function getPositions (address _account) public view returns (uint256) {
+    //     return userPositions[msg.sender];
+    // }
 }

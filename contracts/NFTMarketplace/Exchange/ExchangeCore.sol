@@ -118,14 +118,14 @@ contract ExchangeCore is Ownable, Pausable {
     }
 
 
-    // function validateAuctionTime(uint256 _auctionEndTime)
-    //     internal
-    //     view
-    //     returns (bool)
-    // {
-    //     require(_auctionEndTime > block.timestamp, "Auction has ended");
-    //     return true;
-    // }
+    function validateAuctionTime(uint256 _auctionEndTime)
+        internal
+        view
+        returns (bool)
+    {
+        require(_auctionEndTime > block.timestamp, "Auction has ended");
+        return true;
+    }
 
 
     function executeOrder(
@@ -198,6 +198,7 @@ contract ExchangeCore is Ownable, Pausable {
     }
 
 
+
 //     function setTradingFeeFactor(uint256 _tradingFeeFactor) public onlyOwner {
 //         require(_tradingFeeFactor != 0, "Fee cannot be zero");
 //         tradingFeeFactor = _tradingFeeFactor;
@@ -228,3 +229,4 @@ contract ExchangeCore is Ownable, Pausable {
 // => calls execute order(signature) internal fn
 //      => update owner of NFT in Minting Factory (Interface)
 //      => Royalties distribution
+}

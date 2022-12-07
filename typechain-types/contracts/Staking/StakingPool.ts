@@ -29,84 +29,46 @@ import type {
 
 export interface StakingPoolInterface extends utils.Interface {
   functions: {
-    "balanceOf(address)": FunctionFragment;
-    "duration()": FunctionFragment;
-    "earned(address)": FunctionFragment;
-    "endTime(address)": FunctionFragment;
-    "finishAt()": FunctionFragment;
-    "getReward()": FunctionFragment;
-    "lastTimeRewardApplicable()": FunctionFragment;
+    "APY()": FunctionFragment;
+    "PRECISION_CONSTANT()": FunctionFragment;
+    "getReward(address)": FunctionFragment;
     "owner()": FunctionFragment;
-    "rewardPerToken()": FunctionFragment;
-    "rewardPerTokenStored()": FunctionFragment;
-    "rewardRate()": FunctionFragment;
+    "rewardToken()": FunctionFragment;
     "rewards(address)": FunctionFragment;
-    "rewardsToken()": FunctionFragment;
     "stake(uint256)": FunctionFragment;
+    "stakingTimeConstant()": FunctionFragment;
     "stakingToken()": FunctionFragment;
-    "startTime(address)": FunctionFragment;
-    "totalSupply()": FunctionFragment;
-    "updatedAt()": FunctionFragment;
-    "userInfo(uint256)": FunctionFragment;
-    "userRewardPerTokenPaid(address)": FunctionFragment;
-    "withdraw()": FunctionFragment;
+    "userPositions(address,uint256)": FunctionFragment;
+    "withdraw(uint256)": FunctionFragment;
   };
 
   getFunction(
     nameOrSignatureOrTopic:
-      | "balanceOf"
-      | "duration"
-      | "earned"
-      | "endTime"
-      | "finishAt"
+      | "APY"
+      | "PRECISION_CONSTANT"
       | "getReward"
-      | "lastTimeRewardApplicable"
       | "owner"
-      | "rewardPerToken"
-      | "rewardPerTokenStored"
-      | "rewardRate"
+      | "rewardToken"
       | "rewards"
-      | "rewardsToken"
       | "stake"
+      | "stakingTimeConstant"
       | "stakingToken"
-      | "startTime"
-      | "totalSupply"
-      | "updatedAt"
-      | "userInfo"
-      | "userRewardPerTokenPaid"
+      | "userPositions"
       | "withdraw"
   ): FunctionFragment;
 
+  encodeFunctionData(functionFragment: "APY", values?: undefined): string;
   encodeFunctionData(
-    functionFragment: "balanceOf",
-    values: [PromiseOrValue<string>]
-  ): string;
-  encodeFunctionData(functionFragment: "duration", values?: undefined): string;
-  encodeFunctionData(
-    functionFragment: "earned",
-    values: [PromiseOrValue<string>]
-  ): string;
-  encodeFunctionData(
-    functionFragment: "endTime",
-    values: [PromiseOrValue<string>]
-  ): string;
-  encodeFunctionData(functionFragment: "finishAt", values?: undefined): string;
-  encodeFunctionData(functionFragment: "getReward", values?: undefined): string;
-  encodeFunctionData(
-    functionFragment: "lastTimeRewardApplicable",
+    functionFragment: "PRECISION_CONSTANT",
     values?: undefined
+  ): string;
+  encodeFunctionData(
+    functionFragment: "getReward",
+    values: [PromiseOrValue<string>]
   ): string;
   encodeFunctionData(functionFragment: "owner", values?: undefined): string;
   encodeFunctionData(
-    functionFragment: "rewardPerToken",
-    values?: undefined
-  ): string;
-  encodeFunctionData(
-    functionFragment: "rewardPerTokenStored",
-    values?: undefined
-  ): string;
-  encodeFunctionData(
-    functionFragment: "rewardRate",
+    functionFragment: "rewardToken",
     values?: undefined
   ): string;
   encodeFunctionData(
@@ -114,111 +76,100 @@ export interface StakingPoolInterface extends utils.Interface {
     values: [PromiseOrValue<string>]
   ): string;
   encodeFunctionData(
-    functionFragment: "rewardsToken",
-    values?: undefined
-  ): string;
-  encodeFunctionData(
     functionFragment: "stake",
     values: [PromiseOrValue<BigNumberish>]
   ): string;
   encodeFunctionData(
+    functionFragment: "stakingTimeConstant",
+    values?: undefined
+  ): string;
+  encodeFunctionData(
     functionFragment: "stakingToken",
     values?: undefined
   ): string;
   encodeFunctionData(
-    functionFragment: "startTime",
-    values: [PromiseOrValue<string>]
+    functionFragment: "userPositions",
+    values: [PromiseOrValue<string>, PromiseOrValue<BigNumberish>]
   ): string;
   encodeFunctionData(
-    functionFragment: "totalSupply",
-    values?: undefined
-  ): string;
-  encodeFunctionData(functionFragment: "updatedAt", values?: undefined): string;
-  encodeFunctionData(
-    functionFragment: "userInfo",
+    functionFragment: "withdraw",
     values: [PromiseOrValue<BigNumberish>]
   ): string;
-  encodeFunctionData(
-    functionFragment: "userRewardPerTokenPaid",
-    values: [PromiseOrValue<string>]
-  ): string;
-  encodeFunctionData(functionFragment: "withdraw", values?: undefined): string;
 
-  decodeFunctionResult(functionFragment: "balanceOf", data: BytesLike): Result;
-  decodeFunctionResult(functionFragment: "duration", data: BytesLike): Result;
-  decodeFunctionResult(functionFragment: "earned", data: BytesLike): Result;
-  decodeFunctionResult(functionFragment: "endTime", data: BytesLike): Result;
-  decodeFunctionResult(functionFragment: "finishAt", data: BytesLike): Result;
-  decodeFunctionResult(functionFragment: "getReward", data: BytesLike): Result;
+  decodeFunctionResult(functionFragment: "APY", data: BytesLike): Result;
   decodeFunctionResult(
-    functionFragment: "lastTimeRewardApplicable",
+    functionFragment: "PRECISION_CONSTANT",
     data: BytesLike
   ): Result;
+  decodeFunctionResult(functionFragment: "getReward", data: BytesLike): Result;
   decodeFunctionResult(functionFragment: "owner", data: BytesLike): Result;
   decodeFunctionResult(
-    functionFragment: "rewardPerToken",
+    functionFragment: "rewardToken",
     data: BytesLike
   ): Result;
-  decodeFunctionResult(
-    functionFragment: "rewardPerTokenStored",
-    data: BytesLike
-  ): Result;
-  decodeFunctionResult(functionFragment: "rewardRate", data: BytesLike): Result;
   decodeFunctionResult(functionFragment: "rewards", data: BytesLike): Result;
+  decodeFunctionResult(functionFragment: "stake", data: BytesLike): Result;
   decodeFunctionResult(
-    functionFragment: "rewardsToken",
+    functionFragment: "stakingTimeConstant",
     data: BytesLike
   ): Result;
-  decodeFunctionResult(functionFragment: "stake", data: BytesLike): Result;
   decodeFunctionResult(
     functionFragment: "stakingToken",
     data: BytesLike
   ): Result;
-  decodeFunctionResult(functionFragment: "startTime", data: BytesLike): Result;
   decodeFunctionResult(
-    functionFragment: "totalSupply",
-    data: BytesLike
-  ): Result;
-  decodeFunctionResult(functionFragment: "updatedAt", data: BytesLike): Result;
-  decodeFunctionResult(functionFragment: "userInfo", data: BytesLike): Result;
-  decodeFunctionResult(
-    functionFragment: "userRewardPerTokenPaid",
+    functionFragment: "userPositions",
     data: BytesLike
   ): Result;
   decodeFunctionResult(functionFragment: "withdraw", data: BytesLike): Result;
 
   events: {
-    "Staked(address,uint256,uint256)": EventFragment;
-    "WithdrewStake(address,uint256,uint256)": EventFragment;
+    "RewardsClaimed(address,uint256,uint256)": EventFragment;
+    "Staked(address,uint256,uint256,uint256)": EventFragment;
+    "Unstake(address,uint256,uint256)": EventFragment;
   };
 
+  getEvent(nameOrSignatureOrTopic: "RewardsClaimed"): EventFragment;
   getEvent(nameOrSignatureOrTopic: "Staked"): EventFragment;
-  getEvent(nameOrSignatureOrTopic: "WithdrewStake"): EventFragment;
+  getEvent(nameOrSignatureOrTopic: "Unstake"): EventFragment;
 }
 
+export interface RewardsClaimedEventObject {
+  _user: string;
+  _rewardAmount: BigNumber;
+  _timestamp: BigNumber;
+}
+export type RewardsClaimedEvent = TypedEvent<
+  [string, BigNumber, BigNumber],
+  RewardsClaimedEventObject
+>;
+
+export type RewardsClaimedEventFilter = TypedEventFilter<RewardsClaimedEvent>;
+
 export interface StakedEventObject {
-  user: string;
-  amount: BigNumber;
-  timestamp: BigNumber;
+  _user: string;
+  _amount: BigNumber;
+  _timestamp: BigNumber;
+  positionId: BigNumber;
 }
 export type StakedEvent = TypedEvent<
-  [string, BigNumber, BigNumber],
+  [string, BigNumber, BigNumber, BigNumber],
   StakedEventObject
 >;
 
 export type StakedEventFilter = TypedEventFilter<StakedEvent>;
 
-export interface WithdrewStakeEventObject {
-  user: string;
-  amount: BigNumber;
-  timestamp: BigNumber;
+export interface UnstakeEventObject {
+  _user: string;
+  _amount: BigNumber;
+  _timestamp: BigNumber;
 }
-export type WithdrewStakeEvent = TypedEvent<
+export type UnstakeEvent = TypedEvent<
   [string, BigNumber, BigNumber],
-  WithdrewStakeEventObject
+  UnstakeEventObject
 >;
 
-export type WithdrewStakeEventFilter = TypedEventFilter<WithdrewStakeEvent>;
+export type UnstakeEventFilter = TypedEventFilter<UnstakeEvent>;
 
 export interface StakingPool extends BaseContract {
   connect(signerOrProvider: Signer | Provider | string): this;
@@ -247,401 +198,261 @@ export interface StakingPool extends BaseContract {
   removeListener: OnEvent<this>;
 
   functions: {
-    balanceOf(
-      arg0: PromiseOrValue<string>,
-      overrides?: CallOverrides
-    ): Promise<[BigNumber]>;
+    APY(overrides?: CallOverrides): Promise<[BigNumber]>;
 
-    duration(overrides?: CallOverrides): Promise<[BigNumber]>;
+    PRECISION_CONSTANT(overrides?: CallOverrides): Promise<[BigNumber]>;
 
-    earned(
+    getReward(
       _account: PromiseOrValue<string>,
       overrides?: CallOverrides
     ): Promise<[BigNumber]>;
 
-    endTime(
-      arg0: PromiseOrValue<string>,
-      overrides?: CallOverrides
-    ): Promise<[BigNumber]>;
-
-    finishAt(overrides?: CallOverrides): Promise<[BigNumber]>;
-
-    getReward(
-      overrides?: Overrides & { from?: PromiseOrValue<string> }
-    ): Promise<ContractTransaction>;
-
-    lastTimeRewardApplicable(overrides?: CallOverrides): Promise<[BigNumber]>;
-
     owner(overrides?: CallOverrides): Promise<[string]>;
 
-    rewardPerToken(overrides?: CallOverrides): Promise<[BigNumber]>;
-
-    rewardPerTokenStored(overrides?: CallOverrides): Promise<[BigNumber]>;
-
-    rewardRate(overrides?: CallOverrides): Promise<[BigNumber]>;
+    rewardToken(overrides?: CallOverrides): Promise<[string]>;
 
     rewards(
       arg0: PromiseOrValue<string>,
       overrides?: CallOverrides
     ): Promise<[BigNumber]>;
 
-    rewardsToken(overrides?: CallOverrides): Promise<[string]>;
-
     stake(
       _amount: PromiseOrValue<BigNumberish>,
       overrides?: Overrides & { from?: PromiseOrValue<string> }
     ): Promise<ContractTransaction>;
 
+    stakingTimeConstant(overrides?: CallOverrides): Promise<[BigNumber]>;
+
     stakingToken(overrides?: CallOverrides): Promise<[string]>;
 
-    startTime(
+    userPositions(
       arg0: PromiseOrValue<string>,
-      overrides?: CallOverrides
-    ): Promise<[BigNumber]>;
-
-    totalSupply(overrides?: CallOverrides): Promise<[BigNumber]>;
-
-    updatedAt(overrides?: CallOverrides): Promise<[BigNumber]>;
-
-    userInfo(
-      arg0: PromiseOrValue<BigNumberish>,
+      arg1: PromiseOrValue<BigNumberish>,
       overrides?: CallOverrides
     ): Promise<
-      [string, BigNumber, BigNumber] & {
-        userAddress: string;
-        lastDepositedTime: BigNumber;
-        tokenStaked: BigNumber;
+      [BigNumber, BigNumber, BigNumber, BigNumber] & {
+        positionId: BigNumber;
+        startTime: BigNumber;
+        endTime: BigNumber;
+        tokenStakedAmount: BigNumber;
       }
     >;
 
-    userRewardPerTokenPaid(
-      arg0: PromiseOrValue<string>,
-      overrides?: CallOverrides
-    ): Promise<[BigNumber]>;
-
     withdraw(
+      _positionId: PromiseOrValue<BigNumberish>,
       overrides?: Overrides & { from?: PromiseOrValue<string> }
     ): Promise<ContractTransaction>;
   };
 
-  balanceOf(
-    arg0: PromiseOrValue<string>,
-    overrides?: CallOverrides
-  ): Promise<BigNumber>;
+  APY(overrides?: CallOverrides): Promise<BigNumber>;
 
-  duration(overrides?: CallOverrides): Promise<BigNumber>;
+  PRECISION_CONSTANT(overrides?: CallOverrides): Promise<BigNumber>;
 
-  earned(
+  getReward(
     _account: PromiseOrValue<string>,
     overrides?: CallOverrides
   ): Promise<BigNumber>;
 
-  endTime(
-    arg0: PromiseOrValue<string>,
-    overrides?: CallOverrides
-  ): Promise<BigNumber>;
-
-  finishAt(overrides?: CallOverrides): Promise<BigNumber>;
-
-  getReward(
-    overrides?: Overrides & { from?: PromiseOrValue<string> }
-  ): Promise<ContractTransaction>;
-
-  lastTimeRewardApplicable(overrides?: CallOverrides): Promise<BigNumber>;
-
   owner(overrides?: CallOverrides): Promise<string>;
 
-  rewardPerToken(overrides?: CallOverrides): Promise<BigNumber>;
-
-  rewardPerTokenStored(overrides?: CallOverrides): Promise<BigNumber>;
-
-  rewardRate(overrides?: CallOverrides): Promise<BigNumber>;
+  rewardToken(overrides?: CallOverrides): Promise<string>;
 
   rewards(
     arg0: PromiseOrValue<string>,
     overrides?: CallOverrides
   ): Promise<BigNumber>;
 
-  rewardsToken(overrides?: CallOverrides): Promise<string>;
-
   stake(
     _amount: PromiseOrValue<BigNumberish>,
     overrides?: Overrides & { from?: PromiseOrValue<string> }
   ): Promise<ContractTransaction>;
 
+  stakingTimeConstant(overrides?: CallOverrides): Promise<BigNumber>;
+
   stakingToken(overrides?: CallOverrides): Promise<string>;
 
-  startTime(
+  userPositions(
     arg0: PromiseOrValue<string>,
-    overrides?: CallOverrides
-  ): Promise<BigNumber>;
-
-  totalSupply(overrides?: CallOverrides): Promise<BigNumber>;
-
-  updatedAt(overrides?: CallOverrides): Promise<BigNumber>;
-
-  userInfo(
-    arg0: PromiseOrValue<BigNumberish>,
+    arg1: PromiseOrValue<BigNumberish>,
     overrides?: CallOverrides
   ): Promise<
-    [string, BigNumber, BigNumber] & {
-      userAddress: string;
-      lastDepositedTime: BigNumber;
-      tokenStaked: BigNumber;
+    [BigNumber, BigNumber, BigNumber, BigNumber] & {
+      positionId: BigNumber;
+      startTime: BigNumber;
+      endTime: BigNumber;
+      tokenStakedAmount: BigNumber;
     }
   >;
 
-  userRewardPerTokenPaid(
-    arg0: PromiseOrValue<string>,
-    overrides?: CallOverrides
-  ): Promise<BigNumber>;
-
   withdraw(
+    _positionId: PromiseOrValue<BigNumberish>,
     overrides?: Overrides & { from?: PromiseOrValue<string> }
   ): Promise<ContractTransaction>;
 
   callStatic: {
-    balanceOf(
-      arg0: PromiseOrValue<string>,
-      overrides?: CallOverrides
-    ): Promise<BigNumber>;
+    APY(overrides?: CallOverrides): Promise<BigNumber>;
 
-    duration(overrides?: CallOverrides): Promise<BigNumber>;
+    PRECISION_CONSTANT(overrides?: CallOverrides): Promise<BigNumber>;
 
-    earned(
+    getReward(
       _account: PromiseOrValue<string>,
       overrides?: CallOverrides
     ): Promise<BigNumber>;
 
-    endTime(
-      arg0: PromiseOrValue<string>,
-      overrides?: CallOverrides
-    ): Promise<BigNumber>;
-
-    finishAt(overrides?: CallOverrides): Promise<BigNumber>;
-
-    getReward(overrides?: CallOverrides): Promise<void>;
-
-    lastTimeRewardApplicable(overrides?: CallOverrides): Promise<BigNumber>;
-
     owner(overrides?: CallOverrides): Promise<string>;
 
-    rewardPerToken(overrides?: CallOverrides): Promise<BigNumber>;
-
-    rewardPerTokenStored(overrides?: CallOverrides): Promise<BigNumber>;
-
-    rewardRate(overrides?: CallOverrides): Promise<BigNumber>;
+    rewardToken(overrides?: CallOverrides): Promise<string>;
 
     rewards(
       arg0: PromiseOrValue<string>,
       overrides?: CallOverrides
     ): Promise<BigNumber>;
-
-    rewardsToken(overrides?: CallOverrides): Promise<string>;
 
     stake(
       _amount: PromiseOrValue<BigNumberish>,
       overrides?: CallOverrides
     ): Promise<void>;
 
+    stakingTimeConstant(overrides?: CallOverrides): Promise<BigNumber>;
+
     stakingToken(overrides?: CallOverrides): Promise<string>;
 
-    startTime(
+    userPositions(
       arg0: PromiseOrValue<string>,
-      overrides?: CallOverrides
-    ): Promise<BigNumber>;
-
-    totalSupply(overrides?: CallOverrides): Promise<BigNumber>;
-
-    updatedAt(overrides?: CallOverrides): Promise<BigNumber>;
-
-    userInfo(
-      arg0: PromiseOrValue<BigNumberish>,
+      arg1: PromiseOrValue<BigNumberish>,
       overrides?: CallOverrides
     ): Promise<
-      [string, BigNumber, BigNumber] & {
-        userAddress: string;
-        lastDepositedTime: BigNumber;
-        tokenStaked: BigNumber;
+      [BigNumber, BigNumber, BigNumber, BigNumber] & {
+        positionId: BigNumber;
+        startTime: BigNumber;
+        endTime: BigNumber;
+        tokenStakedAmount: BigNumber;
       }
     >;
 
-    userRewardPerTokenPaid(
-      arg0: PromiseOrValue<string>,
+    withdraw(
+      _positionId: PromiseOrValue<BigNumberish>,
       overrides?: CallOverrides
-    ): Promise<BigNumber>;
-
-    withdraw(overrides?: CallOverrides): Promise<void>;
+    ): Promise<void>;
   };
 
   filters: {
-    "Staked(address,uint256,uint256)"(
-      user?: PromiseOrValue<string> | null,
-      amount?: PromiseOrValue<BigNumberish> | null,
-      timestamp?: null
+    "RewardsClaimed(address,uint256,uint256)"(
+      _user?: PromiseOrValue<string> | null,
+      _rewardAmount?: null,
+      _timestamp?: null
+    ): RewardsClaimedEventFilter;
+    RewardsClaimed(
+      _user?: PromiseOrValue<string> | null,
+      _rewardAmount?: null,
+      _timestamp?: null
+    ): RewardsClaimedEventFilter;
+
+    "Staked(address,uint256,uint256,uint256)"(
+      _user?: PromiseOrValue<string> | null,
+      _amount?: PromiseOrValue<BigNumberish> | null,
+      _timestamp?: null,
+      positionId?: PromiseOrValue<BigNumberish> | null
     ): StakedEventFilter;
     Staked(
-      user?: PromiseOrValue<string> | null,
-      amount?: PromiseOrValue<BigNumberish> | null,
-      timestamp?: null
+      _user?: PromiseOrValue<string> | null,
+      _amount?: PromiseOrValue<BigNumberish> | null,
+      _timestamp?: null,
+      positionId?: PromiseOrValue<BigNumberish> | null
     ): StakedEventFilter;
 
-    "WithdrewStake(address,uint256,uint256)"(
-      user?: PromiseOrValue<string> | null,
-      amount?: PromiseOrValue<BigNumberish> | null,
-      timestamp?: null
-    ): WithdrewStakeEventFilter;
-    WithdrewStake(
-      user?: PromiseOrValue<string> | null,
-      amount?: PromiseOrValue<BigNumberish> | null,
-      timestamp?: null
-    ): WithdrewStakeEventFilter;
+    "Unstake(address,uint256,uint256)"(
+      _user?: PromiseOrValue<string> | null,
+      _amount?: PromiseOrValue<BigNumberish> | null,
+      _timestamp?: null
+    ): UnstakeEventFilter;
+    Unstake(
+      _user?: PromiseOrValue<string> | null,
+      _amount?: PromiseOrValue<BigNumberish> | null,
+      _timestamp?: null
+    ): UnstakeEventFilter;
   };
 
   estimateGas: {
-    balanceOf(
-      arg0: PromiseOrValue<string>,
-      overrides?: CallOverrides
-    ): Promise<BigNumber>;
+    APY(overrides?: CallOverrides): Promise<BigNumber>;
 
-    duration(overrides?: CallOverrides): Promise<BigNumber>;
+    PRECISION_CONSTANT(overrides?: CallOverrides): Promise<BigNumber>;
 
-    earned(
+    getReward(
       _account: PromiseOrValue<string>,
       overrides?: CallOverrides
     ): Promise<BigNumber>;
 
-    endTime(
-      arg0: PromiseOrValue<string>,
-      overrides?: CallOverrides
-    ): Promise<BigNumber>;
-
-    finishAt(overrides?: CallOverrides): Promise<BigNumber>;
-
-    getReward(
-      overrides?: Overrides & { from?: PromiseOrValue<string> }
-    ): Promise<BigNumber>;
-
-    lastTimeRewardApplicable(overrides?: CallOverrides): Promise<BigNumber>;
-
     owner(overrides?: CallOverrides): Promise<BigNumber>;
 
-    rewardPerToken(overrides?: CallOverrides): Promise<BigNumber>;
-
-    rewardPerTokenStored(overrides?: CallOverrides): Promise<BigNumber>;
-
-    rewardRate(overrides?: CallOverrides): Promise<BigNumber>;
+    rewardToken(overrides?: CallOverrides): Promise<BigNumber>;
 
     rewards(
       arg0: PromiseOrValue<string>,
       overrides?: CallOverrides
     ): Promise<BigNumber>;
 
-    rewardsToken(overrides?: CallOverrides): Promise<BigNumber>;
-
     stake(
       _amount: PromiseOrValue<BigNumberish>,
       overrides?: Overrides & { from?: PromiseOrValue<string> }
     ): Promise<BigNumber>;
 
+    stakingTimeConstant(overrides?: CallOverrides): Promise<BigNumber>;
+
     stakingToken(overrides?: CallOverrides): Promise<BigNumber>;
 
-    startTime(
+    userPositions(
       arg0: PromiseOrValue<string>,
-      overrides?: CallOverrides
-    ): Promise<BigNumber>;
-
-    totalSupply(overrides?: CallOverrides): Promise<BigNumber>;
-
-    updatedAt(overrides?: CallOverrides): Promise<BigNumber>;
-
-    userInfo(
-      arg0: PromiseOrValue<BigNumberish>,
-      overrides?: CallOverrides
-    ): Promise<BigNumber>;
-
-    userRewardPerTokenPaid(
-      arg0: PromiseOrValue<string>,
+      arg1: PromiseOrValue<BigNumberish>,
       overrides?: CallOverrides
     ): Promise<BigNumber>;
 
     withdraw(
+      _positionId: PromiseOrValue<BigNumberish>,
       overrides?: Overrides & { from?: PromiseOrValue<string> }
     ): Promise<BigNumber>;
   };
 
   populateTransaction: {
-    balanceOf(
-      arg0: PromiseOrValue<string>,
+    APY(overrides?: CallOverrides): Promise<PopulatedTransaction>;
+
+    PRECISION_CONSTANT(
       overrides?: CallOverrides
     ): Promise<PopulatedTransaction>;
-
-    duration(overrides?: CallOverrides): Promise<PopulatedTransaction>;
-
-    earned(
-      _account: PromiseOrValue<string>,
-      overrides?: CallOverrides
-    ): Promise<PopulatedTransaction>;
-
-    endTime(
-      arg0: PromiseOrValue<string>,
-      overrides?: CallOverrides
-    ): Promise<PopulatedTransaction>;
-
-    finishAt(overrides?: CallOverrides): Promise<PopulatedTransaction>;
 
     getReward(
-      overrides?: Overrides & { from?: PromiseOrValue<string> }
-    ): Promise<PopulatedTransaction>;
-
-    lastTimeRewardApplicable(
+      _account: PromiseOrValue<string>,
       overrides?: CallOverrides
     ): Promise<PopulatedTransaction>;
 
     owner(overrides?: CallOverrides): Promise<PopulatedTransaction>;
 
-    rewardPerToken(overrides?: CallOverrides): Promise<PopulatedTransaction>;
-
-    rewardPerTokenStored(
-      overrides?: CallOverrides
-    ): Promise<PopulatedTransaction>;
-
-    rewardRate(overrides?: CallOverrides): Promise<PopulatedTransaction>;
+    rewardToken(overrides?: CallOverrides): Promise<PopulatedTransaction>;
 
     rewards(
       arg0: PromiseOrValue<string>,
       overrides?: CallOverrides
     ): Promise<PopulatedTransaction>;
 
-    rewardsToken(overrides?: CallOverrides): Promise<PopulatedTransaction>;
-
     stake(
       _amount: PromiseOrValue<BigNumberish>,
       overrides?: Overrides & { from?: PromiseOrValue<string> }
     ): Promise<PopulatedTransaction>;
 
+    stakingTimeConstant(
+      overrides?: CallOverrides
+    ): Promise<PopulatedTransaction>;
+
     stakingToken(overrides?: CallOverrides): Promise<PopulatedTransaction>;
 
-    startTime(
+    userPositions(
       arg0: PromiseOrValue<string>,
-      overrides?: CallOverrides
-    ): Promise<PopulatedTransaction>;
-
-    totalSupply(overrides?: CallOverrides): Promise<PopulatedTransaction>;
-
-    updatedAt(overrides?: CallOverrides): Promise<PopulatedTransaction>;
-
-    userInfo(
-      arg0: PromiseOrValue<BigNumberish>,
-      overrides?: CallOverrides
-    ): Promise<PopulatedTransaction>;
-
-    userRewardPerTokenPaid(
-      arg0: PromiseOrValue<string>,
+      arg1: PromiseOrValue<BigNumberish>,
       overrides?: CallOverrides
     ): Promise<PopulatedTransaction>;
 
     withdraw(
+      _positionId: PromiseOrValue<BigNumberish>,
       overrides?: Overrides & { from?: PromiseOrValue<string> }
     ): Promise<PopulatedTransaction>;
   };

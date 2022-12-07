@@ -76,9 +76,9 @@ contract NFTMintingFactory is Initializable{
         onlyExchange 
         returns (bool)
     {
-        unit256 tokenId = NFTContract(_nftContract).mintNewNFT(_tokenURI);
+        uint256 tokenId = NFTContract(_nftContract).mintNewNFT(_tokenURI);
 
-        emit NFTMinted(_nftContract, _tokenId);
+        emit NFTMinted(_nftContract, tokenId);
         return true;
     }
 

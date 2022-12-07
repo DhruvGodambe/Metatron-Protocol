@@ -76,6 +76,8 @@ export type { SimpleExchange } from "./contracts/MetaTransactions/SimpleExchange
 export { SimpleExchange__factory } from "./factories/contracts/MetaTransactions/SimpleExchange__factory";
 export type { ExchangeCore } from "./contracts/NFTMarketplace/Exchange/ExchangeCore";
 export { ExchangeCore__factory } from "./factories/contracts/NFTMarketplace/Exchange/ExchangeCore__factory";
+export type { ExchangeCoreNew } from "./contracts/NFTMarketplace/Exchange/ExchangeCoreNew";
+export { ExchangeCoreNew__factory } from "./factories/contracts/NFTMarketplace/Exchange/ExchangeCoreNew__factory";
 export type { IMintingFactory } from "./contracts/NFTMarketplace/Interface/IMintingFactory";
 export { IMintingFactory__factory } from "./factories/contracts/NFTMarketplace/Interface/IMintingFactory__factory";
 export type { AltERC721MintingFactory } from "./contracts/NFTMarketplace/MintingAndStorage/Enoch/AltERC721MintingFactory";
