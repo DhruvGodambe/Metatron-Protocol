@@ -46,7 +46,7 @@ contract ExchangeCoreNew is Ownable, Pausable {
         address _nftContract,
         uint256 _tokenId,
         address _seller
-    ) internal returns (bool) {
+    ) internal view returns (bool) {
         // check if he owns the token
         address tokenOwner = IERC721(_nftContract).ownerOf(_tokenId);
         require(_seller == tokenOwner, "Seller does not owns the token");
@@ -65,7 +65,7 @@ contract ExchangeCoreNew is Ownable, Pausable {
 
 
     function validateBuyer(address _buyer, uint256 _amount)
-        internal
+        internal view
         returns (bool)
     {
         require(
@@ -82,10 +82,11 @@ contract ExchangeCoreNew is Ownable, Pausable {
 
     function mintAndTransfer(address _nftContract, string memory _tokenURI, uint256 _tokenId) public {
         bool success = IMintingFactory(mintingFactory).mintNFT(_nftContract, _tokenURI);
+        
         if(success){
-           
             IERC721(_nftContract).transferFrom(address(mintingFactory), msg.sender, _tokenId);
         }
+        
     }
 
 
