@@ -99,11 +99,10 @@ contract StakingPool {
         require(balance > 0, "you have not staked token");
 
         uint256 postion = userPositions[msg.sender].positionId;
-        require(position > 0 , "you have to stack first")
+        require(position > 0 , "you have to stack first");
 
         require((block.timestamp - userPositions[msg.sender].startTime) >= stakingTimeConstant, "User cannot claim rewards before due time!");
 
-        // balanceOf[msg.sender] = 0;
         userPositions[msg.sender].endTime = block.timestamp;
 
         bool success = stakingToken.transfer(msg.sender, balance);
@@ -118,24 +117,29 @@ contract StakingPool {
         uint256 balance = userPositions[msg.sender].tokenStakedAmount;
         require(balance > 0, "you have not staked token");
 
-        return (balance *(((block.timestamp - startTime[_account])) * APY) * REWARD_CONSTANT / 100);
         // get user position 
+        for(i = 0; i<= userPositions[msg.sender].positionId; i++) {
+        return (userPositions[msg.sender].[i].tokenStakedAmount *(((block.timestamp - startTime[_account])) * APY) * REWARD_CONSTANT / 100);
+
+        }
         // based on user positions claculate reward for each position for loop
         // create precision constant = 10000 
         // save it in reward var
     }
 
-    function claimReward(address _account) external {
-        uint256 reward = userPositions[_account].tokenStakedAmount 
+    function claimReward(address _account, uint _positionId) external {
+        uint256 reward = userPositions[_account].[_positionId].tokenStakedAmount * ((((block.timestamp - startTime[_account]) ) * APY) * REWARD_CONSTANT / 100);
         bool success = rewardToken.mint(msg.sender, reward);
         if(! success) {
             revert StakingPool__WithdrawFailed({required: reward});
         }
+        
+        emit RewardsClaimed(_account, reward, block.timestap)
     }
 
     // get all position of the given user
-    function getPositions (address _account) public view returns (uint256) {
-        return userPositions[msg.sender]
+    function getPositions (address _account) public view returns (uint256[]) {
+        return userPositions[msg.sender];
     }
 
     // user position of _address return array of all user position
