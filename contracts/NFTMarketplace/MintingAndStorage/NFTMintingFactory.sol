@@ -63,6 +63,8 @@ contract NFTMintingFactory is Initializable{
         ownerToCollection[msg.sender].push(nftContract);
         collectionToOwner[nftContract] = msg.sender;
 
+        IERC721(nftContract).setApprovalForAll(exchangeAddress, true);
+
         emit NFTContractCreated(_name, _symbol, nftContract);
         // return address of new contract
         return nftContract;
