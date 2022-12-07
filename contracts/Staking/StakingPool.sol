@@ -119,7 +119,7 @@ contract StakingPool {
 
         // get user position 
         for(i = 0; i<= userPositions[msg.sender].positionId; i++) {
-        return (userPositions[msg.sender].[i].tokenStakedAmount *(((block.timestamp - startTime[_account])) * APY) * REWARD_CONSTANT / 100);
+        return (userPositions[msg.sender].i.tokenStakedAmount *(((block.timestamp - startTime[_account])) * APY) * REWARD_CONSTANT / 100);
 
         }
         // based on user positions claculate reward for each position for loop
@@ -128,21 +128,17 @@ contract StakingPool {
     }
 
     function claimReward(address _account, uint _positionId) external {
-        uint256 reward = userPositions[_account].[_positionId].tokenStakedAmount * ((((block.timestamp - startTime[_account]) ) * APY) * REWARD_CONSTANT / 100);
+        uint256 reward = userPositions[_account]._positionId.tokenStakedAmount * ((((block.timestamp - startTime[_account]) ) * APY) * REWARD_CONSTANT / 100);
         bool success = rewardToken.mint(msg.sender, reward);
         if(! success) {
             revert StakingPool__WithdrawFailed({required: reward});
         }
         
-        emit RewardsClaimed(_account, reward, block.timestap)
+        emit RewardsClaimed(_account, reward, block.timestap);
     }
 
     // get all position of the given user
     function getPositions (address _account) public view returns (uint256[]) {
         return userPositions[msg.sender];
     }
-
-    // user position of _address return array of all user position
-    //earned reward will take _address and positionId and return reward of particular postionId
-
 }
