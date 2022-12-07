@@ -153,6 +153,10 @@ declare module "hardhat/types/runtime" {
       signerOrOptions?: ethers.Signer | FactoryOptions
     ): Promise<Contracts.ExchangeCore__factory>;
     getContractFactory(
+      name: "ExchangeCoreNew",
+      signerOrOptions?: ethers.Signer | FactoryOptions
+    ): Promise<Contracts.ExchangeCoreNew__factory>;
+    getContractFactory(
       name: "IERC20",
       signerOrOptions?: ethers.Signer | FactoryOptions
     ): Promise<Contracts.IERC20__factory>;
@@ -217,6 +221,10 @@ declare module "hardhat/types/runtime" {
       signerOrOptions?: ethers.Signer | FactoryOptions
     ): Promise<Contracts.Staking__factory>;
     getContractFactory(
+      name: "StakingPool",
+      signerOrOptions?: ethers.Signer | FactoryOptions
+    ): Promise<Contracts.StakingPool__factory>;
+    getContractFactory(
       name: "StakingProxy",
       signerOrOptions?: ethers.Signer | FactoryOptions
     ): Promise<Contracts.StakingProxy__factory>;
@@ -264,6 +272,14 @@ declare module "hardhat/types/runtime" {
       name: "PremiumNFT",
       signerOrOptions?: ethers.Signer | FactoryOptions
     ): Promise<Contracts.PremiumNFT__factory>;
+    getContractFactory(
+      name: "RjToken",
+      signerOrOptions?: ethers.Signer | FactoryOptions
+    ): Promise<Contracts.RjToken__factory>;
+    getContractFactory(
+      name: "RWDToken",
+      signerOrOptions?: ethers.Signer | FactoryOptions
+    ): Promise<Contracts.RWDToken__factory>;
     getContractFactory(
       name: "SoulBound",
       signerOrOptions?: ethers.Signer | FactoryOptions
@@ -445,6 +461,11 @@ declare module "hardhat/types/runtime" {
       signer?: ethers.Signer
     ): Promise<Contracts.ExchangeCore>;
     getContractAt(
+      name: "ExchangeCoreNew",
+      address: string,
+      signer?: ethers.Signer
+    ): Promise<Contracts.ExchangeCoreNew>;
+    getContractAt(
       name: "IERC20",
       address: string,
       signer?: ethers.Signer
@@ -525,6 +546,11 @@ declare module "hardhat/types/runtime" {
       signer?: ethers.Signer
     ): Promise<Contracts.Staking>;
     getContractAt(
+      name: "StakingPool",
+      address: string,
+      signer?: ethers.Signer
+    ): Promise<Contracts.StakingPool>;
+    getContractAt(
       name: "StakingProxy",
       address: string,
       signer?: ethers.Signer
@@ -584,6 +610,16 @@ declare module "hardhat/types/runtime" {
       address: string,
       signer?: ethers.Signer
     ): Promise<Contracts.PremiumNFT>;
+    getContractAt(
+      name: "RjToken",
+      address: string,
+      signer?: ethers.Signer
+    ): Promise<Contracts.RjToken>;
+    getContractAt(
+      name: "RWDToken",
+      address: string,
+      signer?: ethers.Signer
+    ): Promise<Contracts.RWDToken>;
     getContractAt(
       name: "SoulBound",
       address: string,

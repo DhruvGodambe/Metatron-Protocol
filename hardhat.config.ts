@@ -6,7 +6,7 @@ require("@nomicfoundation/hardhat-chai-matchers");
 const { task } = require("hardhat/config");
 import { config as dotEnvConfig } from "dotenv";
 dotEnvConfig();
-const RPCURL = require("../Metatron-Protocol/scripts/Wormhole/RPC.json");
+const RPCURL = require("./scripts/Wormhole/RPC.json");
 
 
 // This is a sample Hardhat task. To learn how to create your own go to
@@ -93,6 +93,14 @@ module.exports = {
       },
       {
         version: "0.8.10",
+        settings: {
+          optimizer: {
+            enabled: true,
+            runs: 200,
+          },
+        },
+      },{
+        version: "0.8.13",
         settings: {
           optimizer: {
             enabled: true,

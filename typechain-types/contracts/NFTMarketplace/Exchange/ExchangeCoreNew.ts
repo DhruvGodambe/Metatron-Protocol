@@ -27,11 +27,12 @@ import type {
   PromiseOrValue,
 } from "../../../common";
 
-export interface ExchangeCoreInterface extends utils.Interface {
+export interface ExchangeCoreNewInterface extends utils.Interface {
   functions: {
     "cancelOrder(address,uint256,address,address,uint256)": FunctionFragment;
     "cancelledOrders(address,address,uint256)": FunctionFragment;
-    "executeOrder(address,uint256,address,address,uint256,uint256)": FunctionFragment;
+    "executeOrder(address,uint256,address,address,uint256)": FunctionFragment;
+    "mintAndTransfer(address,string,uint256)": FunctionFragment;
     "owner()": FunctionFragment;
     "paused()": FunctionFragment;
     "renounceOwnership()": FunctionFragment;
@@ -45,6 +46,7 @@ export interface ExchangeCoreInterface extends utils.Interface {
       | "cancelOrder"
       | "cancelledOrders"
       | "executeOrder"
+      | "mintAndTransfer"
       | "owner"
       | "paused"
       | "renounceOwnership"
@@ -78,7 +80,14 @@ export interface ExchangeCoreInterface extends utils.Interface {
       PromiseOrValue<BigNumberish>,
       PromiseOrValue<string>,
       PromiseOrValue<string>,
-      PromiseOrValue<BigNumberish>,
+      PromiseOrValue<BigNumberish>
+    ]
+  ): string;
+  encodeFunctionData(
+    functionFragment: "mintAndTransfer",
+    values: [
+      PromiseOrValue<string>,
+      PromiseOrValue<string>,
       PromiseOrValue<BigNumberish>
     ]
   ): string;
@@ -111,6 +120,10 @@ export interface ExchangeCoreInterface extends utils.Interface {
   ): Result;
   decodeFunctionResult(
     functionFragment: "executeOrder",
+    data: BytesLike
+  ): Result;
+  decodeFunctionResult(
+    functionFragment: "mintAndTransfer",
     data: BytesLike
   ): Result;
   decodeFunctionResult(functionFragment: "owner", data: BytesLike): Result;
@@ -198,12 +211,12 @@ export type UnpausedEvent = TypedEvent<[string], UnpausedEventObject>;
 
 export type UnpausedEventFilter = TypedEventFilter<UnpausedEvent>;
 
-export interface ExchangeCore extends BaseContract {
+export interface ExchangeCoreNew extends BaseContract {
   connect(signerOrProvider: Signer | Provider | string): this;
   attach(addressOrName: string): this;
   deployed(): Promise<this>;
 
-  interface: ExchangeCoreInterface;
+  interface: ExchangeCoreNewInterface;
 
   queryFilter<TEvent extends TypedEvent>(
     event: TypedEventFilter<TEvent>,
@@ -247,7 +260,13 @@ export interface ExchangeCore extends BaseContract {
       _buyer: PromiseOrValue<string>,
       _seller: PromiseOrValue<string>,
       _amount: PromiseOrValue<BigNumberish>,
-      _auctionEndTime: PromiseOrValue<BigNumberish>,
+      overrides?: Overrides & { from?: PromiseOrValue<string> }
+    ): Promise<ContractTransaction>;
+
+    mintAndTransfer(
+      _nftContract: PromiseOrValue<string>,
+      _tokenURI: PromiseOrValue<string>,
+      _tokenId: PromiseOrValue<BigNumberish>,
       overrides?: Overrides & { from?: PromiseOrValue<string> }
     ): Promise<ContractTransaction>;
 
@@ -291,7 +310,13 @@ export interface ExchangeCore extends BaseContract {
     _buyer: PromiseOrValue<string>,
     _seller: PromiseOrValue<string>,
     _amount: PromiseOrValue<BigNumberish>,
-    _auctionEndTime: PromiseOrValue<BigNumberish>,
+    overrides?: Overrides & { from?: PromiseOrValue<string> }
+  ): Promise<ContractTransaction>;
+
+  mintAndTransfer(
+    _nftContract: PromiseOrValue<string>,
+    _tokenURI: PromiseOrValue<string>,
+    _tokenId: PromiseOrValue<BigNumberish>,
     overrides?: Overrides & { from?: PromiseOrValue<string> }
   ): Promise<ContractTransaction>;
 
@@ -335,7 +360,13 @@ export interface ExchangeCore extends BaseContract {
       _buyer: PromiseOrValue<string>,
       _seller: PromiseOrValue<string>,
       _amount: PromiseOrValue<BigNumberish>,
-      _auctionEndTime: PromiseOrValue<BigNumberish>,
+      overrides?: CallOverrides
+    ): Promise<void>;
+
+    mintAndTransfer(
+      _nftContract: PromiseOrValue<string>,
+      _tokenURI: PromiseOrValue<string>,
+      _tokenId: PromiseOrValue<BigNumberish>,
       overrides?: CallOverrides
     ): Promise<void>;
 
@@ -419,7 +450,13 @@ export interface ExchangeCore extends BaseContract {
       _buyer: PromiseOrValue<string>,
       _seller: PromiseOrValue<string>,
       _amount: PromiseOrValue<BigNumberish>,
-      _auctionEndTime: PromiseOrValue<BigNumberish>,
+      overrides?: Overrides & { from?: PromiseOrValue<string> }
+    ): Promise<BigNumber>;
+
+    mintAndTransfer(
+      _nftContract: PromiseOrValue<string>,
+      _tokenURI: PromiseOrValue<string>,
+      _tokenId: PromiseOrValue<BigNumberish>,
       overrides?: Overrides & { from?: PromiseOrValue<string> }
     ): Promise<BigNumber>;
 
@@ -464,7 +501,13 @@ export interface ExchangeCore extends BaseContract {
       _buyer: PromiseOrValue<string>,
       _seller: PromiseOrValue<string>,
       _amount: PromiseOrValue<BigNumberish>,
-      _auctionEndTime: PromiseOrValue<BigNumberish>,
+      overrides?: Overrides & { from?: PromiseOrValue<string> }
+    ): Promise<PopulatedTransaction>;
+
+    mintAndTransfer(
+      _nftContract: PromiseOrValue<string>,
+      _tokenURI: PromiseOrValue<string>,
+      _tokenId: PromiseOrValue<BigNumberish>,
       overrides?: Overrides & { from?: PromiseOrValue<string> }
     ): Promise<PopulatedTransaction>;
 

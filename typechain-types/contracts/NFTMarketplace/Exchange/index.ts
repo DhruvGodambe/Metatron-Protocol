@@ -2,3 +2,4 @@
 /* tslint:disable */
 /* eslint-disable */
 export type { ExchangeCore } from "./ExchangeCore";
+export type { ExchangeCoreNew } from "./ExchangeCoreNew";

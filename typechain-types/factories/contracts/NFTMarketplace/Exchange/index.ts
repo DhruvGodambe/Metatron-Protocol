@@ -2,3 +2,4 @@
 /* tslint:disable */
 /* eslint-disable */
 export { ExchangeCore__factory } from "./ExchangeCore__factory";
+export { ExchangeCoreNew__factory } from "./ExchangeCoreNew__factory";

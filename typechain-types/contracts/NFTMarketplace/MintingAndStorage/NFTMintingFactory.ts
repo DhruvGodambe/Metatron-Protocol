@@ -384,7 +384,7 @@ export interface NFTMintingFactory extends BaseContract {
       _nftContract: PromiseOrValue<string>,
       _tokenURI: PromiseOrValue<string>,
       overrides?: CallOverrides
-    ): Promise<void>;
+    ): Promise<boolean>;
 
     ownerToCollection(
       arg0: PromiseOrValue<string>,

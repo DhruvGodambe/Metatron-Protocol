@@ -186,3 +186,4 @@ contract ExchangeCoreNew is Ownable, Pausable {
 // => calls execute order(signature) internal fn
 //      => update owner of NFT in Minting Factory (Interface)
 //      => Royalties distribution
+}

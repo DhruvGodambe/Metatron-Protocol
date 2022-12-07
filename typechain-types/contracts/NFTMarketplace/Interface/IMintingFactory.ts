@@ -25,11 +25,23 @@ import type {
 
 export interface IMintingFactoryInterface extends utils.Interface {
   functions: {
+    "createNFTContract(string,string)": FunctionFragment;
+    "mintNFT(address,string)": FunctionFragment;
     "updateOwner(address,uint256,address)": FunctionFragment;
   };
 
-  getFunction(nameOrSignatureOrTopic: "updateOwner"): FunctionFragment;
+  getFunction(
+    nameOrSignatureOrTopic: "createNFTContract" | "mintNFT" | "updateOwner"
+  ): FunctionFragment;
 
+  encodeFunctionData(
+    functionFragment: "createNFTContract",
+    values: [PromiseOrValue<string>, PromiseOrValue<string>]
+  ): string;
+  encodeFunctionData(
+    functionFragment: "mintNFT",
+    values: [PromiseOrValue<string>, PromiseOrValue<string>]
+  ): string;
   encodeFunctionData(
     functionFragment: "updateOwner",
     values: [
@@ -39,6 +51,11 @@ export interface IMintingFactoryInterface extends utils.Interface {
     ]
   ): string;
 
+  decodeFunctionResult(
+    functionFragment: "createNFTContract",
+    data: BytesLike
+  ): Result;
+  decodeFunctionResult(functionFragment: "mintNFT", data: BytesLike): Result;
   decodeFunctionResult(
     functionFragment: "updateOwner",
     data: BytesLike
@@ -74,6 +91,18 @@ export interface IMintingFactory extends BaseContract {
   removeListener: OnEvent<this>;
 
   functions: {
+    createNFTContract(
+      _name: PromiseOrValue<string>,
+      _symbol: PromiseOrValue<string>,
+      overrides?: Overrides & { from?: PromiseOrValue<string> }
+    ): Promise<ContractTransaction>;
+
+    mintNFT(
+      _nftContract: PromiseOrValue<string>,
+      _tokenURI: PromiseOrValue<string>,
+      overrides?: Overrides & { from?: PromiseOrValue<string> }
+    ): Promise<ContractTransaction>;
+
     updateOwner(
       _nftContract: PromiseOrValue<string>,
       _tokenId: PromiseOrValue<BigNumberish>,
@@ -81,6 +110,18 @@ export interface IMintingFactory extends BaseContract {
       overrides?: Overrides & { from?: PromiseOrValue<string> }
     ): Promise<ContractTransaction>;
   };
+
+  createNFTContract(
+    _name: PromiseOrValue<string>,
+    _symbol: PromiseOrValue<string>,
+    overrides?: Overrides & { from?: PromiseOrValue<string> }
+  ): Promise<ContractTransaction>;
+
+  mintNFT(
+    _nftContract: PromiseOrValue<string>,
+    _tokenURI: PromiseOrValue<string>,
+    overrides?: Overrides & { from?: PromiseOrValue<string> }
+  ): Promise<ContractTransaction>;
 
   updateOwner(
     _nftContract: PromiseOrValue<string>,
@@ -90,6 +131,18 @@ export interface IMintingFactory extends BaseContract {
   ): Promise<ContractTransaction>;
 
   callStatic: {
+    createNFTContract(
+      _name: PromiseOrValue<string>,
+      _symbol: PromiseOrValue<string>,
+      overrides?: CallOverrides
+    ): Promise<string>;
+
+    mintNFT(
+      _nftContract: PromiseOrValue<string>,
+      _tokenURI: PromiseOrValue<string>,
+      overrides?: CallOverrides
+    ): Promise<boolean>;
+
     updateOwner(
       _nftContract: PromiseOrValue<string>,
       _tokenId: PromiseOrValue<BigNumberish>,
@@ -101,6 +154,18 @@ export interface IMintingFactory extends BaseContract {
   filters: {};
 
   estimateGas: {
+    createNFTContract(
+      _name: PromiseOrValue<string>,
+      _symbol: PromiseOrValue<string>,
+      overrides?: Overrides & { from?: PromiseOrValue<string> }
+    ): Promise<BigNumber>;
+
+    mintNFT(
+      _nftContract: PromiseOrValue<string>,
+      _tokenURI: PromiseOrValue<string>,
+      overrides?: Overrides & { from?: PromiseOrValue<string> }
+    ): Promise<BigNumber>;
+
     updateOwner(
       _nftContract: PromiseOrValue<string>,
       _tokenId: PromiseOrValue<BigNumberish>,
@@ -110,6 +175,18 @@ export interface IMintingFactory extends BaseContract {
   };
 
   populateTransaction: {
+    createNFTContract(
+      _name: PromiseOrValue<string>,
+      _symbol: PromiseOrValue<string>,
+      overrides?: Overrides & { from?: PromiseOrValue<string> }
+    ): Promise<PopulatedTransaction>;
+
+    mintNFT(
+      _nftContract: PromiseOrValue<string>,
+      _tokenURI: PromiseOrValue<string>,
+      overrides?: Overrides & { from?: PromiseOrValue<string> }
+    ): Promise<PopulatedTransaction>;
+
     updateOwner(
       _nftContract: PromiseOrValue<string>,
       _tokenId: PromiseOrValue<BigNumberish>,
