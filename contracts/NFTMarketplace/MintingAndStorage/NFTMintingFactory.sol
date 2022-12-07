@@ -1,6 +1,8 @@
 // SPDX-License-Identifier: MIT
 pragma solidity ^0.8.4;
 
+//While mint the collection, approve the exchange address (approveAll);
+//Exchange calls transferFrom fn;
 
 import "./NFTContract.sol";
 import "@openzeppelin/contracts-upgradeable/proxy/utils/Initializable.sol";
@@ -71,12 +73,13 @@ contract NFTMintingFactory is Initializable{
     // the one in above mapping could call it
     function mintNFT(address _nftContract, string memory _tokenURI)
         public
-        onlyExchange()
+        onlyExchange 
+        returns (bool)
     {
-        NFTContract(_nftContract).mintNewNFT(_tokenURI);
-        uint256 _tokenId = NFTContract(_nftContract).getTotalNFTs();
+        unit256 tokenId = NFTContract(_nftContract).mintNewNFT(_tokenURI);
 
         emit NFTMinted(_nftContract, _tokenId);
+        return true;
     }
 
     // updating owner in our factory records => just book-keeping
@@ -126,6 +129,6 @@ contract NFTMintingFactory is Initializable{
     //     view
     //     returns (uint256)
     // {
-    //     return ERC721NFTContract(_nftContract).getTotalNFTs();
+    //     return NFTContract(_nftContract).getTotalNFTs();
     // }
 }
