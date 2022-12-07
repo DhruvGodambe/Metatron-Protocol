@@ -10,14 +10,25 @@ contract NFTContract is ERC721URIStorage {
     using Counters for Counters.Counter;
     Counters.Counter private _tokenIds;
 
+    address public mintingFactory;
+
     constructor(string memory _name, string memory _symbol)
         ERC721(_name, _symbol)
     {
+        mintingFactory = msg.sender;
         console.log("This is an NFT contract. Whoa!");
     }
 
+     modifier onlyMintingFactory() {
+        require(
+            mintingFactory == msg.sender,
+            "Only MintingFactory can call this!"
+        );
+        _;
+    }
 
-    function mintNewNFT(string memory tokenURI) public returns (uint256) {
+
+    function mintNewNFT(string memory tokenURI) public onlyMintingFactory returns (uint256) {
         _tokenIds.increment();
         uint256 newItemId = _tokenIds.current();
 
