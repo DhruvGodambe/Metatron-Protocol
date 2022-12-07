@@ -18,7 +18,7 @@ contract NFTMintingFactory is Initializable{
     address public adminAddress;
     address public exchangeAddress;
 
-    function initialize() public initializer {
+    constructor() public {
         adminAddress = msg.sender;
     }
 
