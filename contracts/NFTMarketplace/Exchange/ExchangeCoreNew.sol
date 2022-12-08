@@ -17,14 +17,16 @@ contract ExchangeCoreNew is Ownable, Pausable {
 
     IMintingFactory internal mintingFactory;
     IERC20 internal WETH;
+    address public treasury;
 
     uint256 auctionTimeLimit = 28800;
     uint256 public constant tradingFeeFactorMax = 10000; // 100%
     uint256 public tradingFeeFactor = 250; // 2.5%
 
-    constructor(IMintingFactory _mintingFactory, IERC20 _weth) {
+    constructor(IMintingFactory _mintingFactory, IERC20 _weth, address _treasury) {
         mintingFactory = IMintingFactory(_mintingFactory);
         WETH = IERC20(_weth);
+        treasury = _treasury;
     }
 
     // One who bids for an nft, can cancel it anytime before auction ends
@@ -80,6 +82,17 @@ contract ExchangeCoreNew is Ownable, Pausable {
     }
 
 
+//2 fns: PrimarySale and SecondarySale
+//Primary sale: No tradingfee
+//Sec sale: 4% trading fee
+    function fixedPricePrimarySale(address _nftContract, string memory _tokenURI,uint256 _nftPrice, uint256 _tokenId, address _buyer, address _buyerToken) public {
+        require(IERC20(_buyerToken).allowance(_buyer, address(this)) >= _nftPrice, "Exchange is not allowed enough tokens");
+
+        IERC20(_buyerToken).transferFrom(_buyer, treasury, _nftPrice);
+    }
+
+
+
     function mintAndTransfer(address _nftContract, string memory _tokenURI, uint256 _tokenId) public {
         bool success = IMintingFactory(mintingFactory).mintNFT(_nftContract, _tokenURI);
         
@@ -89,10 +102,6 @@ contract ExchangeCoreNew is Ownable, Pausable {
         
     }
 
-
-//2 fns: PrimarySale and SecondarySale
-//Primary sale: No tradingfee
-//Sec sale: 4% trading fee
 
     function executeOrder(
         address _nftContract,
