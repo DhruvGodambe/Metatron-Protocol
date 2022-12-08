@@ -11,6 +11,7 @@ contract NFTContract is ERC721URIStorage {
     Counters.Counter private _tokenIds;
 
     address public mintingFactory;
+    address public exchange;
 
     constructor(string memory _name, string memory _symbol)
         ERC721(_name, _symbol)
@@ -23,6 +24,14 @@ contract NFTContract is ERC721URIStorage {
         require(
             mintingFactory == msg.sender,
             "Only MintingFactory can call this!"
+        );
+        _;
+    }
+
+     modifier onlyExchange() {
+        require(
+            exchange == msg.sender,
+            "Only Exchange can call this!"
         );
         _;
     }
