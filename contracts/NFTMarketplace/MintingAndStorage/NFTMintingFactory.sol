@@ -7,7 +7,7 @@ pragma solidity ^0.8.4;
 import "./NFTContract.sol";
 import "@openzeppelin/contracts-upgradeable/proxy/utils/Initializable.sol";
 
-contract NFTMintingFactory is Initializable{
+contract NFTMintingFactory {
     // this contract creates an NFT contract
     // and then it can mint NFT for that contract
     // keeps track of all NFT contracts for the users
@@ -53,6 +53,7 @@ contract NFTMintingFactory is Initializable{
         _;
     }
 
+
     function createNFTContract(string memory _name, string memory _symbol)
         external onlyAdmin
         returns (address _nftcontract)
@@ -71,16 +72,16 @@ contract NFTMintingFactory is Initializable{
     }
 
     // function => mintNFt
-    // onlyAdmin can call it, so need a modifier it
+    // onlyExchange can call it, so need a modifier for it
     // the one in above mapping could call it
     function mintNFT(address _nftContract, string memory _tokenURI)
         public
         onlyExchange 
         returns (bool)
     {
-        uint256 tokenId = NFTContract(_nftContract).mintNewNFT(_tokenURI);
+        uint256 _tokenId = NFTContract(_nftContract).mintNewNFT(_tokenURI);
 
-        emit NFTMinted(_nftContract, tokenId);
+        emit NFTMinted(_nftContract, _tokenId);
         return true;
     }
 
