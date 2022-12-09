@@ -57,12 +57,15 @@ contract NFTMintingFactory {
     }
 
 
-    function createNFTCollection(string memory _name, string memory _symbol)
-        external onlyAdmin
+    function createNFTCollection(
+        string memory _name, 
+        string memory _symbol,
+        string memory _baseURI
+    )   external onlyAdmin
         returns (address _nftCollection)
     {
         // create new contract
-        address nftCollection = address(new NFTCollection(_name, _symbol, adminRegistry));
+        address nftCollection = address(new NFTCollection(_name, _symbol, adminRegistry, _baseURI));
         // update mapping of owner to NFTCollections
         ownerToCollection[msg.sender].push(nftCollection);
         collectionToOwner[nftCollection] = msg.sender;

@@ -12,17 +12,23 @@ contract NFTCollection is ERC721URIStorage {
     using Counters for Counters.Counter;
     Counters.Counter private _tokenIds;
 
+    using Strings for uint256;
+
+    // Optional mapping for token URIs
+    mapping(uint256 => string) private _tokenURIs;
+
     address public mintingFactory;
     address public exchange;
     string public baseURI;
     address public adminRegistry;
 
-    constructor(string memory _name, string memory _symbol, address _adminRegistry)
+    constructor(string memory _name, string memory _symbol, address _adminRegistry, string memory _baseURI)
         ERC721(_name, _symbol)
     {
         mintingFactory = msg.sender;
         console.log("This is an NFT contract. Whoa!");
         adminRegistry = _adminRegistry;
+        baseURI = _baseURI;
     }
 
      modifier onlyMintingFactory() {
@@ -59,22 +65,37 @@ contract NFTCollection is ERC721URIStorage {
         return baseURI;
     }
 
-    // function tokenURI(uint256 tokenId)
-    //     public
-    //     view
-    //     override(ERC721, ERC721URIStorage)
-    //     returns (string memory)
-    // {
-    //     return super.tokenURI(tokenId);
-    // }
+
+    function tokenURI(uint256 tokenId)
+        public
+        view virtual 
+        override 
+        returns (string memory)
+    {
+        string memory _tokenURI = _tokenURIs[tokenId];
+        string memory base = baseURI;
+
+        // If there is no base URI, return the token URI.
+        if (bytes(base).length == 0) {
+            return _tokenURI;
+        }
+        // If both are set, concatenate the baseURI and tokenURI (via abi.encodePacked).
+        if (bytes(_tokenURI).length > 0) {
+            return string(abi.encodePacked(base, _tokenURI));
+        }
+
+        return super.tokenURI(tokenId);
+    }
 
 
-    function mintNewNFT(string memory tokenURI) public onlyMintingFactory returns (uint256) {
+    function mintNewNFT(
+        string memory _tokenURI
+    ) public onlyMintingFactory returns (uint256) {
         _tokenIds.increment();
         uint256 newItemId = _tokenIds.current();
 
         _mint(mintingFactory, newItemId);
-        _setTokenURI(newItemId, tokenURI);
+        _setTokenURI(newItemId, _tokenURI);
 
         // console.log("New NFT minted");
         return newItemId;

@@ -121,7 +121,7 @@ module.exports = {
   },
   etherscan: {
     // apiKey: [process.env.ETHERSCAN_API_KEY]
-    //goerli
+    // goerli
     // apiKey: "E64T3MHX34J6QRFHSSIAMM4QSR2PXFZ5KK"
     // mumbai
     apiKey: "7ADQVGNSBRPGF84Q1XK4MX2FW4ZJ7JDHUS"
