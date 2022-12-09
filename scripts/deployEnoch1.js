@@ -6,7 +6,7 @@ async function main() {
   const enoch = await Enochtoken.deploy();
 
   await enoch.deployed();
-  
+
   console.log("Enoch token deployed to", enoch.address);
 }
 
