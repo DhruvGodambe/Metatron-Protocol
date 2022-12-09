@@ -9,16 +9,12 @@ const IAdminRegistry = require('../../artifacts/contracts/Registry/IAdminRegistr
 
 
 /*
-marketplaceDeployment.ts requirements:
-1. deploy adminregistry 
-2. set admin addresses
-3. deploy mintingfactory
-4. deploy exchangeCore
-5. set exchange address in minting factory
+marketplaceInteraction.ts requirements:
+1. createCollection
+2. mintNFT
+3. fixedPricePrimarySale
 */
 
-
-let admin:Address, treasury:Address;
 
 
 const main = async () => {
@@ -38,9 +34,9 @@ const main = async () => {
     
     console.log("AdminRegistry address : ", adminRegistry.address);
     
-    const tx = await adminRegistry.isAdmin(admin.address);
-    // const receipt = await tx.wait();
-    console.log(admin.address, " is the admin of Admin Registry? ", tx);
+    const tx1 = await adminRegistry.isAdmin(admin.address);
+    // const receipt1 = await tx1.wait();
+    console.log(admin.address, " is the admin of Admin Registry? ", tx1);
 
     console.log("<<<<=====================================================>>>>");
 
@@ -52,6 +48,26 @@ const main = async () => {
 
     await mintingFactory.deployed();
     console.log("Minting Factory address : ", mintingFactory.address);
+
+    console.log("<<<<=====================================================>>>>");
+
+    //@ 1. Create NFT Collection
+
+    console.log("@ 1. Creating NFT Collection");
+
+    const tx2 = await mintingFactory.createNFTCollection("StephCurry", "SC", "https://ipfs.io/ipfs/");
+
+    const receipt2 = await tx2.wait();
+
+    let event2 = receipt2.events?.find((event:any) => event.event === "NFTCollectionCreated");
+    console.log(event2);
+    
+
+    console.log("Name of Collection is : ", event2?.args.name);
+    console.log("Symbol of Collection is : ", event2?.args.symbol);
+    console.log("Collection is : ", event2?.args.nftCollection);
+
+
 
     console.log("<<<<=====================================================>>>>");
 
@@ -67,22 +83,35 @@ const main = async () => {
     await exchangeCore.deployed();
     console.log("Exchange Core address : ", exchangeCore.address);
 
+
     console.log("<<<<=====================================================>>>>");
 
     console.log("Setting Exchange Address in Minting Factory");
 
-    let tx1 = await mintingFactory.updateExchangeAddress(exchangeCore.address);
-    console.log("Update Exchange Address tx : ", tx1);
+    let tx = await mintingFactory.updateExchangeAddress(exchangeCore.address);
+    console.log("Update Exchange Address tx : ", tx);
 
-    const receipt1 = await tx1.wait();
+    const receipt = await tx.wait();
 
-    let event = receipt1.events?.find((event:any) => event.event === "ExchangeAddressChanged");
+    let event = receipt.events?.find((event:any) => event.event === "ExchangeAddressChanged");
 
     console.log("Updated Exchange Address is : ", event?.args.newExchange);
 
-    console.log("<<<<=====================================================>>>>");
+    console.log("<<<<===============================================================>>>>");
 
+    //@ 2. Mint NFT
+
+    console.log("@ 2. Minting NFT");
     
+
+    const tx3 = await mintingFactory.mintNFT("0x115f303ee8bCa7899D40EeE33B5f33551EEebA9c", "StephenCurry30GoldenStateWarriors").onlyExchange(exchangeCore.address);
+
+    const receipt3 = await tx3.wait();
+    console.log("receipt3 :", receipt3);
+    
+    
+    let event3 = receipt3.events?.find((event:any) => event.event === "NFTMinted");
+    console.log(event3);
 
 
 
