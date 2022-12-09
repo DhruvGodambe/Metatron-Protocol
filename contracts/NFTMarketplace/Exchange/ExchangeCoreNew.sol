@@ -18,6 +18,7 @@ contract ExchangeCoreNew is Ownable, Pausable {
     IMintingFactory internal mintingFactory;
     IERC20 internal WETH;
     address public treasury;
+    address public exchange;
 
     uint256 auctionTimeLimit = 28800;
     uint256 public constant tradingFeeFactorMax = 10000; // 100%
@@ -30,12 +31,12 @@ contract ExchangeCoreNew is Ownable, Pausable {
     }
 
     // One who bids for an nft, can cancel it anytime before auction ends
-    // cancelledOrders[userAddress][nftContract][id] => returns bool
+    // cancelledOrders[userAddress][nftCollection][id] => returns bool
     mapping(address => mapping(address => mapping(uint256 => bool)))
         public cancelledOrders;
 
     event OrderExecuted(
-        address nftContract,
+        address nftCollection,
         uint256 tokenId,
         address oldOwner,
         address newOwner
@@ -43,18 +44,26 @@ contract ExchangeCoreNew is Ownable, Pausable {
 
     event OrderCancelled(address nftContract, uint256 tokenId, address buyer);
 
+    modifier onlyExchange() {
+        require(
+            exchange == msg.sender,
+            "Only Exchange can call this!"
+        );
+        _;
+    }
+
 
     function validateSeller(
-        address _nftContract,
+        address _nftCollection,
         uint256 _tokenId,
         address _seller
     ) internal view returns (bool) {
         // check if he owns the token
-        address tokenOwner = IERC721(_nftContract).ownerOf(_tokenId);
+        address tokenOwner = IERC721(_nftCollection).ownerOf(_tokenId);
         require(_seller == tokenOwner, "Seller does not owns the token");
 
         // check token approval
-        address tokenApprovedAddress = IERC721(_nftContract).getApproved(
+        address tokenApprovedAddress = IERC721(_nftCollection).getApproved(
             _tokenId
         );
         require(
@@ -85,36 +94,39 @@ contract ExchangeCoreNew is Ownable, Pausable {
 //2 fns: PrimarySale and SecondarySale
 //Primary sale: No tradingfee
 //Sec sale: 4% trading fee
-    function fixedPricePrimarySale(address _nftContract, string memory _tokenURI,uint256 _nftPrice, uint256 _tokenId, address _buyer, address _buyerToken) public {
+
+    function fixedPricePrimarySale(address _nftCollection, string memory _tokenURI, uint256 _nftPrice, uint256 _tokenId, address _buyer, address _buyerToken) public {
         require(IERC20(_buyerToken).allowance(_buyer, address(this)) >= _nftPrice, "Exchange is not allowed enough tokens");
 
         IERC20(_buyerToken).transferFrom(_buyer, treasury, _nftPrice);
+        mintAndTransfer(_nftCollection, _tokenURI, _tokenId);
+
     }
 
 
 
-    function mintAndTransfer(address _nftContract, string memory _tokenURI, uint256 _tokenId) public {
-        bool success = IMintingFactory(mintingFactory).mintNFT(_nftContract, _tokenURI);
+    function mintAndTransfer(address _nftCollection, string memory _tokenURI, uint256 _tokenId) public onlyExchange {
+        bool success = IMintingFactory(mintingFactory).mintNFT(_nftCollection, _tokenURI);
         
         if(success){
-            IERC721(_nftContract).transferFrom(address(mintingFactory), msg.sender, _tokenId);
+            IERC721(_nftCollection).transferFrom(address(mintingFactory), msg.sender, _tokenId);
         }
         
     }
 
 
     function executeOrder(
-        address _nftContract,
+        address _nftCollection,
         uint256 _tokenId,
         address _buyer,
         address _seller,
         uint256 _amount
     ) public whenNotPaused {
 
-        bool validSeller = validateSeller(_nftContract, _tokenId, _seller);
+        bool validSeller = validateSeller(_nftCollection, _tokenId, _seller);
         bool validBuyer = validateBuyer(_buyer, _amount);
 
-        bool isCancel = cancelledOrders[_buyer][_nftContract][_tokenId];
+        bool isCancel = cancelledOrders[_buyer][_nftCollection][_tokenId];
 
         require(validSeller, "Seller isn't valid");
         require(validBuyer, "Buyer isn't valid");
@@ -133,35 +145,35 @@ contract ExchangeCoreNew is Ownable, Pausable {
         IERC20(WETH).transferFrom(_buyer, _seller, transferableAmt);
 
         // transferring the NFT to the buyer
-        IERC721(_nftContract).transferFrom(_seller, _buyer, _tokenId);
+        IERC721(_nftCollection).transferFrom(_seller, _buyer, _tokenId);
         //Use this for second sale
 
         // updating the NFT ownership in our Minting Factory
         IMintingFactory(mintingFactory).updateOwner(
-            _nftContract,
+            _nftCollection,
             _tokenId,
             _buyer
         );
 
-        emit OrderExecuted(_nftContract, _tokenId, _seller, _buyer);
+        emit OrderExecuted(_nftCollection, _tokenId, _seller, _buyer);
     }
 
 
     function cancelOrder(
-        address _nftContract,
+        address _nftCollection,
         uint256 _tokenId,
         address _buyer,
         address _seller,
         uint256 _amount
     ) public {
         // approvals to be checked
-        bool validSeller = validateSeller(_nftContract, _tokenId, _seller);
+        bool validSeller = validateSeller(_nftCollection, _tokenId, _seller);
         bool validBuyer = validateBuyer(_buyer, _amount);
         // decrease approval in web3 scripts
         // add this cancelled Order in the mapping
         if (validSeller && validBuyer) {
-            cancelledOrders[_buyer][_nftContract][_tokenId] = true;
-            emit OrderCancelled(_nftContract, _tokenId, _buyer);
+            cancelledOrders[_buyer][_nftCollection][_tokenId] = true;
+            emit OrderCancelled(_nftCollection, _tokenId, _buyer);
         }
     }
 

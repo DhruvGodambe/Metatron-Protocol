@@ -2,6 +2,7 @@
 /* tslint:disable */
 /* eslint-disable */
 export * as enoch from "./Enoch";
+export { NFTCollection__factory } from "./NFTCollection__factory";
 export { NFTContract__factory } from "./NFTContract__factory";
 export { NFTMintingFactory__factory } from "./NFTMintingFactory__factory";
 export { NFTMintingFactoryV2__factory } from "./NFTMintingFactoryV2__factory";

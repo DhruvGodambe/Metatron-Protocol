@@ -148,7 +148,7 @@ export interface ExchangeCoreInterface extends utils.Interface {
 }
 
 export interface OrderCancelledEventObject {
-  nftContract: string;
+  nftCollection: string;
   tokenId: BigNumber;
   buyer: string;
 }
@@ -160,7 +160,7 @@ export type OrderCancelledEvent = TypedEvent<
 export type OrderCancelledEventFilter = TypedEventFilter<OrderCancelledEvent>;
 
 export interface OrderExecutedEventObject {
-  nftContract: string;
+  nftCollection: string;
   tokenId: BigNumber;
   oldOwner: string;
   newOwner: string;
@@ -226,7 +226,7 @@ export interface ExchangeCore extends BaseContract {
 
   functions: {
     cancelOrder(
-      _nftContract: PromiseOrValue<string>,
+      _nftCollection: PromiseOrValue<string>,
       _tokenId: PromiseOrValue<BigNumberish>,
       _buyer: PromiseOrValue<string>,
       _seller: PromiseOrValue<string>,
@@ -242,7 +242,7 @@ export interface ExchangeCore extends BaseContract {
     ): Promise<[boolean]>;
 
     executeOrder(
-      _nftContract: PromiseOrValue<string>,
+      _nftCollection: PromiseOrValue<string>,
       _tokenId: PromiseOrValue<BigNumberish>,
       _buyer: PromiseOrValue<string>,
       _seller: PromiseOrValue<string>,
@@ -270,7 +270,7 @@ export interface ExchangeCore extends BaseContract {
   };
 
   cancelOrder(
-    _nftContract: PromiseOrValue<string>,
+    _nftCollection: PromiseOrValue<string>,
     _tokenId: PromiseOrValue<BigNumberish>,
     _buyer: PromiseOrValue<string>,
     _seller: PromiseOrValue<string>,
@@ -286,7 +286,7 @@ export interface ExchangeCore extends BaseContract {
   ): Promise<boolean>;
 
   executeOrder(
-    _nftContract: PromiseOrValue<string>,
+    _nftCollection: PromiseOrValue<string>,
     _tokenId: PromiseOrValue<BigNumberish>,
     _buyer: PromiseOrValue<string>,
     _seller: PromiseOrValue<string>,
@@ -314,7 +314,7 @@ export interface ExchangeCore extends BaseContract {
 
   callStatic: {
     cancelOrder(
-      _nftContract: PromiseOrValue<string>,
+      _nftCollection: PromiseOrValue<string>,
       _tokenId: PromiseOrValue<BigNumberish>,
       _buyer: PromiseOrValue<string>,
       _seller: PromiseOrValue<string>,
@@ -330,7 +330,7 @@ export interface ExchangeCore extends BaseContract {
     ): Promise<boolean>;
 
     executeOrder(
-      _nftContract: PromiseOrValue<string>,
+      _nftCollection: PromiseOrValue<string>,
       _tokenId: PromiseOrValue<BigNumberish>,
       _buyer: PromiseOrValue<string>,
       _seller: PromiseOrValue<string>,
@@ -357,24 +357,24 @@ export interface ExchangeCore extends BaseContract {
 
   filters: {
     "OrderCancelled(address,uint256,address)"(
-      nftContract?: null,
+      nftCollection?: null,
       tokenId?: null,
       buyer?: null
     ): OrderCancelledEventFilter;
     OrderCancelled(
-      nftContract?: null,
+      nftCollection?: null,
       tokenId?: null,
       buyer?: null
     ): OrderCancelledEventFilter;
 
     "OrderExecuted(address,uint256,address,address)"(
-      nftContract?: null,
+      nftCollection?: null,
       tokenId?: null,
       oldOwner?: null,
       newOwner?: null
     ): OrderExecutedEventFilter;
     OrderExecuted(
-      nftContract?: null,
+      nftCollection?: null,
       tokenId?: null,
       oldOwner?: null,
       newOwner?: null
@@ -398,7 +398,7 @@ export interface ExchangeCore extends BaseContract {
 
   estimateGas: {
     cancelOrder(
-      _nftContract: PromiseOrValue<string>,
+      _nftCollection: PromiseOrValue<string>,
       _tokenId: PromiseOrValue<BigNumberish>,
       _buyer: PromiseOrValue<string>,
       _seller: PromiseOrValue<string>,
@@ -414,7 +414,7 @@ export interface ExchangeCore extends BaseContract {
     ): Promise<BigNumber>;
 
     executeOrder(
-      _nftContract: PromiseOrValue<string>,
+      _nftCollection: PromiseOrValue<string>,
       _tokenId: PromiseOrValue<BigNumberish>,
       _buyer: PromiseOrValue<string>,
       _seller: PromiseOrValue<string>,
@@ -443,7 +443,7 @@ export interface ExchangeCore extends BaseContract {
 
   populateTransaction: {
     cancelOrder(
-      _nftContract: PromiseOrValue<string>,
+      _nftCollection: PromiseOrValue<string>,
       _tokenId: PromiseOrValue<BigNumberish>,
       _buyer: PromiseOrValue<string>,
       _seller: PromiseOrValue<string>,
@@ -459,7 +459,7 @@ export interface ExchangeCore extends BaseContract {
     ): Promise<PopulatedTransaction>;
 
     executeOrder(
-      _nftContract: PromiseOrValue<string>,
+      _nftCollection: PromiseOrValue<string>,
       _tokenId: PromiseOrValue<BigNumberish>,
       _buyer: PromiseOrValue<string>,
       _seller: PromiseOrValue<string>,

@@ -25,17 +25,17 @@ import type {
 
 export interface IMintingFactoryInterface extends utils.Interface {
   functions: {
-    "createNFTContract(string,string)": FunctionFragment;
+    "createNFTCollection(string,string)": FunctionFragment;
     "mintNFT(address,string)": FunctionFragment;
     "updateOwner(address,uint256,address)": FunctionFragment;
   };
 
   getFunction(
-    nameOrSignatureOrTopic: "createNFTContract" | "mintNFT" | "updateOwner"
+    nameOrSignatureOrTopic: "createNFTCollection" | "mintNFT" | "updateOwner"
   ): FunctionFragment;
 
   encodeFunctionData(
-    functionFragment: "createNFTContract",
+    functionFragment: "createNFTCollection",
     values: [PromiseOrValue<string>, PromiseOrValue<string>]
   ): string;
   encodeFunctionData(
@@ -52,7 +52,7 @@ export interface IMintingFactoryInterface extends utils.Interface {
   ): string;
 
   decodeFunctionResult(
-    functionFragment: "createNFTContract",
+    functionFragment: "createNFTCollection",
     data: BytesLike
   ): Result;
   decodeFunctionResult(functionFragment: "mintNFT", data: BytesLike): Result;
@@ -91,7 +91,7 @@ export interface IMintingFactory extends BaseContract {
   removeListener: OnEvent<this>;
 
   functions: {
-    createNFTContract(
+    createNFTCollection(
       _name: PromiseOrValue<string>,
       _symbol: PromiseOrValue<string>,
       overrides?: Overrides & { from?: PromiseOrValue<string> }
@@ -111,7 +111,7 @@ export interface IMintingFactory extends BaseContract {
     ): Promise<ContractTransaction>;
   };
 
-  createNFTContract(
+  createNFTCollection(
     _name: PromiseOrValue<string>,
     _symbol: PromiseOrValue<string>,
     overrides?: Overrides & { from?: PromiseOrValue<string> }
@@ -131,7 +131,7 @@ export interface IMintingFactory extends BaseContract {
   ): Promise<ContractTransaction>;
 
   callStatic: {
-    createNFTContract(
+    createNFTCollection(
       _name: PromiseOrValue<string>,
       _symbol: PromiseOrValue<string>,
       overrides?: CallOverrides
@@ -154,7 +154,7 @@ export interface IMintingFactory extends BaseContract {
   filters: {};
 
   estimateGas: {
-    createNFTContract(
+    createNFTCollection(
       _name: PromiseOrValue<string>,
       _symbol: PromiseOrValue<string>,
       overrides?: Overrides & { from?: PromiseOrValue<string> }
@@ -175,7 +175,7 @@ export interface IMintingFactory extends BaseContract {
   };
 
   populateTransaction: {
-    createNFTContract(
+    createNFTCollection(
       _name: PromiseOrValue<string>,
       _symbol: PromiseOrValue<string>,
       overrides?: Overrides & { from?: PromiseOrValue<string> }

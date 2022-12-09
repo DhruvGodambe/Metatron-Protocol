@@ -1,12 +1,12 @@
 const { ethers, upgrades } = require("hardhat");
 
-const NFTContractabi = require('../artifacts/contracts/NFTMarketplace/MintingAndStorage/NFTContract.sol/NFTContract.json');
+const NFTCollectionabi = require('../../artifacts/contracts/NFTMarketplace/MintingAndStorage/NFTCollection.sol/NFTCollection.json');
 
 
 const main = async () => {
     [admin] = await ethers.getSigners();
     console.log("Admin address : ", admin.address);
-    // let nftContract;
+    // let nftCollection;
 
     const mintingFactoryContract = await hre.ethers.getContractFactory("NFTMintingFactory");
     console.log("Deploying ERC721 Minting Factory Proxy...");
@@ -20,18 +20,18 @@ const main = async () => {
 
     //Minting collection
         // console.log("Creating a collection ...");
-        // let collectionAddress = await mintingFactoryProxy.connect(admin).createNFTContract("BlockNormandy", "BN");
+        // let collectionAddress = await mintingFactoryProxy.connect(admin).createNFTCollection("BlockNormandy", "BN");
         // console.log("Collection created");
 
         // const receipt = await collectionAddress.wait();
         // console.log("Receipt : ", receipt);
-        // nftContract = receipt.events[0].args.nftContract;
+        // nftCollection = receipt.events[0].args.nftCollection;
         
         // console.log("Event : ",receipt.events[0].args);
-        // console.log("NFT contract :  ", nftContract);
+        // console.log("NFT Collection :  ", nftCollection);
         
-        // nftContractInstance = await new ethers.Contract(nftContract, NFTContractabi.abi, admin);
-        // console.log("Contract Address: ", nftContract);
+        // nftCollectionInstance = await new ethers.Contract(nftCollection, NFTCollectionabi.abi, admin);
+        // console.log("Contract Address: ", nftCollection);
 
     // const [account, account2, account3] = await hre.ethers.getSigners();
 
@@ -41,7 +41,7 @@ const main = async () => {
     // creator will mint his nft,
     // then, console log the nft address and creator address.
 
-    // let txn = await nftFactory.createNFTContract("CHENNAI SUPER KINGS", "CSK");
+    // let txn = await nftFactory.createNFTCollection("CHENNAI SUPER KINGS", "CSK");
     // await txn.wait()
     // console.log("NFT Contract minted!");
 

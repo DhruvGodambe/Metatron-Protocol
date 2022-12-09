@@ -3,6 +3,7 @@
 /* eslint-disable */
 import type * as enoch from "./Enoch";
 export type { enoch };
+export type { NFTCollection } from "./NFTCollection";
 export type { NFTContract } from "./NFTContract";
 export type { NFTMintingFactory } from "./NFTMintingFactory";
 export type { NFTMintingFactoryV2 } from "./NFTMintingFactoryV2";

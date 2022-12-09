@@ -23,7 +23,7 @@ const _abi = [
         type: "string",
       },
     ],
-    name: "createNFTContract",
+    name: "createNFTCollection",
     outputs: [
       {
         internalType: "address",

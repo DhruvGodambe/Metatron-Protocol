@@ -3,7 +3,7 @@
 pragma solidity ^0.8.0;
 
 interface IMintingFactory {
-    function createNFTContract(
+    function createNFTCollection(
         string memory _name, 
         string memory _symbol
         )

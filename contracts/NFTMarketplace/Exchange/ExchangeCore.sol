@@ -28,26 +28,26 @@ contract ExchangeCore is Ownable, Pausable {
     }
 
     // One who bids for an nft, can cancel it anytime before auction ends
-    // cancelledOrders[userAddress][nftContract][id] => returns bool
+    // cancelledOrders[userAddress][nftCollection][id] => returns bool
     mapping(address => mapping(address => mapping(uint256 => bool)))
         public cancelledOrders;
 
     event OrderExecuted(
-        address nftContract,
+        address nftCollection,
         uint256 tokenId,
         address oldOwner,
         address newOwner
     );
 
-    event OrderCancelled(address nftContract, uint256 tokenId, address buyer);
+    event OrderCancelled(address nftCollection, uint256 tokenId, address buyer);
 
 
-    // function putOnDirectSale(address _nftContract, uint256 _tokenId)
+    // function putOnDirectSale(address _nftCollection, uint256 _tokenId)
     //     public
     //     returns (address, uint256)
     // {
     //     // check if the sender owns this nft
-    //     address nftOwner = IERC721(_nftContract).ownerOf(_tokenId);
+    //     address nftOwner = IERC721(_nftCollection).ownerOf(_tokenId);
     //     require(
     //         msg.sender == nftOwner,
     //         "Message sender is not the owner of NFT"
@@ -55,11 +55,11 @@ contract ExchangeCore is Ownable, Pausable {
     //     // then approve this nft to the contract
     //     // this function in web3, we'll add approve functionality
 
-    //     return (_nftContract, _tokenId);
+    //     return (_nftCollection, _tokenId);
     // }
 
 
-    // function putOnAuction(address _nftContract, uint256 _tokenId)
+    // function putOnAuction(address _nftCollection, uint256 _tokenId)
     //     public
     //     returns (
     //         address,
@@ -68,7 +68,7 @@ contract ExchangeCore is Ownable, Pausable {
     //     )
     // {
     //     // check if sender owns this nft
-    //     address nftOwner = IERC721(_nftContract).ownerOf(_tokenId);
+    //     address nftOwner = IERC721(_nftCollection).ownerOf(_tokenId);
     //     require(
     //         msg.sender == nftOwner,
     //         "Message sender is not the owner of NFT"
@@ -76,21 +76,21 @@ contract ExchangeCore is Ownable, Pausable {
     //     // then approve this nft to the contract
     //     // then, add auctionTimeLimit to blocktime and that is auctionEndTime
     //     uint256 auctionEndTime = block.timestamp + auctionTimeLimit;
-    //     return (_nftContract, _tokenId, auctionEndTime);
+    //     return (_nftCollection, _tokenId, auctionEndTime);
     // }
 
 
     function validateSeller(
-        address _nftContract,
+        address _nftCollection,
         uint256 _tokenId,
         address _seller
     ) internal view returns (bool) {
         // check if he owns the token
-        address tokenOwner = IERC721(_nftContract).ownerOf(_tokenId);
+        address tokenOwner = IERC721(_nftCollection).ownerOf(_tokenId);
         require(_seller == tokenOwner, "Seller does not owns the token");
 
         // check token approval
-        address tokenApprovedAddress = IERC721(_nftContract).getApproved(
+        address tokenApprovedAddress = IERC721(_nftCollection).getApproved(
             _tokenId
         );
         require(
@@ -129,7 +129,7 @@ contract ExchangeCore is Ownable, Pausable {
 
 
     function executeOrder(
-        address _nftContract,
+        address _nftCollection,
         uint256 _tokenId,
         address _buyer,
         address _seller,
@@ -144,10 +144,10 @@ contract ExchangeCore is Ownable, Pausable {
             validTime = true;
         }
 
-        bool validSeller = validateSeller(_nftContract, _tokenId, _seller);
+        bool validSeller = validateSeller(_nftCollection, _tokenId, _seller);
         bool validBuyer = validateBuyer(_buyer, _amount);
 
-        bool isCancel = cancelledOrders[_buyer][_nftContract][_tokenId];
+        bool isCancel = cancelledOrders[_buyer][_nftCollection][_tokenId];
 
         require(validTime, "Auction is already over");
         require(validSeller, "Seller isn't valid");
@@ -167,33 +167,33 @@ contract ExchangeCore is Ownable, Pausable {
         IERC20(WETH).transferFrom(_buyer, _seller, transferableAmt);
 
         // transferring the NFT to the buyer
-        IERC721(_nftContract).transferFrom(_seller, _buyer, _tokenId);
+        IERC721(_nftCollection).transferFrom(_seller, _buyer, _tokenId);
         // updating the NFT ownership in our Minting Factory
         IMintingFactory(mintingFactory).updateOwner(
-            _nftContract,
+            _nftCollection,
             _tokenId,
             _buyer
         );
 
-        emit OrderExecuted(_nftContract, _tokenId, _seller, _buyer);
+        emit OrderExecuted(_nftCollection, _tokenId, _seller, _buyer);
     }
 
 
     function cancelOrder(
-        address _nftContract,
+        address _nftCollection,
         uint256 _tokenId,
         address _buyer,
         address _seller,
         uint256 _amount
     ) public {
         // approvals to be checked
-        bool validSeller = validateSeller(_nftContract, _tokenId, _seller);
+        bool validSeller = validateSeller(_nftCollection, _tokenId, _seller);
         bool validBuyer = validateBuyer(_buyer, _amount);
         // decrease approval in web3 scripts
         // add this cancelled Order in the mapping
         if (validSeller && validBuyer) {
-            cancelledOrders[_buyer][_nftContract][_tokenId] = true;
-            emit OrderCancelled(_nftContract, _tokenId, _buyer);
+            cancelledOrders[_buyer][_nftCollection][_tokenId] = true;
+            emit OrderCancelled(_nftCollection, _tokenId, _buyer);
         }
     }
 

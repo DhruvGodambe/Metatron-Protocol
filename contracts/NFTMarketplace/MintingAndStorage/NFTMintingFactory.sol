@@ -4,13 +4,13 @@ pragma solidity ^0.8.4;
 //While mint the collection, approve the exchange address (approveAll);
 //Exchange calls transferFrom fn;
 
-import "./NFTContract.sol";
+import "./NFTCollection.sol";
 import "@openzeppelin/contracts-upgradeable/proxy/utils/Initializable.sol";
 
 contract NFTMintingFactory {
-    // this contract creates an NFT contract
-    // and then it can mint NFT for that contract
-    // keeps track of all NFT contracts for the users
+    // this contract creates an NFT Collection
+    // and then it can mint NFT for that Collection
+    // keeps track of all NFT Collections for the users
 
     // exchangeAddress
     // admin address
@@ -30,14 +30,14 @@ contract NFTMintingFactory {
     mapping(address => address) public collectionToOwner;
 
     // Events
-    event NFTContractCreated(string name, string symbol, address nftContract);
-    event NFTMinted(address nftContract, uint256 tokenId);
-    event OwnerUpdated(address nftContract, address newOwner, uint256 tokenId);
+    event NFTCollectionCreated(string name, string symbol, address nftCollection);
+    event NFTMinted(address nftCollection, uint256 tokenId);
+    event OwnerUpdated(address nftCollection, address newOwner, uint256 tokenId);
     event ExchangeAddressChanged(address oldExchange, address newExchange);
 
-    modifier onlyOwner(address _nftContract) {
+    modifier onlyOwner(address _nftCollection) {
         require(
-            collectionToOwner[_nftContract] == msg.sender,
+            collectionToOwner[_nftCollection] == msg.sender,
             "Only Creator can call this!"
         );
         _;
@@ -54,34 +54,34 @@ contract NFTMintingFactory {
     }
 
 
-    function createNFTContract(string memory _name, string memory _symbol)
+    function createNFTCollection(string memory _name, string memory _symbol)
         external onlyAdmin
-        returns (address _nftcontract)
+        returns (address _nftCollection)
     {
         // create new contract
-        address nftContract = address(new NFTContract(_name, _symbol));
-        // update mapping of owner to NFTContracts
-        ownerToCollection[msg.sender].push(nftContract);
-        collectionToOwner[nftContract] = msg.sender;
+        address nftCollection = address(new NFTCollection(_name, _symbol));
+        // update mapping of owner to NFTCollections
+        ownerToCollection[msg.sender].push(nftCollection);
+        collectionToOwner[nftCollection] = msg.sender;
 
-        IERC721(nftContract).setApprovalForAll(exchangeAddress, true);
+        IERC721(nftCollection).setApprovalForAll(exchangeAddress, true);
 
-        emit NFTContractCreated(_name, _symbol, nftContract);
+        emit NFTCollectionCreated(_name, _symbol, nftCollection);
         // return address of new contract
-        return nftContract;
+        return nftCollection;
     }
 
     // function => mintNFt
     // onlyExchange can call it, so need a modifier for it
     // the one in above mapping could call it
-    function mintNFT(address _nftContract, string memory _tokenURI)
+    function mintNFT(address _nftCollection, string memory _tokenURI)
         public
         onlyExchange 
         returns (bool)
     {
-        uint256 _tokenId = NFTContract(_nftContract).mintNewNFT(_tokenURI);
+        uint256 _tokenId = NFTCollection(_nftCollection).mintNewNFT(_tokenURI);
 
-        emit NFTMinted(_nftContract, _tokenId);
+        emit NFTMinted(_nftCollection, _tokenId);
         return true;
     }
 
@@ -92,13 +92,13 @@ contract NFTMintingFactory {
     // function changeExchangeAddress, called by onlyAdmin
     // adminAddress => fixed, during constructor, the one who deploys factory
     function updateOwner(
-        address _nftContract,
+        address _nftCollection,
         address _newOwner,
         uint256 _tokenId
     ) public onlyExchange {
-        collectionToOwnerToId[_nftContract][_newOwner] = _tokenId;
+        collectionToOwnerToId[_nftCollection][_newOwner] = _tokenId;
 
-        emit OwnerUpdated(_nftContract, _newOwner, _tokenId);
+        emit OwnerUpdated(_nftCollection, _newOwner, _tokenId);
     }
 
     function updateExchangeAddress(address _newExchange) public onlyAdmin {
@@ -118,20 +118,20 @@ contract NFTMintingFactory {
 
 
     // // lists all NFT IDs for a collection of owner
-    // function getIdsForCollectionToOwner(address _nftContract, address user)
+    // function getIdsForCollectionToOwner(address _nftCollection, address user)
     //     public
     //     view
     //     returns (uint256[] memory)
     // {
-    //     return collectionToOwnerToId[_nftContract][user];
+    //     return collectionToOwnerToId[_nftCollection][user];
     // }
 
     // get total NFTs minted for a contract
-    // function getTotalNFTsMinted(address _nftContract)
+    // function getTotalNFTsMinted(address _nftCollection)
     //     public
     //     view
     //     returns (uint256)
     // {
-    //     return NFTContract(_nftContract).getTotalNFTs();
+    //     return NFTCollection(_nftCollection).getTotalNFTs();
     // }
 }

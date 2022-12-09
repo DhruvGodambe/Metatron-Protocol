@@ -32,10 +32,9 @@ export interface NFTMintingFactoryInterface extends utils.Interface {
     "adminAddress()": FunctionFragment;
     "collectionToOwner(address)": FunctionFragment;
     "collectionToOwnerToId(address,address)": FunctionFragment;
-    "createNFTContract(string,string)": FunctionFragment;
+    "createNFTCollection(string,string)": FunctionFragment;
     "exchangeAddress()": FunctionFragment;
     "getCollectionForOwner(address)": FunctionFragment;
-    "initialize()": FunctionFragment;
     "mintNFT(address,string)": FunctionFragment;
     "ownerToCollection(address,uint256)": FunctionFragment;
     "updateExchangeAddress(address)": FunctionFragment;
@@ -47,10 +46,9 @@ export interface NFTMintingFactoryInterface extends utils.Interface {
       | "adminAddress"
       | "collectionToOwner"
       | "collectionToOwnerToId"
-      | "createNFTContract"
+      | "createNFTCollection"
       | "exchangeAddress"
       | "getCollectionForOwner"
-      | "initialize"
       | "mintNFT"
       | "ownerToCollection"
       | "updateExchangeAddress"
@@ -70,7 +68,7 @@ export interface NFTMintingFactoryInterface extends utils.Interface {
     values: [PromiseOrValue<string>, PromiseOrValue<string>]
   ): string;
   encodeFunctionData(
-    functionFragment: "createNFTContract",
+    functionFragment: "createNFTCollection",
     values: [PromiseOrValue<string>, PromiseOrValue<string>]
   ): string;
   encodeFunctionData(
@@ -80,10 +78,6 @@ export interface NFTMintingFactoryInterface extends utils.Interface {
   encodeFunctionData(
     functionFragment: "getCollectionForOwner",
     values: [PromiseOrValue<string>]
-  ): string;
-  encodeFunctionData(
-    functionFragment: "initialize",
-    values?: undefined
   ): string;
   encodeFunctionData(
     functionFragment: "mintNFT",
@@ -119,7 +113,7 @@ export interface NFTMintingFactoryInterface extends utils.Interface {
     data: BytesLike
   ): Result;
   decodeFunctionResult(
-    functionFragment: "createNFTContract",
+    functionFragment: "createNFTCollection",
     data: BytesLike
   ): Result;
   decodeFunctionResult(
@@ -130,7 +124,6 @@ export interface NFTMintingFactoryInterface extends utils.Interface {
     functionFragment: "getCollectionForOwner",
     data: BytesLike
   ): Result;
-  decodeFunctionResult(functionFragment: "initialize", data: BytesLike): Result;
   decodeFunctionResult(functionFragment: "mintNFT", data: BytesLike): Result;
   decodeFunctionResult(
     functionFragment: "ownerToCollection",
@@ -147,15 +140,13 @@ export interface NFTMintingFactoryInterface extends utils.Interface {
 
   events: {
     "ExchangeAddressChanged(address,address)": EventFragment;
-    "Initialized(uint8)": EventFragment;
-    "NFTContractCreated(string,string,address)": EventFragment;
+    "NFTCollectionCreated(string,string,address)": EventFragment;
     "NFTMinted(address,uint256)": EventFragment;
     "OwnerUpdated(address,address,uint256)": EventFragment;
   };
 
   getEvent(nameOrSignatureOrTopic: "ExchangeAddressChanged"): EventFragment;
-  getEvent(nameOrSignatureOrTopic: "Initialized"): EventFragment;
-  getEvent(nameOrSignatureOrTopic: "NFTContractCreated"): EventFragment;
+  getEvent(nameOrSignatureOrTopic: "NFTCollectionCreated"): EventFragment;
   getEvent(nameOrSignatureOrTopic: "NFTMinted"): EventFragment;
   getEvent(nameOrSignatureOrTopic: "OwnerUpdated"): EventFragment;
 }
@@ -172,28 +163,21 @@ export type ExchangeAddressChangedEvent = TypedEvent<
 export type ExchangeAddressChangedEventFilter =
   TypedEventFilter<ExchangeAddressChangedEvent>;
 
-export interface InitializedEventObject {
-  version: number;
-}
-export type InitializedEvent = TypedEvent<[number], InitializedEventObject>;
-
-export type InitializedEventFilter = TypedEventFilter<InitializedEvent>;
-
-export interface NFTContractCreatedEventObject {
+export interface NFTCollectionCreatedEventObject {
   name: string;
   symbol: string;
-  nftContract: string;
+  nftCollection: string;
 }
-export type NFTContractCreatedEvent = TypedEvent<
+export type NFTCollectionCreatedEvent = TypedEvent<
   [string, string, string],
-  NFTContractCreatedEventObject
+  NFTCollectionCreatedEventObject
 >;
 
-export type NFTContractCreatedEventFilter =
-  TypedEventFilter<NFTContractCreatedEvent>;
+export type NFTCollectionCreatedEventFilter =
+  TypedEventFilter<NFTCollectionCreatedEvent>;
 
 export interface NFTMintedEventObject {
-  nftContract: string;
+  nftCollection: string;
   tokenId: BigNumber;
 }
 export type NFTMintedEvent = TypedEvent<
@@ -204,7 +188,7 @@ export type NFTMintedEvent = TypedEvent<
 export type NFTMintedEventFilter = TypedEventFilter<NFTMintedEvent>;
 
 export interface OwnerUpdatedEventObject {
-  nftContract: string;
+  nftCollection: string;
   newOwner: string;
   tokenId: BigNumber;
 }
@@ -255,7 +239,7 @@ export interface NFTMintingFactory extends BaseContract {
       overrides?: CallOverrides
     ): Promise<[BigNumber]>;
 
-    createNFTContract(
+    createNFTCollection(
       _name: PromiseOrValue<string>,
       _symbol: PromiseOrValue<string>,
       overrides?: Overrides & { from?: PromiseOrValue<string> }
@@ -268,12 +252,8 @@ export interface NFTMintingFactory extends BaseContract {
       overrides?: CallOverrides
     ): Promise<[string[]]>;
 
-    initialize(
-      overrides?: Overrides & { from?: PromiseOrValue<string> }
-    ): Promise<ContractTransaction>;
-
     mintNFT(
-      _nftContract: PromiseOrValue<string>,
+      _nftCollection: PromiseOrValue<string>,
       _tokenURI: PromiseOrValue<string>,
       overrides?: Overrides & { from?: PromiseOrValue<string> }
     ): Promise<ContractTransaction>;
@@ -290,7 +270,7 @@ export interface NFTMintingFactory extends BaseContract {
     ): Promise<ContractTransaction>;
 
     updateOwner(
-      _nftContract: PromiseOrValue<string>,
+      _nftCollection: PromiseOrValue<string>,
       _newOwner: PromiseOrValue<string>,
       _tokenId: PromiseOrValue<BigNumberish>,
       overrides?: Overrides & { from?: PromiseOrValue<string> }
@@ -310,7 +290,7 @@ export interface NFTMintingFactory extends BaseContract {
     overrides?: CallOverrides
   ): Promise<BigNumber>;
 
-  createNFTContract(
+  createNFTCollection(
     _name: PromiseOrValue<string>,
     _symbol: PromiseOrValue<string>,
     overrides?: Overrides & { from?: PromiseOrValue<string> }
@@ -323,12 +303,8 @@ export interface NFTMintingFactory extends BaseContract {
     overrides?: CallOverrides
   ): Promise<string[]>;
 
-  initialize(
-    overrides?: Overrides & { from?: PromiseOrValue<string> }
-  ): Promise<ContractTransaction>;
-
   mintNFT(
-    _nftContract: PromiseOrValue<string>,
+    _nftCollection: PromiseOrValue<string>,
     _tokenURI: PromiseOrValue<string>,
     overrides?: Overrides & { from?: PromiseOrValue<string> }
   ): Promise<ContractTransaction>;
@@ -345,7 +321,7 @@ export interface NFTMintingFactory extends BaseContract {
   ): Promise<ContractTransaction>;
 
   updateOwner(
-    _nftContract: PromiseOrValue<string>,
+    _nftCollection: PromiseOrValue<string>,
     _newOwner: PromiseOrValue<string>,
     _tokenId: PromiseOrValue<BigNumberish>,
     overrides?: Overrides & { from?: PromiseOrValue<string> }
@@ -365,7 +341,7 @@ export interface NFTMintingFactory extends BaseContract {
       overrides?: CallOverrides
     ): Promise<BigNumber>;
 
-    createNFTContract(
+    createNFTCollection(
       _name: PromiseOrValue<string>,
       _symbol: PromiseOrValue<string>,
       overrides?: CallOverrides
@@ -378,10 +354,8 @@ export interface NFTMintingFactory extends BaseContract {
       overrides?: CallOverrides
     ): Promise<string[]>;
 
-    initialize(overrides?: CallOverrides): Promise<void>;
-
     mintNFT(
-      _nftContract: PromiseOrValue<string>,
+      _nftCollection: PromiseOrValue<string>,
       _tokenURI: PromiseOrValue<string>,
       overrides?: CallOverrides
     ): Promise<boolean>;
@@ -398,7 +372,7 @@ export interface NFTMintingFactory extends BaseContract {
     ): Promise<void>;
 
     updateOwner(
-      _nftContract: PromiseOrValue<string>,
+      _nftCollection: PromiseOrValue<string>,
       _newOwner: PromiseOrValue<string>,
       _tokenId: PromiseOrValue<BigNumberish>,
       overrides?: CallOverrides
@@ -415,33 +389,30 @@ export interface NFTMintingFactory extends BaseContract {
       newExchange?: null
     ): ExchangeAddressChangedEventFilter;
 
-    "Initialized(uint8)"(version?: null): InitializedEventFilter;
-    Initialized(version?: null): InitializedEventFilter;
-
-    "NFTContractCreated(string,string,address)"(
+    "NFTCollectionCreated(string,string,address)"(
       name?: null,
       symbol?: null,
-      nftContract?: null
-    ): NFTContractCreatedEventFilter;
-    NFTContractCreated(
+      nftCollection?: null
+    ): NFTCollectionCreatedEventFilter;
+    NFTCollectionCreated(
       name?: null,
       symbol?: null,
-      nftContract?: null
-    ): NFTContractCreatedEventFilter;
+      nftCollection?: null
+    ): NFTCollectionCreatedEventFilter;
 
     "NFTMinted(address,uint256)"(
-      nftContract?: null,
+      nftCollection?: null,
       tokenId?: null
     ): NFTMintedEventFilter;
-    NFTMinted(nftContract?: null, tokenId?: null): NFTMintedEventFilter;
+    NFTMinted(nftCollection?: null, tokenId?: null): NFTMintedEventFilter;
 
     "OwnerUpdated(address,address,uint256)"(
-      nftContract?: null,
+      nftCollection?: null,
       newOwner?: null,
       tokenId?: null
     ): OwnerUpdatedEventFilter;
     OwnerUpdated(
-      nftContract?: null,
+      nftCollection?: null,
       newOwner?: null,
       tokenId?: null
     ): OwnerUpdatedEventFilter;
@@ -461,7 +432,7 @@ export interface NFTMintingFactory extends BaseContract {
       overrides?: CallOverrides
     ): Promise<BigNumber>;
 
-    createNFTContract(
+    createNFTCollection(
       _name: PromiseOrValue<string>,
       _symbol: PromiseOrValue<string>,
       overrides?: Overrides & { from?: PromiseOrValue<string> }
@@ -474,12 +445,8 @@ export interface NFTMintingFactory extends BaseContract {
       overrides?: CallOverrides
     ): Promise<BigNumber>;
 
-    initialize(
-      overrides?: Overrides & { from?: PromiseOrValue<string> }
-    ): Promise<BigNumber>;
-
     mintNFT(
-      _nftContract: PromiseOrValue<string>,
+      _nftCollection: PromiseOrValue<string>,
       _tokenURI: PromiseOrValue<string>,
       overrides?: Overrides & { from?: PromiseOrValue<string> }
     ): Promise<BigNumber>;
@@ -496,7 +463,7 @@ export interface NFTMintingFactory extends BaseContract {
     ): Promise<BigNumber>;
 
     updateOwner(
-      _nftContract: PromiseOrValue<string>,
+      _nftCollection: PromiseOrValue<string>,
       _newOwner: PromiseOrValue<string>,
       _tokenId: PromiseOrValue<BigNumberish>,
       overrides?: Overrides & { from?: PromiseOrValue<string> }
@@ -517,7 +484,7 @@ export interface NFTMintingFactory extends BaseContract {
       overrides?: CallOverrides
     ): Promise<PopulatedTransaction>;
 
-    createNFTContract(
+    createNFTCollection(
       _name: PromiseOrValue<string>,
       _symbol: PromiseOrValue<string>,
       overrides?: Overrides & { from?: PromiseOrValue<string> }
@@ -530,12 +497,8 @@ export interface NFTMintingFactory extends BaseContract {
       overrides?: CallOverrides
     ): Promise<PopulatedTransaction>;
 
-    initialize(
-      overrides?: Overrides & { from?: PromiseOrValue<string> }
-    ): Promise<PopulatedTransaction>;
-
     mintNFT(
-      _nftContract: PromiseOrValue<string>,
+      _nftCollection: PromiseOrValue<string>,
       _tokenURI: PromiseOrValue<string>,
       overrides?: Overrides & { from?: PromiseOrValue<string> }
     ): Promise<PopulatedTransaction>;
@@ -552,7 +515,7 @@ export interface NFTMintingFactory extends BaseContract {
     ): Promise<PopulatedTransaction>;
 
     updateOwner(
-      _nftContract: PromiseOrValue<string>,
+      _nftCollection: PromiseOrValue<string>,
       _newOwner: PromiseOrValue<string>,
       _tokenId: PromiseOrValue<BigNumberish>,
       overrides?: Overrides & { from?: PromiseOrValue<string> }

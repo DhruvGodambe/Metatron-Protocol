@@ -1,5 +1,5 @@
 const { ethers, network } = require("hardhat");
-const { signMetaTxRequest } = require("../utils/signer");
+const { signMetaTxRequest } = require("../../utils/signer");
 const { readFileSync, writeFileSync } = require("fs");
 
 const DEFAULT_NAME = "sign-test";

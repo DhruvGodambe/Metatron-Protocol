@@ -31,7 +31,9 @@ export interface ExchangeCoreNewInterface extends utils.Interface {
   functions: {
     "cancelOrder(address,uint256,address,address,uint256)": FunctionFragment;
     "cancelledOrders(address,address,uint256)": FunctionFragment;
+    "exchange()": FunctionFragment;
     "executeOrder(address,uint256,address,address,uint256)": FunctionFragment;
+    "fixedPricePrimarySale(address,string,uint256,uint256,address,address)": FunctionFragment;
     "mintAndTransfer(address,string,uint256)": FunctionFragment;
     "owner()": FunctionFragment;
     "paused()": FunctionFragment;
@@ -39,13 +41,16 @@ export interface ExchangeCoreNewInterface extends utils.Interface {
     "tradingFeeFactor()": FunctionFragment;
     "tradingFeeFactorMax()": FunctionFragment;
     "transferOwnership(address)": FunctionFragment;
+    "treasury()": FunctionFragment;
   };
 
   getFunction(
     nameOrSignatureOrTopic:
       | "cancelOrder"
       | "cancelledOrders"
+      | "exchange"
       | "executeOrder"
+      | "fixedPricePrimarySale"
       | "mintAndTransfer"
       | "owner"
       | "paused"
@@ -53,6 +58,7 @@ export interface ExchangeCoreNewInterface extends utils.Interface {
       | "tradingFeeFactor"
       | "tradingFeeFactorMax"
       | "transferOwnership"
+      | "treasury"
   ): FunctionFragment;
 
   encodeFunctionData(
@@ -73,6 +79,7 @@ export interface ExchangeCoreNewInterface extends utils.Interface {
       PromiseOrValue<BigNumberish>
     ]
   ): string;
+  encodeFunctionData(functionFragment: "exchange", values?: undefined): string;
   encodeFunctionData(
     functionFragment: "executeOrder",
     values: [
@@ -81,6 +88,17 @@ export interface ExchangeCoreNewInterface extends utils.Interface {
       PromiseOrValue<string>,
       PromiseOrValue<string>,
       PromiseOrValue<BigNumberish>
+    ]
+  ): string;
+  encodeFunctionData(
+    functionFragment: "fixedPricePrimarySale",
+    values: [
+      PromiseOrValue<string>,
+      PromiseOrValue<string>,
+      PromiseOrValue<BigNumberish>,
+      PromiseOrValue<BigNumberish>,
+      PromiseOrValue<string>,
+      PromiseOrValue<string>
     ]
   ): string;
   encodeFunctionData(
@@ -109,6 +127,7 @@ export interface ExchangeCoreNewInterface extends utils.Interface {
     functionFragment: "transferOwnership",
     values: [PromiseOrValue<string>]
   ): string;
+  encodeFunctionData(functionFragment: "treasury", values?: undefined): string;
 
   decodeFunctionResult(
     functionFragment: "cancelOrder",
@@ -118,8 +137,13 @@ export interface ExchangeCoreNewInterface extends utils.Interface {
     functionFragment: "cancelledOrders",
     data: BytesLike
   ): Result;
+  decodeFunctionResult(functionFragment: "exchange", data: BytesLike): Result;
   decodeFunctionResult(
     functionFragment: "executeOrder",
+    data: BytesLike
+  ): Result;
+  decodeFunctionResult(
+    functionFragment: "fixedPricePrimarySale",
     data: BytesLike
   ): Result;
   decodeFunctionResult(
@@ -144,6 +168,7 @@ export interface ExchangeCoreNewInterface extends utils.Interface {
     functionFragment: "transferOwnership",
     data: BytesLike
   ): Result;
+  decodeFunctionResult(functionFragment: "treasury", data: BytesLike): Result;
 
   events: {
     "OrderCancelled(address,uint256,address)": EventFragment;
@@ -173,7 +198,7 @@ export type OrderCancelledEvent = TypedEvent<
 export type OrderCancelledEventFilter = TypedEventFilter<OrderCancelledEvent>;
 
 export interface OrderExecutedEventObject {
-  nftContract: string;
+  nftCollection: string;
   tokenId: BigNumber;
   oldOwner: string;
   newOwner: string;
@@ -239,7 +264,7 @@ export interface ExchangeCoreNew extends BaseContract {
 
   functions: {
     cancelOrder(
-      _nftContract: PromiseOrValue<string>,
+      _nftCollection: PromiseOrValue<string>,
       _tokenId: PromiseOrValue<BigNumberish>,
       _buyer: PromiseOrValue<string>,
       _seller: PromiseOrValue<string>,
@@ -254,8 +279,10 @@ export interface ExchangeCoreNew extends BaseContract {
       overrides?: CallOverrides
     ): Promise<[boolean]>;
 
+    exchange(overrides?: CallOverrides): Promise<[string]>;
+
     executeOrder(
-      _nftContract: PromiseOrValue<string>,
+      _nftCollection: PromiseOrValue<string>,
       _tokenId: PromiseOrValue<BigNumberish>,
       _buyer: PromiseOrValue<string>,
       _seller: PromiseOrValue<string>,
@@ -263,8 +290,18 @@ export interface ExchangeCoreNew extends BaseContract {
       overrides?: Overrides & { from?: PromiseOrValue<string> }
     ): Promise<ContractTransaction>;
 
+    fixedPricePrimarySale(
+      _nftCollection: PromiseOrValue<string>,
+      _tokenURI: PromiseOrValue<string>,
+      _nftPrice: PromiseOrValue<BigNumberish>,
+      _tokenId: PromiseOrValue<BigNumberish>,
+      _buyer: PromiseOrValue<string>,
+      _buyerToken: PromiseOrValue<string>,
+      overrides?: Overrides & { from?: PromiseOrValue<string> }
+    ): Promise<ContractTransaction>;
+
     mintAndTransfer(
-      _nftContract: PromiseOrValue<string>,
+      _nftCollection: PromiseOrValue<string>,
       _tokenURI: PromiseOrValue<string>,
       _tokenId: PromiseOrValue<BigNumberish>,
       overrides?: Overrides & { from?: PromiseOrValue<string> }
@@ -286,10 +323,12 @@ export interface ExchangeCoreNew extends BaseContract {
       newOwner: PromiseOrValue<string>,
       overrides?: Overrides & { from?: PromiseOrValue<string> }
     ): Promise<ContractTransaction>;
+
+    treasury(overrides?: CallOverrides): Promise<[string]>;
   };
 
   cancelOrder(
-    _nftContract: PromiseOrValue<string>,
+    _nftCollection: PromiseOrValue<string>,
     _tokenId: PromiseOrValue<BigNumberish>,
     _buyer: PromiseOrValue<string>,
     _seller: PromiseOrValue<string>,
@@ -304,8 +343,10 @@ export interface ExchangeCoreNew extends BaseContract {
     overrides?: CallOverrides
   ): Promise<boolean>;
 
+  exchange(overrides?: CallOverrides): Promise<string>;
+
   executeOrder(
-    _nftContract: PromiseOrValue<string>,
+    _nftCollection: PromiseOrValue<string>,
     _tokenId: PromiseOrValue<BigNumberish>,
     _buyer: PromiseOrValue<string>,
     _seller: PromiseOrValue<string>,
@@ -313,8 +354,18 @@ export interface ExchangeCoreNew extends BaseContract {
     overrides?: Overrides & { from?: PromiseOrValue<string> }
   ): Promise<ContractTransaction>;
 
+  fixedPricePrimarySale(
+    _nftCollection: PromiseOrValue<string>,
+    _tokenURI: PromiseOrValue<string>,
+    _nftPrice: PromiseOrValue<BigNumberish>,
+    _tokenId: PromiseOrValue<BigNumberish>,
+    _buyer: PromiseOrValue<string>,
+    _buyerToken: PromiseOrValue<string>,
+    overrides?: Overrides & { from?: PromiseOrValue<string> }
+  ): Promise<ContractTransaction>;
+
   mintAndTransfer(
-    _nftContract: PromiseOrValue<string>,
+    _nftCollection: PromiseOrValue<string>,
     _tokenURI: PromiseOrValue<string>,
     _tokenId: PromiseOrValue<BigNumberish>,
     overrides?: Overrides & { from?: PromiseOrValue<string> }
@@ -337,9 +388,11 @@ export interface ExchangeCoreNew extends BaseContract {
     overrides?: Overrides & { from?: PromiseOrValue<string> }
   ): Promise<ContractTransaction>;
 
+  treasury(overrides?: CallOverrides): Promise<string>;
+
   callStatic: {
     cancelOrder(
-      _nftContract: PromiseOrValue<string>,
+      _nftCollection: PromiseOrValue<string>,
       _tokenId: PromiseOrValue<BigNumberish>,
       _buyer: PromiseOrValue<string>,
       _seller: PromiseOrValue<string>,
@@ -354,8 +407,10 @@ export interface ExchangeCoreNew extends BaseContract {
       overrides?: CallOverrides
     ): Promise<boolean>;
 
+    exchange(overrides?: CallOverrides): Promise<string>;
+
     executeOrder(
-      _nftContract: PromiseOrValue<string>,
+      _nftCollection: PromiseOrValue<string>,
       _tokenId: PromiseOrValue<BigNumberish>,
       _buyer: PromiseOrValue<string>,
       _seller: PromiseOrValue<string>,
@@ -363,8 +418,18 @@ export interface ExchangeCoreNew extends BaseContract {
       overrides?: CallOverrides
     ): Promise<void>;
 
+    fixedPricePrimarySale(
+      _nftCollection: PromiseOrValue<string>,
+      _tokenURI: PromiseOrValue<string>,
+      _nftPrice: PromiseOrValue<BigNumberish>,
+      _tokenId: PromiseOrValue<BigNumberish>,
+      _buyer: PromiseOrValue<string>,
+      _buyerToken: PromiseOrValue<string>,
+      overrides?: CallOverrides
+    ): Promise<void>;
+
     mintAndTransfer(
-      _nftContract: PromiseOrValue<string>,
+      _nftCollection: PromiseOrValue<string>,
       _tokenURI: PromiseOrValue<string>,
       _tokenId: PromiseOrValue<BigNumberish>,
       overrides?: CallOverrides
@@ -384,6 +449,8 @@ export interface ExchangeCoreNew extends BaseContract {
       newOwner: PromiseOrValue<string>,
       overrides?: CallOverrides
     ): Promise<void>;
+
+    treasury(overrides?: CallOverrides): Promise<string>;
   };
 
   filters: {
@@ -399,13 +466,13 @@ export interface ExchangeCoreNew extends BaseContract {
     ): OrderCancelledEventFilter;
 
     "OrderExecuted(address,uint256,address,address)"(
-      nftContract?: null,
+      nftCollection?: null,
       tokenId?: null,
       oldOwner?: null,
       newOwner?: null
     ): OrderExecutedEventFilter;
     OrderExecuted(
-      nftContract?: null,
+      nftCollection?: null,
       tokenId?: null,
       oldOwner?: null,
       newOwner?: null
@@ -429,7 +496,7 @@ export interface ExchangeCoreNew extends BaseContract {
 
   estimateGas: {
     cancelOrder(
-      _nftContract: PromiseOrValue<string>,
+      _nftCollection: PromiseOrValue<string>,
       _tokenId: PromiseOrValue<BigNumberish>,
       _buyer: PromiseOrValue<string>,
       _seller: PromiseOrValue<string>,
@@ -444,8 +511,10 @@ export interface ExchangeCoreNew extends BaseContract {
       overrides?: CallOverrides
     ): Promise<BigNumber>;
 
+    exchange(overrides?: CallOverrides): Promise<BigNumber>;
+
     executeOrder(
-      _nftContract: PromiseOrValue<string>,
+      _nftCollection: PromiseOrValue<string>,
       _tokenId: PromiseOrValue<BigNumberish>,
       _buyer: PromiseOrValue<string>,
       _seller: PromiseOrValue<string>,
@@ -453,8 +522,18 @@ export interface ExchangeCoreNew extends BaseContract {
       overrides?: Overrides & { from?: PromiseOrValue<string> }
     ): Promise<BigNumber>;
 
+    fixedPricePrimarySale(
+      _nftCollection: PromiseOrValue<string>,
+      _tokenURI: PromiseOrValue<string>,
+      _nftPrice: PromiseOrValue<BigNumberish>,
+      _tokenId: PromiseOrValue<BigNumberish>,
+      _buyer: PromiseOrValue<string>,
+      _buyerToken: PromiseOrValue<string>,
+      overrides?: Overrides & { from?: PromiseOrValue<string> }
+    ): Promise<BigNumber>;
+
     mintAndTransfer(
-      _nftContract: PromiseOrValue<string>,
+      _nftCollection: PromiseOrValue<string>,
       _tokenURI: PromiseOrValue<string>,
       _tokenId: PromiseOrValue<BigNumberish>,
       overrides?: Overrides & { from?: PromiseOrValue<string> }
@@ -476,11 +555,13 @@ export interface ExchangeCoreNew extends BaseContract {
       newOwner: PromiseOrValue<string>,
       overrides?: Overrides & { from?: PromiseOrValue<string> }
     ): Promise<BigNumber>;
+
+    treasury(overrides?: CallOverrides): Promise<BigNumber>;
   };
 
   populateTransaction: {
     cancelOrder(
-      _nftContract: PromiseOrValue<string>,
+      _nftCollection: PromiseOrValue<string>,
       _tokenId: PromiseOrValue<BigNumberish>,
       _buyer: PromiseOrValue<string>,
       _seller: PromiseOrValue<string>,
@@ -495,8 +576,10 @@ export interface ExchangeCoreNew extends BaseContract {
       overrides?: CallOverrides
     ): Promise<PopulatedTransaction>;
 
+    exchange(overrides?: CallOverrides): Promise<PopulatedTransaction>;
+
     executeOrder(
-      _nftContract: PromiseOrValue<string>,
+      _nftCollection: PromiseOrValue<string>,
       _tokenId: PromiseOrValue<BigNumberish>,
       _buyer: PromiseOrValue<string>,
       _seller: PromiseOrValue<string>,
@@ -504,8 +587,18 @@ export interface ExchangeCoreNew extends BaseContract {
       overrides?: Overrides & { from?: PromiseOrValue<string> }
     ): Promise<PopulatedTransaction>;
 
+    fixedPricePrimarySale(
+      _nftCollection: PromiseOrValue<string>,
+      _tokenURI: PromiseOrValue<string>,
+      _nftPrice: PromiseOrValue<BigNumberish>,
+      _tokenId: PromiseOrValue<BigNumberish>,
+      _buyer: PromiseOrValue<string>,
+      _buyerToken: PromiseOrValue<string>,
+      overrides?: Overrides & { from?: PromiseOrValue<string> }
+    ): Promise<PopulatedTransaction>;
+
     mintAndTransfer(
-      _nftContract: PromiseOrValue<string>,
+      _nftCollection: PromiseOrValue<string>,
       _tokenURI: PromiseOrValue<string>,
       _tokenId: PromiseOrValue<BigNumberish>,
       overrides?: Overrides & { from?: PromiseOrValue<string> }
@@ -529,5 +622,7 @@ export interface ExchangeCoreNew extends BaseContract {
       newOwner: PromiseOrValue<string>,
       overrides?: Overrides & { from?: PromiseOrValue<string> }
     ): Promise<PopulatedTransaction>;
+
+    treasury(overrides?: CallOverrides): Promise<PopulatedTransaction>;
   };
 }
