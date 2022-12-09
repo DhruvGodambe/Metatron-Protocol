@@ -22,7 +22,7 @@ let admin:Address, treasury:Address;
 
 
 const main = async () => {
-    [admin, treasury] = await ethers.getSigners();
+    const [admin, treasury] = await ethers.getSigners();
     
     console.log("Deploying Admin Registry...");
     
