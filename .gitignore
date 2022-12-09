@@ -4,3 +4,4 @@ artifacts
 .env
 deploy.json
 request.json
+typechain-types

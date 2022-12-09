@@ -6,6 +6,7 @@ pragma solidity ^0.8.4;
 
 import "./NFTCollection.sol";
 import "@openzeppelin/contracts-upgradeable/proxy/utils/Initializable.sol";
+import "../../Registry/IAdminRegistry.sol";
 
 contract NFTMintingFactory {
     // this contract creates an NFT Collection
@@ -13,13 +14,13 @@ contract NFTMintingFactory {
     // keeps track of all NFT Collections for the users
 
     // exchangeAddress
-    // admin address
+    // adminRegistry address
 
-    address public adminAddress;
     address public exchangeAddress;
+    address public adminRegistry;
 
-    constructor() public {
-        adminAddress = msg.sender;
+    constructor(address _adminRegistry)  {
+        adminRegistry = _adminRegistry;
     }
 
     //owner=>collection
@@ -44,12 +45,14 @@ contract NFTMintingFactory {
     }
 
     modifier onlyExchange() {
-        require(msg.sender == exchangeAddress, "Only Exchange can call this!");
+        require(msg.sender == exchangeAddress, 
+        "Only Exchange can call this!");
         _;
     }
 
     modifier onlyAdmin() {
-        require(msg.sender == adminAddress, "Only Admin can call this!");
+        require(IAdminRegistry(adminRegistry).isAdmin(msg.sender), 
+        "Only Admin can call this!");
         _;
     }
 
@@ -59,7 +62,7 @@ contract NFTMintingFactory {
         returns (address _nftCollection)
     {
         // create new contract
-        address nftCollection = address(new NFTCollection(_name, _symbol));
+        address nftCollection = address(new NFTCollection(_name, _symbol, adminRegistry));
         // update mapping of owner to NFTCollections
         ownerToCollection[msg.sender].push(nftCollection);
         collectionToOwner[nftCollection] = msg.sender;
@@ -106,6 +109,7 @@ contract NFTMintingFactory {
         exchangeAddress = _newExchange;
         emit ExchangeAddressChanged(oldExchange, exchangeAddress);
     }
+
 
     // lists all NFT collections for a owner
     function getCollectionForOwner(address user)

@@ -11,6 +11,7 @@ import "@openzeppelin/contracts/utils/math/SafeMath.sol";
 import "./../Interface/IERC20.sol";
 import "./../Interface/IERC721.sol";
 import "./../Interface/IMintingFactory.sol";
+import "../../Registry/IAdminRegistry.sol";
 
 contract ExchangeCoreNew is Ownable, Pausable {
     using SafeMath for uint256;
@@ -19,15 +20,17 @@ contract ExchangeCoreNew is Ownable, Pausable {
     IERC20 internal WETH;
     address public treasury;
     address public exchange;
+    address public adminRegistry;
 
     uint256 auctionTimeLimit = 28800;
     uint256 public constant tradingFeeFactorMax = 10000; // 100%
-    uint256 public tradingFeeFactor = 250; // 2.5%
+    uint256 public tradingFeeFactor = 400; // 2.5%
 
-    constructor(IMintingFactory _mintingFactory, IERC20 _weth, address _treasury) {
+    constructor(IMintingFactory _mintingFactory, IERC20 _weth,address _adminRegistry, address _treasury) {
         mintingFactory = IMintingFactory(_mintingFactory);
         WETH = IERC20(_weth);
         treasury = _treasury;
+        adminRegistry = _adminRegistry;
     }
 
     // One who bids for an nft, can cancel it anytime before auction ends
@@ -48,6 +51,14 @@ contract ExchangeCoreNew is Ownable, Pausable {
         require(
             exchange == msg.sender,
             "Only Exchange can call this!"
+        );
+        _;
+    }
+
+    modifier onlyAdmin() {
+        require(
+            IAdminRegistry(adminRegistry).isAdmin(msg.sender),
+            "Only Admin can call this!"
         );
         _;
     }
@@ -95,7 +106,7 @@ contract ExchangeCoreNew is Ownable, Pausable {
 //Primary sale: No tradingfee
 //Sec sale: 4% trading fee
 
-    function fixedPricePrimarySale(address _nftCollection, string memory _tokenURI, uint256 _nftPrice, uint256 _tokenId, address _buyer, address _buyerToken) public {
+    function fixedPricePrimarySale(address _nftCollection, string memory _tokenURI, uint256 _nftPrice, uint256 _tokenId, address _buyer, address _buyerToken) public onlyAdmin {
         require(IERC20(_buyerToken).allowance(_buyer, address(this)) >= _nftPrice, "Exchange is not allowed enough tokens");
 
         IERC20(_buyerToken).transferFrom(_buyer, treasury, _nftPrice);
@@ -112,6 +123,10 @@ contract ExchangeCoreNew is Ownable, Pausable {
             IERC721(_nftCollection).transferFrom(address(mintingFactory), msg.sender, _tokenId);
         }
         
+    }
+
+    function fixedPriceSecondarySale() public {
+
     }
 
 
