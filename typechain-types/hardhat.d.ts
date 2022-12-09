@@ -177,18 +177,6 @@ declare module "hardhat/types/runtime" {
       signerOrOptions?: ethers.Signer | FactoryOptions
     ): Promise<Contracts.AltERC721NFTContract__factory>;
     getContractFactory(
-      name: "ERC721MintingFactory",
-      signerOrOptions?: ethers.Signer | FactoryOptions
-    ): Promise<Contracts.ERC721MintingFactory__factory>;
-    getContractFactory(
-      name: "ERC721MintingFactoryV2",
-      signerOrOptions?: ethers.Signer | FactoryOptions
-    ): Promise<Contracts.ERC721MintingFactoryV2__factory>;
-    getContractFactory(
-      name: "ERC721NFTContract",
-      signerOrOptions?: ethers.Signer | FactoryOptions
-    ): Promise<Contracts.ERC721NFTContract__factory>;
-    getContractFactory(
       name: "NFTContract",
       signerOrOptions?: ethers.Signer | FactoryOptions
     ): Promise<Contracts.NFTContract__factory>;
@@ -490,21 +478,6 @@ declare module "hardhat/types/runtime" {
       address: string,
       signer?: ethers.Signer
     ): Promise<Contracts.AltERC721NFTContract>;
-    getContractAt(
-      name: "ERC721MintingFactory",
-      address: string,
-      signer?: ethers.Signer
-    ): Promise<Contracts.ERC721MintingFactory>;
-    getContractAt(
-      name: "ERC721MintingFactoryV2",
-      address: string,
-      signer?: ethers.Signer
-    ): Promise<Contracts.ERC721MintingFactoryV2>;
-    getContractAt(
-      name: "ERC721NFTContract",
-      address: string,
-      signer?: ethers.Signer
-    ): Promise<Contracts.ERC721NFTContract>;
     getContractAt(
       name: "NFTContract",
       address: string,

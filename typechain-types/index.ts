@@ -84,12 +84,6 @@ export type { AltERC721MintingFactory } from "./contracts/NFTMarketplace/Minting
 export { AltERC721MintingFactory__factory } from "./factories/contracts/NFTMarketplace/MintingAndStorage/Enoch/AltERC721MintingFactory__factory";
 export type { AltERC721NFTContract } from "./contracts/NFTMarketplace/MintingAndStorage/Enoch/AltERC721NFTContract";
 export { AltERC721NFTContract__factory } from "./factories/contracts/NFTMarketplace/MintingAndStorage/Enoch/AltERC721NFTContract__factory";
-export type { ERC721MintingFactory } from "./contracts/NFTMarketplace/MintingAndStorage/ERC721MintingFactory";
-export { ERC721MintingFactory__factory } from "./factories/contracts/NFTMarketplace/MintingAndStorage/ERC721MintingFactory__factory";
-export type { ERC721MintingFactoryV2 } from "./contracts/NFTMarketplace/MintingAndStorage/ERC721MintingFactoryV2";
-export { ERC721MintingFactoryV2__factory } from "./factories/contracts/NFTMarketplace/MintingAndStorage/ERC721MintingFactoryV2__factory";
-export type { ERC721NFTContract } from "./contracts/NFTMarketplace/MintingAndStorage/ERC721NFTContract";
-export { ERC721NFTContract__factory } from "./factories/contracts/NFTMarketplace/MintingAndStorage/ERC721NFTContract__factory";
 export type { NFTContract } from "./contracts/NFTMarketplace/MintingAndStorage/NFTContract";
 export { NFTContract__factory } from "./factories/contracts/NFTMarketplace/MintingAndStorage/NFTContract__factory";
 export type { NFTMintingFactory } from "./contracts/NFTMarketplace/MintingAndStorage/NFTMintingFactory";

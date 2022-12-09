@@ -84,7 +84,7 @@ contract ExchangeCore is Ownable, Pausable {
         address _nftContract,
         uint256 _tokenId,
         address _seller
-    ) internal returns (bool) {
+    ) internal view returns (bool) {
         // check if he owns the token
         address tokenOwner = IERC721(_nftContract).ownerOf(_tokenId);
         require(_seller == tokenOwner, "Seller does not owns the token");
@@ -103,7 +103,7 @@ contract ExchangeCore is Ownable, Pausable {
 
 
     function validateBuyer(address _buyer, uint256 _amount)
-        internal
+        internal view
         returns (bool)
     {
         require(
