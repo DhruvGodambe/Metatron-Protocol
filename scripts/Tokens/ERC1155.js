@@ -16,9 +16,10 @@ const main = async () => {
   const gameItems = await GameItems.deploy();
   const txReceipt = await gameItems.deployed();
 
-  console.log(Object.values(txReceipt));
+  //   console.log(Object.values(txReceipt));
 
-  console.log(`Contract Instance ==> ${txReceipt}\n`);
+  //   console.log(`Contract Instance ==> ${txReceipt}\n`);
+  console.log(txReceipt);
   console.log(`Contract Address ==> ${txReceipt.address}\n`);
 
   console.log(`---------- Calling safeTransferFrom ----------`);
@@ -35,14 +36,23 @@ const main = async () => {
   );
 
   const tx1Receipt = await tx1.wait();
-  console.log(`tx1Receipt ==> ${tx1Receipt}\n`);
+  //   console.log(`tx1Receipt ==> ${tx1Receipt}\n`);
+  //   console.log(tx1Receipt);
+  //   console.log(tx1Receipt.events[0].args);
 
-  console.log(`---------- Calling balanceOf ----------\n`);
+  console.log("\nFrom Address", tx1Receipt.events[0].args.from);
+  console.log("To Address", tx1Receipt.events[0].args.to);
+  console.log("ERC1155 Id", tx1Receipt.events[0].args.id);
+  console.log("ERC1155 value", tx1Receipt.events[0].args.value);
+
+  console.log(`\n---------- Calling balanceOf ----------\n`);
 
   const tx2 = await gameItems.balanceOf(userAddress, id);
   //   const tx2Receipt = await tx2.wait();
 
-  console.log(`tx2Receipt ==> ${tx2}`);
+  //   console.log(`tx2Receipt ==> ${tx2}`);
+  //   console.log(tx2);
+  console.log("balanceOf Address is", tx2);
 };
 
 main()
