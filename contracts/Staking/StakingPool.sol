@@ -9,7 +9,6 @@ error StakingPool__StakeFailed(uint256 required);
 error StakingPool__WithdrawFailed(uint256 required);
 
 contract StakingPool {
-
     using Counters for Counters.Counter;
     Counters.Counter private positionIdCounter;
 
@@ -19,14 +18,15 @@ contract StakingPool {
         uint256 positionId;
         uint256 startTime;
         uint256 endTime;
-        uint256 tokenStakedAmount;        
+        uint256 tokenStakedAmount;
     }
     // UserInfo[] public userInfo;
 
     IERC20 public immutable stakingToken; //RJToken
     IERC20 public immutable rewardToken; //RWDToken
 
-    mapping(address => UserInfo[]) public userPositions; 
+    // Mapping from user address to array of positions
+    mapping(address => UserInfo[]) public userPositions;
     // User address => rewards already claimed
     mapping(address => uint256) public rewards;
 
@@ -34,7 +34,7 @@ contract StakingPool {
     // uint32 public positionIdCounter;
     uint256 public APY;
     uint256 public constant PRECISION_CONSTANT = 10000;
-    uint256 public stakingTimeConstant; 
+    uint256 public stakingTimeConstant;
 
     event Staked(
         address indexed _user,
@@ -47,10 +47,18 @@ contract StakingPool {
         uint256 indexed _amount,
         uint256 _timestamp
     );
-    event RewardsClaimed(address indexed _user, uint256 _rewardAmount, uint256 _timestamp);
+    event RewardsClaimed(
+        address indexed _user,
+        uint256 _rewardAmount,
+        uint256 _timestamp
+    );
 
-
-    constructor(address _stakingToken, address _rewardToken, uint256 _APY, uint256 _stakingTimeConstant) {
+    constructor(
+        address _stakingToken,
+        address _rewardToken,
+        uint256 _APY,
+        uint256 _stakingTimeConstant
+    ) {
         owner = msg.sender;
         stakingToken = IERC20(_stakingToken); //RJToken
         rewardToken = IERC20(_rewardToken); //RWDToken
@@ -66,19 +74,34 @@ contract StakingPool {
     function stake(uint _amount) external {
         require(_amount > 0, "amount cannot be 0");
 
-        // check for approval         
-        require(stakingToken.allowance(msg.sender, address(this)) >= _amount, "Staking Contract is not approved for this Token or approved amount is not equal to given amount" );  
-        
-        UserInfo memory currentUserInfo = UserInfo(positionIdCounter.current(), block.timestamp, block.timestamp + stakingTimeConstant, _amount);
-        
-        UserInfo[] storage currentUserPositions = userPositions[msg.sender];
+        // check for approval
+        require(
+            stakingToken.allowance(msg.sender, address(this)) >= _amount,
+            "Staking Contract is not approved for this Token or approved amount is not equal to given amount"
+        );
+        uint256 newPositionId =  positionIdCounter.current();
+        positionIdCounter.increment();
 
-        if(currentUserPositions.length > 0) {
-            currentUserPositions.push(currentUserInfo);
-        } else {
+        UserInfo memory currentUserInfo = UserInfo(
+            newPositionId,
+            block.timestamp,
+            block.timestamp + stakingTimeConstant,
+            _amount
+        );
 
-            
-        }
+        UserInfo[] memory currentUserPositions = userPositions[msg.sender];
+
+    // incomplete 
+    // if user has existing position then push new position
+    // else create a new array containing new position
+
+        if (currentUserPositions.length > 0) {
+            userPositions[msg.sender].push(currentUserInfo);
+        } //else {
+        //     UserInfo[] storage storableUserPosition;
+        //     storableUserPosition.push(currentUserInfo);
+        //     userPositions[msg.sender] = storableUserPosition;
+        // }
 
         bool success = stakingToken.transferFrom(
             msg.sender,
@@ -95,8 +118,12 @@ contract StakingPool {
         //3. update user position for perticular user
         // increment position id counter
 
-        emit Staked(msg.sender, _amount, block.timestamp, positionIdCounter.current());
-        positionIdCounter.increment();
+        emit Staked(
+            msg.sender,
+            _amount,
+            block.timestamp,
+            newPositionId
+        );
     }
 
     function withdraw(uint256 _positionId) external {
@@ -105,35 +132,27 @@ contract StakingPool {
         //if the postionid matches with struct use that struct withdrawing further
         // uint256 balance = userPositions[msg.sender]._positionId.tokenStakedAmount; // create position for balances
         // require(balance > 0, "you have not staked token");
-
         // uint256 position = userPositions[msg.sender].positionId;
         // require(position > 0 , "you have to stack first");
-
         // require((block.timestamp - userPositions[msg.sender].startTime) >= stakingTimeConstant, "User cannot claim rewards before due time!");
-
         // userPositions[msg.sender].endTime = block.timestamp;
-
         // bool success = stakingToken.transfer(msg.sender, balance);
         // if (!success) {
         //     revert StakingPool__WithdrawFailed({required: balance});
         // }
-
         // emit Unstake(msg.sender, balance, block.timestamp);
     }
 
     function getReward(address _account) public view returns (uint256) {
         // uint256 balance = userPositions[msg.sender].tokenStakedAmount;
         // require(balance > 0, "you have not staked token");
-
-        // // get user position 
+        // // get user position
         // for(uint i = 0; i<= userPositions[msg.sender].positionId; i++) {
         // return (userPositions[msg.sender].i.tokenStakedAmount *(((block.timestamp - userPositions[_account].startTime)) * APY) / PRECISION_CONSTANT);
-
-        }
-        // based on user positions claculate reward for each position for loop
-        // create precision constant = 10000 
-        // save it in reward var
-    
+    }
+    // based on user positions claculate reward for each position for loop
+    // create precision constant = 10000
+    // save it in reward var
 
     // function claimReward(address _account, uint _positionId) external {
     //     uint256 reward = userPositions[_account]._positionId.tokenStakedAmount * ((((block.timestamp - userPositions[_account].startTime) ) * APY) / PRECISION_CONSTANT );
@@ -141,7 +160,7 @@ contract StakingPool {
     //     if(! success) {
     //         revert StakingPool__WithdrawFailed({required: reward});
     //     }
-        
+
     //     emit RewardsClaimed(_account, reward, block.timestap);
     // }
 
