@@ -25,20 +25,20 @@ const main = async () => {
     const [admin, treasury] = await ethers.getSigners();
     
     console.log("Deploying Admin Registry...");
-    
 
     const AdminRegistry = await hre.ethers.getContractFactory("AdminRegistry");
-    const adminRegistry = AdminRegistry.deploy(admin.address);
+    const adminRegistry = await AdminRegistry.deploy(admin.address);
 
-    // const tx = await adminRegistry.isAdmin(admin.address);
-    // const receipt = await tx.wait();
-    // console.log("Admin get from Admin Registry is : ", receipt);
     
     console.log("Admin address : ", admin.address);
-
+    
     await adminRegistry.deployed();
-
+    
     console.log("AdminRegistry address : ", adminRegistry.address);
+    
+    const tx = await adminRegistry.isAdmin(admin.address);
+    // const receipt = await tx.wait();
+    console.log(admin.address, " is the admin of Admin Registry? ", tx);
 
     //=======================================
 
@@ -46,19 +46,19 @@ const main = async () => {
     
     const MintingFactory = await hre.ethers.getContractFactory("NFTMintingFactory");
 
-    const mintingFactory = MintingFactory.deploy(adminRegistry.address);    
+    const mintingFactory = await MintingFactory.deploy(adminRegistry.address);    
 
     await mintingFactory.deployed();
     console.log("Minting Factory address : ", mintingFactory.address);
 
     //========================================
 
-    console.log("Deploying Exchange Core");
+    console.log("Deploying Exchange Core...");
 
     const ExchangeCore = await hre.ethers.getContractFactory("ExchangeCore");
 
-    const exchangeCore = ExchangeCore.deploy(IMintingFactory(mintingFactory.address), 
-        IAdminRegistry(adminRegistry.address), 
+    const exchangeCore = await ExchangeCore.deploy(mintingFactory.address, 
+        adminRegistry.address, 
         treasury.address
     );    
 
