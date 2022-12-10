@@ -73,7 +73,7 @@ const main = async () => {
     const receipt1 = await tx1.wait();
     let event = receipt1.events?.find((event:any) => event.event === "ExchangeAddressChanged");
     console.log("Updated Exchange Address is : ", event?.args.newExchange);
-
+    
     console.log("<<<<=====================================================>>>>");
 
     
@@ -102,8 +102,7 @@ const main = async () => {
                 );
                 
             console.log("<=====  Written ADDRESSES in marketplaceAddress.json  =====>");
-
-
+                
 
 };
 

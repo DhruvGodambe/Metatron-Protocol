@@ -71,31 +71,19 @@ contract NFTCollection is ERC721URIStorage {
         view virtual 
         override 
         returns (string memory)
-    {
-        string memory _tokenURI = _tokenURIs[tokenId];
-        string memory base = baseURI;
+    {         
 
-        // If there is no base URI, return the token URI.
-        if (bytes(base).length == 0) {
-            return _tokenURI;
-        }
-        // If both are set, concatenate the baseURI and tokenURI (via abi.encodePacked).
-        if (bytes(_tokenURI).length > 0) {
-            return string(abi.encodePacked(base, _tokenURI));
-        }
+            return string(abi.encodePacked(baseURI, tokenId.toString()));
 
-        return super.tokenURI(tokenId);
     }
 
 
-    function mintNewNFT(
-        string memory _tokenURI
-    ) public onlyMintingFactory returns (uint256) {
+    function mintNewNFT( ) public onlyMintingFactory returns (uint256) {
         _tokenIds.increment();
         uint256 newItemId = _tokenIds.current();
 
         _mint(mintingFactory, newItemId);
-        _setTokenURI(newItemId, _tokenURI);
+        // _setTokenURI(newItemId, _tokenURI);
 
         // console.log("New NFT minted");
         return newItemId;
