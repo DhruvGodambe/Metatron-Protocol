@@ -10,11 +10,12 @@ contract GameItems is ERC1155 {
     uint256 public constant SWORD = 3;
     uint256 public constant SHIELD = 4;
 
-    constructor() ERC1155("https://game.example/api/item/{id}.json") {
+    constructor() ERC1155("ipfs://QmdG7pjG7ZrmJuhtt1wyUyU4y6JgsjZ7Bwb6AhrP8qXevW/") {
         _mint(msg.sender, GOLD, 10**18, "");
         _mint(msg.sender, SILVER, 10**27, "");
         _mint(msg.sender, THORS_HAMMER, 1, "");
         _mint(msg.sender, SWORD, 10**9, "");
         _mint(msg.sender, SHIELD, 10**9, "");
     }
+
 }
