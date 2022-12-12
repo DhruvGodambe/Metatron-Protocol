@@ -5,7 +5,7 @@ import "@openzeppelin/contracts/token/ERC1155/ERC1155.sol";
 import "@openzeppelin/contracts/token/ERC1155/extensions/ERC1155Supply.sol";
 import "@openzeppelin/contracts/utils/Strings.sol";
 
-contract GameItems is ERC1155 {
+contract GameItems is ERC1155, ERC1155Supply {
     uint256 public constant GOLD = 0;
     uint256 public constant ELIXIR = 1;
     uint256 public constant THORS_HAMMER = 2;
@@ -22,9 +22,10 @@ contract GameItems is ERC1155 {
         _mint(msg.sender, SHIELD, 10 ** 9, "");
     }
 
-    function uri(
-        uint256 _id
-    ) public view virtual override returns (string memory) {
+    function uri(uint256 _id) public view override returns (string memory) {
+        /**
+         * @dev checks whether any token exist with a given id, or not.
+         */
         require(exists(_id), "URI: nonexistent token");
         return
             string(
