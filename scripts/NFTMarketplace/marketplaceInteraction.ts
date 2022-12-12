@@ -14,14 +14,15 @@ const IAdminRegistry = require('../../artifacts/contracts/Registry/IAdminRegistr
 const AdminRegistryabi = require('../../artifacts/contracts/Registry/AdminRegistry.sol/AdminRegistry.json');
 const mintingFactoryabi = require('../../artifacts/contracts/NFTMarketplace/MintingAndStorage/NFTMintingFactory.sol/NFTMintingFactory.json');
 const exchangeCoreabi = require('../../artifacts/contracts/NFTMarketplace/Exchange/ExchangeCore.sol/ExchangeCore.json');
-// const nftCollectionabi = require('../../artifacts/contracts/NFTMarketplace/MintingAndStorage/NFTCollection.sol/NFTCollection.json');
+const enochTokenabi = require('../../artifacts/contracts/Tokens/Enoch.sol/Enoch.json');
 
 
-const adminAddress = "0xf39Fd6e51aad88F6F4ce6aB8827279cffFb92266"
-const adminRegistryAddress = "0xB7f8BC63BbcaD18155201308C8f3540b07f84F5e"
-const treasuryAddress = "0xa0Ee7A142d267C1f36714E4a8F75612F20a79720"
-const mintingFactoryAddress = "0xA51c1fc2f0D1a1b8494Ed1FE312d7C3a78Ed91C0"
-const exchangeCoreAddress = "0x0DCd1Bf9A1b36cE34237eEaFef220932846BCD82"
+const adminAddress = Book.ADMIN_ADDRESS;
+const adminRegistryAddress = Book.ADMIN_REGISTRY_ADDRESS;
+const treasuryAddress = Book.TREASURY_ADDRESS;
+const mintingFactoryAddress = Book.MINTING_FACTORY_ADDRESS;
+const exchangeCoreAddress = Book.EXCHANGE_CORE_ADDRESS;
+const enochTokenAddress = Book.ENOCHTOKEN_ADDRESS;
 
 const PrivateKey = process.env.PRIVATE_KEY_LOCALHOST_1;
 const providerURL = process.env.PROVIDER_URL;
@@ -38,27 +39,24 @@ marketplaceInteraction.ts requirements:
 const main = async () => {
 
   const provider = new ethers.providers.JsonRpcProvider(providerURL);
-    // const account = new ethers.Wallet( PrivateKey , provider )
-    // console.log("account",account);
 
     const accounts = await ethers.getSigners();
     const admin  = accounts[0];
     const treasury = accounts[9];
     console.log("Inside main function ========>");
     
-    console.log("Admin address", admin.address);
-    console.log("Treasury address", treasury.address);
 
     const AdminRegistry = new ethers.Contract(adminRegistryAddress, AdminRegistryabi.abi, provider);
     console.log("AdminRegistry",AdminRegistry);
-    
+  
     const tx1 = await AdminRegistry.isAdmin(adminAddress);
-    console.log("Is Admin", tx1);
+    console.log(adminAddress, " is the admin of Admin Registry? ", tx1);
+    
 
     console.log("<<<<=====================================================>>>>");
 
     const MintingFactory = new ethers.Contract(mintingFactoryAddress, mintingFactoryabi.abi, provider);
-    console.log("AdminRegistry",AdminRegistry);
+    console.log("MintingFactory : ",MintingFactory);
 
     //@ 1. Create NFT Collection
     console.log("@ 1. Creating NFT Collection");
@@ -107,48 +105,55 @@ const main = async () => {
 
     const ExchangeCore = new ethers.Contract(exchangeCoreAddress, exchangeCoreabi.abi, provider);
     console.log("ExchangeCore : ",ExchangeCore);
-    
-    //@ 2. Updating Exchange Address
-    console.log("Setting Exchange Address in Minting Factory");
-
-    let tx = await MintingFactory.connect(admin).updateExchangeAddress(ExchangeCore.address);
-    console.log("Update Exchange Address tx : ", tx);
-
-    const receipt = await tx.wait();
-
-    let event = receipt.events?.find((event:any) => event.event === "ExchangeAddressChanged");
-
-    console.log("Updated Exchange Address is : ", event?.args.newExchange);
 
 
-    console.log("<<<<===============================================================>>>>");
+    // console.log("<<<<===============================================================>>>>");
 
-    //@ 3. mintNewNFT
-    console.log("@ 3. Minting New NFT from NFT Collection contract");
+    const EnochToken = new ethers.Contract(enochTokenAddress, enochTokenabi.abi, provider);
+    console.log("Enoch Token : ", EnochToken);
 
-    const NFTCollection = await hre.ethers.getContractFactory('NFTCollection');
-    const nftCollection1 = await NFTCollection.deploy(
-      "Saturday",
-      "Work",
-      adminRegistryAddress,
-      "https://ipfs.io/ipfs/"
-    );
-    await nftCollection1.deployed();
+    //@ Approving buyer token to exchange core by admin
 
-    const tx3 = await nftCollection1.connect(admin).mintNewNFT();
+    const tx6 = await EnochToken.connect(admin).approve(exchangeCoreAddress, "55550000050000050000500005");
+    const receipt6 = await tx6.wait();
+    console.log("Approve receipt6 :", receipt6);
 
-    const receipt3 = await tx3.wait();
-    console.log("receipt3 :", receipt3);
-
-    console.log("NFT  Minted from NFT Collection");
+    console.log("Checking allowance");
     
 
-    console.log("<<<<===============================================================>>>>");
+    const tx7 = await EnochToken.connect(admin).allowance(adminAddress, exchangeCoreAddress);
+    console.log("Allowance tx7 :", tx7);
+
+
+
+    // console.log("<<<<===============================================================>>>>");
+
+    // //@ 3. mintNewNFT
+    // console.log("@ 3. Minting New NFT from NFT Collection contract");
+
+    // const NFTCollection = await hre.ethers.getContractFactory('NFTCollection');
+    // const nftCollection1 = await NFTCollection.deploy(
+    //   "Saturday",
+    //   "Sat",
+    //   adminRegistryAddress,
+    //   "https://ipfs.io/ipfs/"
+    // );
+    // await nftCollection1.deployed();
+
+    // const tx3 = await nftCollection1.connect(admin).mintNewNFT();
+
+    // const receipt3 = await tx3.wait();
+    // console.log("receipt3 :", receipt3);
+
+    // console.log("NFT  Minted from NFT Collection");
+    
+
+  /*  console.log("<<<<===============================================================>>>>");
 
     //@ 4. MintNFT
     console.log("@ 4. Minting NFT from Minting Factory");
 
-    const tx4 = await MintingFactory.connect(exchangeCoreAddress).mintNFT(NFT_COLLECTION);
+    const tx4 = await MintingFactory.connect(ExchangeCore).mintNFT(NFT_COLLECTION);
 
     const receipt4 = await tx4.wait();
     console.log("receipt4 :", receipt4);
@@ -157,15 +162,18 @@ const main = async () => {
 
     console.log("NFT  Minted from Minting Factory");
     
-    
+    */
 
     console.log("<<<<===============================================================>>>>");
 
-    const tx5 = await ExchangeCore.connect(admin).fixedPricePrimarySale(event2?.args.nftCollection,
-      "2",
-      "1",
-      "0x70997970C51812dc3A010C7d01b50e0d17dc79C8",
-      "0xBF7386b82aEF544a0Fb114800f7aD02933Db434C"
+    //@ 5. FIXED PRICE Primary Sale
+    console.log("@ 5. Fixed Price Primary Sale from ExchangeCore contract");
+
+    const tx5 = await ExchangeCore.connect(admin).fixedPricePrimarySale(NFT_COLLECTION,
+      0, //NFTPrice
+      1, //TokenId
+      adminAddress,
+      enochTokenAddress
     );
 
     const receipt5 = await tx5.wait();

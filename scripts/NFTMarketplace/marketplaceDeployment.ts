@@ -76,12 +76,22 @@ const main = async () => {
 
     console.log("<<<<=====================================================>>>>");
 
+    console.log("Deploying Enoch Token...");
+    
+    const EnochToken = await hre.ethers.getContractFactory("Enoch");
+    const enochToken = await EnochToken.deploy();    
+    await enochToken.deployed();
+    console.log("Enoch Token address : ", enochToken.address);
+
+    console.log("<<<<=====================================================>>>>");
+
     
     let ADMIN_ADDRESS = admin.address;
     let TREASURY_ADDRESS = treasury.address;
     let ADMIN_REGISTRY_ADDRESS = adminRegistry.address;
     let MINTING_FACTORY_ADDRESS = mintingFactory.address;
     let EXCHANGE_CORE_ADDRESS = exchangeCore.address;
+    let ENOCHTOKEN_ADDRESS = enochToken.address;
             
             
             console.log("Writing a new file to store Marketplace address...");
@@ -94,7 +104,8 @@ const main = async () => {
                   TREASURY_ADDRESS,
                   ADMIN_REGISTRY_ADDRESS,
                   MINTING_FACTORY_ADDRESS,
-                  EXCHANGE_CORE_ADDRESS
+                  EXCHANGE_CORE_ADDRESS,
+                  ENOCHTOKEN_ADDRESS
                 },
                 null,
                 2

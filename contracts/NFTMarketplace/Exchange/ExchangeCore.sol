@@ -112,8 +112,8 @@ contract ExchangeCore is Ownable, Pausable {
     function fixedPricePrimarySale(
         address _nftCollection, 
         uint256 _nftPrice,
-        uint256 _tokenId, 
-        address _buyer, 
+        uint256 _tokenId,
+        address _buyer,
         address _buyerToken
         ) public onlyAdmin   {
 
@@ -131,18 +131,19 @@ contract ExchangeCore is Ownable, Pausable {
 
 
         IERC20(_buyerToken).transferFrom(_buyer, treasury, _nftPrice);
-        mintAndTransfer(_nftCollection);
+        mintAndTransfer(_nftCollection, _tokenId);
 
     }
 
 
     function mintAndTransfer(
-        address _nftCollection
-    ) public onlyExchange {
+        address _nftCollection,
+        uint256 _tokenId
+    ) internal {
         // bool success;
         // uint256 _tokenId;
         
-         (bool success, uint256 _tokenId) = IMintingFactory(mintingFactory).mintNFT(_nftCollection);
+         (bool success) = IMintingFactory(mintingFactory).mintNFT(_nftCollection, _tokenId);
         
         if(success){
             IERC721(_nftCollection).transferFrom(address(mintingFactory), msg.sender, _tokenId);

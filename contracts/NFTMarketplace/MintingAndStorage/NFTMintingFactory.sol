@@ -80,15 +80,15 @@ contract NFTMintingFactory {
     // function => mintNFt
     // onlyExchange can call it, so need a modifier for it
     // the one in above mapping could call it
-    function mintNFT(address _nftCollection)
+    function mintNFT(address _nftCollection, uint256 _tokenId)
         public
         onlyExchange 
-        returns (bool, uint256)
+        returns (bool)
     {
-        uint256 _tokenId = NFTCollection(_nftCollection).mintNewNFT();
+        uint256 tokenId = NFTCollection(_nftCollection).mintNewNFT(_tokenId);
 
-        emit NFTMinted(_nftCollection, _tokenId);
-        return (true, _tokenId);
+        emit NFTMinted(_nftCollection, tokenId);
+        return (true);
     }
 
     // updating owner in our factory records => just book-keeping
