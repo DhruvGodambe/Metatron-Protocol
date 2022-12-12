@@ -73,7 +73,16 @@ const main = async () => {
     const receipt1 = await tx1.wait();
     let event = receipt1.events?.find((event:any) => event.event === "ExchangeAddressChanged");
     console.log("Updated Exchange Address is : ", event?.args.newExchange);
+
+    console.log("<<<<=====================================================>>>>");
+
+    console.log("Deploying Enoch Token...");
     
+    const EnochToken = await hre.ethers.getContractFactory("Enoch");
+    const enochToken = await EnochToken.deploy();    
+    await enochToken.deployed();
+    console.log("Enoch Token address : ", enochToken.address);
+
     console.log("<<<<=====================================================>>>>");
 
     
@@ -82,19 +91,21 @@ const main = async () => {
     let ADMIN_REGISTRY_ADDRESS = adminRegistry.address;
     let MINTING_FACTORY_ADDRESS = mintingFactory.address;
     let EXCHANGE_CORE_ADDRESS = exchangeCore.address;
+    let ENOCHTOKEN_ADDRESS = enochToken.address;
             
             
             console.log("Writing a new file to store Marketplace address...");
             
             await writeFileSync(
-              path.join(__dirname, 'marketplaceAddresses.json'),
+              path.join(__dirname, 'Addresses.json'),
               JSON.stringify(
                 {
                   ADMIN_ADDRESS,
                   TREASURY_ADDRESS,
                   ADMIN_REGISTRY_ADDRESS,
                   MINTING_FACTORY_ADDRESS,
-                  EXCHANGE_CORE_ADDRESS
+                  EXCHANGE_CORE_ADDRESS,
+                  ENOCHTOKEN_ADDRESS
                 },
                 null,
                 2
@@ -102,7 +113,8 @@ const main = async () => {
                 );
                 
             console.log("<=====  Written ADDRESSES in marketplaceAddress.json  =====>");
-                
+
+
 
 };
 

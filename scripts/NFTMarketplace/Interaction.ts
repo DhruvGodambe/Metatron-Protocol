@@ -6,7 +6,7 @@ const hre = require("hardhat");
 const fs = require('fs');
 const { writeFileSync } = require("fs");
 const path = require('path');
-const Book = require("../NFTMarketplace/marketplaceAddresses.json");
+const Book = require("../NFTMarketplace/Addresses.json");
 
 const NFTCollectionabi = require('../../artifacts/contracts/NFTMarketplace/MintingAndStorage/NFTCollection.sol/NFTCollection.json');
 const IMintingFactory = require('../../artifacts/contracts/NFTMarketplace/Interface/IMintingFactory.sol/IMintingFactory.json');
@@ -85,7 +85,7 @@ const main = async () => {
             console.log("Writing a new file to store Marketplace address...");
             
             await writeFileSync(
-              path.join(__dirname, 'nftCollection.json'),
+              path.join(__dirname, 'Collection.json'),
               JSON.stringify(
                 {
                   NFT_NAME,
