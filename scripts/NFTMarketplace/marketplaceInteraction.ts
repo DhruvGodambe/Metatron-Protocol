@@ -107,7 +107,7 @@ const main = async () => {
     console.log("ExchangeCore : ",ExchangeCore);
 
 
-    // console.log("<<<<===============================================================>>>>");
+    console.log("<<<<===============================================================>>>>");
 
     const EnochToken = new ethers.Contract(enochTokenAddress, enochTokenabi.abi, provider);
     console.log("Enoch Token : ", EnochToken);
@@ -170,14 +170,14 @@ const main = async () => {
     console.log("@ 5. Fixed Price Primary Sale from ExchangeCore contract");
 
     const tx5 = await ExchangeCore.connect(admin).fixedPricePrimarySale(NFT_COLLECTION,
-      0, //NFTPrice
-      1, //TokenId
+      1, //NFTPrice
+      2, //TokenId
       adminAddress,
       enochTokenAddress
     );
 
     const receipt5 = await tx5.wait();
-    console.log("receipt5 :", receipt5);
+    console.log("Primary sale for ", NFT_COLLECTION, " : ", receipt5);
 
 
 
