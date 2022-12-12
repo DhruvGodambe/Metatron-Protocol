@@ -210,7 +210,7 @@ contract Staking is
         // UserInfo[_user][_tokenId].lastRewardAccumulatedTime += oneMonthTimeConstant;
 
         // transfer
-        Enoch(rewardToken).mint(msg.sender, installment);
+        // Enoch(rewardToken).mint(msg.sender, installment);
 
         if (UserInfo[_user][_tokenId].totalClaimableRewards.sub(UserInfo[_user][_tokenId].claimedRewards) <= 2) {
             // burn the token

@@ -6,8 +6,12 @@ import "@openzeppelin/contracts/access/AccessControlEnumerable.sol";
 
 contract AdminRegistry is AccessControlEnumerable {
 
-    constructor(address account) {
+    bytes32 public constant TREASURY_ROLE = bytes32('0x01');
+
+
+    constructor(address account, address treasury) {
         _setupRole(DEFAULT_ADMIN_ROLE, account);
+        _setupRole(TREASURY_ROLE, treasury);
     }
 
     // @notice only admin registered in admin registry contract can call it
@@ -22,6 +26,14 @@ contract AdminRegistry is AccessControlEnumerable {
      */
     function isAdmin(address account) public view returns (bool) {
         return hasRole(DEFAULT_ADMIN_ROLE, account);
+    }
+
+    /*
+     * @dev Checks if the given address is the treasury
+     * @param address of the treasury
+     */
+    function isTreasury(address _treasury) public view returns (bool) {
+        return hasRole(TREASURY_ROLE, _treasury);
     }
 
     /*
@@ -51,7 +63,7 @@ contract AdminRegistry is AccessControlEnumerable {
     * @dev Lists out the list of all the admin addresses
     * @returns total number of admins and list of admin addresses
     */
-    function getRoleMembers()
+    function getAdminRoleMembers()
         external
         view
         returns (uint256, address[] memory)
@@ -61,6 +73,26 @@ contract AdminRegistry is AccessControlEnumerable {
 
         for (uint256 index = 0; index < roleMemberCount; index++) {
             roleMembers[index] = getRoleMember(DEFAULT_ADMIN_ROLE, index);
+        }
+
+        return (roleMemberCount, roleMembers);
+    }
+
+
+    /*
+    * @dev Lists out the list of all the treasury addresses
+    * @returns total number of members and list of treasury addresses
+    */
+    function getTreasuryRoleMembers()
+        external
+        view
+        returns (uint256, address[] memory)
+    {
+        uint256 roleMemberCount = getRoleMemberCount(TREASURY_ROLE);
+        address[] memory roleMembers = new address[](roleMemberCount);
+
+        for (uint256 index = 0; index < roleMemberCount; index++) {
+            roleMembers[index] = getRoleMember(TREASURY_ROLE, index);
         }
 
         return (roleMemberCount, roleMembers);

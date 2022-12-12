@@ -8,9 +8,9 @@ import "@openzeppelin/contracts/security/Pausable.sol";
 import "@openzeppelin/contracts/utils/math/SafeMath.sol";
 
 // import required interfaces
-import "./../Interface/IERC20.sol";
-import "./../Interface/IERC721.sol";
-import "./../Interface/IMintingFactory.sol";
+import "../Interface/IERC20.sol";
+import "../Interface/IERC721.sol";
+import "../Interface/IMintingFactory.sol";
 import "../../Registry/IAdminRegistry.sol";
 
 contract ExchangeCore is Ownable, Pausable {
@@ -63,6 +63,8 @@ contract ExchangeCore is Ownable, Pausable {
     }
 
 
+    //@ Make validateSeller and validateBuyer as modifier later.
+
     function validateSeller(
         address _nftCollection,
         uint256 _tokenId,
@@ -109,10 +111,9 @@ contract ExchangeCore is Ownable, Pausable {
 
     function fixedPricePrimarySale(
         address _nftCollection, 
-        uint256 _nftPrice, 
-        string memory _tokenURI, 
-        uint256 _tokenId, 
-        address _buyer, 
+        uint256 _nftPrice,
+        uint256 _tokenId,
+        address _buyer,
         address _buyerToken
         ) public onlyAdmin   {
 
@@ -130,18 +131,19 @@ contract ExchangeCore is Ownable, Pausable {
 
 
         IERC20(_buyerToken).transferFrom(_buyer, treasury, _nftPrice);
-        mintAndTransfer(_nftCollection, _tokenURI, _tokenId);
+        mintAndTransfer(_nftCollection, _tokenId);
 
     }
 
 
     function mintAndTransfer(
-        address _nftCollection, 
-        string memory _tokenURI, 
+        address _nftCollection,
         uint256 _tokenId
-    ) public onlyExchange {
-
-        bool success = IMintingFactory(mintingFactory).mintNFT(_nftCollection, _tokenURI);
+    ) internal {
+        // bool success;
+        // uint256 _tokenId;
+        
+         (bool success) = IMintingFactory(mintingFactory).mintNFT(_nftCollection, _tokenId);
         
         if(success){
             IERC721(_nftCollection).transferFrom(address(mintingFactory), msg.sender, _tokenId);
