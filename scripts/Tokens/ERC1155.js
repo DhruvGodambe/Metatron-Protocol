@@ -53,6 +53,14 @@ const main = async () => {
   //   console.log(`tx2Receipt ==> ${tx2}`);
   //   console.log(tx2);
   console.log("balanceOf Address is", tx2);
+
+  console.log(`\n---------- Calling uri func ----------\n`);
+
+  const tx3 = await gameItems.uri(id);
+  // const tx3Receipt = await tx3.wait();
+  // console.log("\n", tx3);
+
+  console.log(`URI of ID ${id} is ==> ${tx3}`);
 };
 
 main()
