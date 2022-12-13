@@ -44,11 +44,6 @@ const main = async () => {
 
     const tx6 = await AdminRegistry.getTreasuryRoleMembers();
     console.log("get Treasury Role Members  :", tx6);
-    
-    
-
-
-    
 
 
 }

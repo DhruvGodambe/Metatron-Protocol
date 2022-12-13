@@ -6,7 +6,7 @@ const hre = require("hardhat");
 const fs = require('fs');
 const { writeFileSync } = require("fs");
 const path = require('path');
-const Book = require("../NFTMarketplace/marketplaceAddresses.json");
+const Book = require("../NFTMarketplace/Addresses.json");
 
 const NFTCollectionabi = require('../../artifacts/contracts/NFTMarketplace/MintingAndStorage/NFTCollection.sol/NFTCollection.json');
 const IMintingFactory = require('../../artifacts/contracts/NFTMarketplace/Interface/IMintingFactory.sol/IMintingFactory.json');
@@ -26,6 +26,9 @@ const enochTokenAddress = Book.ENOCHTOKEN_ADDRESS;
 
 const PrivateKey = process.env.PRIVATE_KEY_LOCALHOST_1;
 const providerURL = process.env.PROVIDER_URL;
+
+const tokenId = 2;
+const nftPrice = "550000050000050000500005";
 
 /*
 marketplaceInteraction.ts requirements:
@@ -85,7 +88,7 @@ const main = async () => {
             console.log("Writing a new file to store Marketplace address...");
             
             await writeFileSync(
-              path.join(__dirname, 'nftCollection.json'),
+              path.join(__dirname, 'Collection.json'),
               JSON.stringify(
                 {
                   NFT_NAME,
@@ -107,7 +110,7 @@ const main = async () => {
     console.log("ExchangeCore : ",ExchangeCore);
 
 
-    // console.log("<<<<===============================================================>>>>");
+    console.log("<<<<===============================================================>>>>");
 
     const EnochToken = new ethers.Contract(enochTokenAddress, enochTokenabi.abi, provider);
     console.log("Enoch Token : ", EnochToken);
@@ -170,14 +173,24 @@ const main = async () => {
     console.log("@ 5. Fixed Price Primary Sale from ExchangeCore contract");
 
     const tx5 = await ExchangeCore.connect(admin).fixedPricePrimarySale(NFT_COLLECTION,
-      0, //NFTPrice
-      1, //TokenId
+      nftPrice, 
+      tokenId, 
       adminAddress,
       enochTokenAddress
     );
 
     const receipt5 = await tx5.wait();
-    console.log("receipt5 :", receipt5);
+    console.log("Primary sale for ", NFT_COLLECTION, " : ", receipt5);
+
+    console.log("<<<<===============================================================>>>>");
+
+    const nftColl = new ethers.Contract(NFT_COLLECTION, NFTCollectionabi.abi, provider);
+    console.log("Nft Collection instance : ",nftColl);
+
+    const tx8 = await nftColl.tokenURI(tokenId);
+    console.log("Token URI", tx8);
+    
+
 
 
 

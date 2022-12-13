@@ -28,8 +28,8 @@ contract ExchangeCore is Ownable, Pausable {
 
     constructor(IMintingFactory _mintingFactory, address _adminRegistry, address _treasury) {
         mintingFactory = IMintingFactory(_mintingFactory);
-        treasury = _treasury;
         adminRegistry = _adminRegistry;
+        treasury = _treasury;
     }
 
     // One who bids for an nft, can cancel it anytime before auction ends
@@ -117,10 +117,8 @@ contract ExchangeCore is Ownable, Pausable {
         address _buyerToken
         ) public onlyAdmin   {
 
-        bool validSeller = validateSeller(_nftCollection, _tokenId, exchange);
         bool validBuyer = validateBuyer(_buyer, _nftPrice, _buyerToken);
         
-        require(validSeller, "Seller isn't valid");
         require(validBuyer, "Buyer isn't valid");
 
         bool isCancelled = cancelledOrders[_buyer][_nftCollection][_tokenId];
