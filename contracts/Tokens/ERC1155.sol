@@ -13,7 +13,7 @@ contract GameItems is ERC1155, ERC1155Supply {
     uint256 public constant SHIELD = 4;
 
     constructor()
-        ERC1155("ipfs://QmdG7pjG7ZrmJuhtt1wyUyU4y6JgsjZ7Bwb6AhrP8qXevW/")
+        ERC1155("ipfs://QmNxbxKW8ERM32KAJiVn5aCk5khZMuKugTNu7zdjy64WWo/")
     {
         _mint(msg.sender, GOLD, 10 ** 18, "");
         _mint(msg.sender, ELIXIR, 10 ** 27, "");
