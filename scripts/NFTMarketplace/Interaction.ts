@@ -27,6 +27,9 @@ const enochTokenAddress = Book.ENOCHTOKEN_ADDRESS;
 const PrivateKey = process.env.PRIVATE_KEY_LOCALHOST_1;
 const providerURL = process.env.PROVIDER_URL;
 
+const tokenId = 2;
+const nftPrice = "550000050000050000500005";
+
 /*
 marketplaceInteraction.ts requirements:
 1. createCollection
@@ -170,14 +173,24 @@ const main = async () => {
     console.log("@ 5. Fixed Price Primary Sale from ExchangeCore contract");
 
     const tx5 = await ExchangeCore.connect(admin).fixedPricePrimarySale(NFT_COLLECTION,
-      1, //NFTPrice
-      2, //TokenId
+      nftPrice, 
+      tokenId, 
       adminAddress,
       enochTokenAddress
     );
 
     const receipt5 = await tx5.wait();
     console.log("Primary sale for ", NFT_COLLECTION, " : ", receipt5);
+
+    console.log("<<<<===============================================================>>>>");
+
+    const nftColl = new ethers.Contract(NFT_COLLECTION, NFTCollectionabi.abi, provider);
+    console.log("Nft Collection instance : ",nftColl);
+
+    const tx8 = await nftColl.tokenURI(tokenId);
+    console.log("Token URI", tx8);
+    
+
 
 
 
