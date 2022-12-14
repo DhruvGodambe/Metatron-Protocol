@@ -1,5 +1,5 @@
 const { ethers } = require("hardhat");
-const abi = require("../../artifacts/contracts/Tokens/ERC1155.sol/GameItems.json");
+const abi = require("../../../artifacts/contracts/Tokens/ERC1155.sol/GameItems.json");
 
 const main = async () => {
     
