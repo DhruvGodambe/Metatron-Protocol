@@ -24,7 +24,7 @@ const main = async () => {
     const amount = 1;
     const data = 0x00;
 
-    const tx1 = await gameItems.safeTransferFrom(
+    const tx1 = await gameItems.connect(owner).safeTransferFrom(
         ownerAddress,
         userAddress,
         id,
@@ -62,7 +62,7 @@ const main = async () => {
     const _amount = BigInt(1000000000000);
     const _data = "0x";
 
-    const tx4 = await gameItems.mint(_account, _id, _amount, _data);
+    const tx4 = await gameItems.connect(owner).mint(_account, _id, _amount, _data);
     const tx4Receipt = await tx4.wait();
 
     // console.log(tx4Receipt);
@@ -78,7 +78,7 @@ const main = async () => {
     const _ids = [6, 7, 8];
     const _amounts = [100, 200, 300];
 
-    const tx5 = await gameItems.mintBatch(_to, _ids, _amounts, _data);
+    const tx5 = await gameItems.connect(owner).mintBatch(_to, _ids, _amounts, _data);
     const tx5Receipt = await tx5.wait();
 
     // console.log(tx5Receipt);
