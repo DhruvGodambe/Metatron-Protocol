@@ -28,14 +28,14 @@ const main = async () => {
 
     const accounts = await ethers.getSigners();
     const admin  = accounts[0];
-    const treasury = accounts[9];
+    const treasuryAddress = "0x404DbBbD516d101b41Ce1671C9e5D0766272d047";
     
     console.log("Deploying Admin Registry...");
 
     const AdminRegistry = await hre.ethers.getContractFactory("AdminRegistry");
-    const adminRegistry = await AdminRegistry.deploy(admin.address, treasury.address);
+    const adminRegistry = await AdminRegistry.deploy(admin.address, treasuryAddress);
     console.log("Admin address : ", admin.address);
-    console.log("Treasury address : ", treasury.address);
+    console.log("Treasury address : ", treasuryAddress);
     
     await adminRegistry.deployed();
     console.log("AdminRegistry address : ", adminRegistry.address);
@@ -58,7 +58,7 @@ const main = async () => {
     const ExchangeCore = await hre.ethers.getContractFactory("ExchangeCore");
     const exchangeCore = await ExchangeCore.deploy(mintingFactory.address, 
         adminRegistry.address, 
-        treasury.address
+        treasuryAddress
     );    
     await exchangeCore.deployed();
     console.log("Exchange Core address : ", exchangeCore.address);
@@ -87,7 +87,7 @@ const main = async () => {
 
     
     let ADMIN_ADDRESS = admin.address;
-    let TREASURY_ADDRESS = treasury.address;
+    let TREASURY_ADDRESS = treasuryAddress;
     let ADMIN_REGISTRY_ADDRESS = adminRegistry.address;
     let MINTING_FACTORY_ADDRESS = mintingFactory.address;
     let EXCHANGE_CORE_ADDRESS = exchangeCore.address;

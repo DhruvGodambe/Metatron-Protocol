@@ -127,8 +127,30 @@ const main = async () => {
     const tx7 = await EnochToken.connect(admin).allowance(adminAddress, exchangeCoreAddress);
     console.log("Allowance tx7 :", tx7);
 
+    console.log("<<<<===============================================================>>>>");
 
+    //@ 5. FIXED PRICE Primary Sale
+    console.log("@ 5. Fixed Price Primary Sale from ExchangeCore contract");
 
+    const tx5 = await ExchangeCore.connect(admin).fixedPricePrimarySale(NFT_COLLECTION,
+      nftPrice, 
+      tokenId, 
+      adminAddress,
+      enochTokenAddress
+    );
+
+    const receipt5 = await tx5.wait();
+    console.log("Primary sale for ", NFT_COLLECTION, " : ", receipt5);
+
+    console.log("<<<<===============================================================>>>>");
+
+    const Collection = new ethers.Contract(NFT_COLLECTION, NFTCollectionabi.abi, provider);
+    console.log("Nft Collection instance : ",Collection);
+
+    const tx8 = await Collection.tokenURI(tokenId);
+    console.log("Token URI", tx8);
+
+    
     // console.log("<<<<===============================================================>>>>");
 
     // //@ 3. mintNewNFT
@@ -166,31 +188,6 @@ const main = async () => {
     console.log("NFT  Minted from Minting Factory");
     
     */
-
-    console.log("<<<<===============================================================>>>>");
-
-    //@ 5. FIXED PRICE Primary Sale
-    console.log("@ 5. Fixed Price Primary Sale from ExchangeCore contract");
-
-    const tx5 = await ExchangeCore.connect(admin).fixedPricePrimarySale(NFT_COLLECTION,
-      nftPrice, 
-      tokenId, 
-      adminAddress,
-      enochTokenAddress
-    );
-
-    const receipt5 = await tx5.wait();
-    console.log("Primary sale for ", NFT_COLLECTION, " : ", receipt5);
-
-    console.log("<<<<===============================================================>>>>");
-
-    const nftColl = new ethers.Contract(NFT_COLLECTION, NFTCollectionabi.abi, provider);
-    console.log("Nft Collection instance : ",nftColl);
-
-    const tx8 = await nftColl.tokenURI(tokenId);
-    console.log("Token URI", tx8);
-    
-
 
 
 
