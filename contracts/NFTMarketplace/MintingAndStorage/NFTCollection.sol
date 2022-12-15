@@ -8,9 +8,7 @@ import "@openzeppelin/contracts/utils/Counters.sol";
 
 import "../../Registry/IAdminRegistry.sol";
 
-contract NFTCollection is ERC721URIStorage {
-    using Counters for Counters.Counter;
-    Counters.Counter private _tokenIds;
+contract NFTCollection is ERC721 {
 
     using Strings for uint256;
 
@@ -36,13 +34,6 @@ contract NFTCollection is ERC721URIStorage {
         _;
     }
 
-     modifier onlyExchange() {
-        require(
-            exchange == msg.sender,
-            "Only Exchange can call this!"
-        );
-        _;
-    }
 
     modifier onlyAdmin() {
         require(
