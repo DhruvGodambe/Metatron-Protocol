@@ -15,6 +15,7 @@ describe("===================>Staking<==================",function () {
     let PremiumNFT: any;
     let AdminRegistry: any;
     let adminRegistry: any;
+    let treasuryAddress: string;
 
 
     let StakingInstance: any;
@@ -31,9 +32,10 @@ describe("===================>Staking<==================",function () {
         owner = accounts[0];
         user = accounts[1];
         ownerAddress = await accounts[0].getAddress();
+        treasuryAddress = await accounts[9].getAddress();
         userAddress = await accounts[1].getAddress();
 
-        adminRegistry = await AdminRegistry.deploy(ownerAddress);
+        adminRegistry = await AdminRegistry.deploy(ownerAddress, treasuryAddress);
         await adminRegistry.deployed();
         console.log("AdminRegistry deployed at ", adminRegistry.address);
 
