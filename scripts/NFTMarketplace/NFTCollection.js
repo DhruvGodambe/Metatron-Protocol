@@ -5,13 +5,28 @@ const main = async () => {
 
     owner = accounts[0];
     user = accounts[1];
+    tresasurer = accounts[9];
 
     ownerAddress = await accounts[0].getAddress();
     userAddress = await accounts[1].getAddress();
+    treasuryAddress = await accounts[9].getAddress();
+
+    // Admin Registry
+    const AdminRegistry = await ethers.getContractFactory(
+        "AdminRegistry",
+        owner
+    );
+    const adminRegistry = await AdminRegistry.deploy(
+        ownerAddress,
+        treasuryAddress
+    );
+    await adminRegistry.deployed();
+    const aRegistryAddress = adminRegistry.address;
+
+    //NFT collection
 
     const name = "Friday";
     const symbol = "FRI";
-    const adminRegistry = ownerAddress;
     const baseURI = "ipfs://";
 
     const NFTCollection = await ethers.getContractFactory(
@@ -21,33 +36,39 @@ const main = async () => {
     const nftCollection = await NFTCollection.deploy(
         name,
         symbol,
-        adminRegistry,
+        aRegistryAddress,
         baseURI
     );
-    await nftCollection.deployed();
+    const collection = await nftCollection.deployed();
 
-    console.log(`NFTCollection Address --> ${nftCollection.address}`);
+    console.log(collection);
+    console.log(`NFTCollection Address --> ${collection.address}`);
 
-    console.log(`\n---------- Calling _setbaseURI ----------`);
+    console.log("\n---------- Calling tokenURI ----------\n");
 
-    // const uri = "ipfs://";
-    // const tx1 = await nftCollection._setbaseURI(uri);
-    // const tx1Receipt = await tx1.wait();
+    const tokenId = 10;
+    const tx1 = await collection.connect(owner).tokenURI(tokenId);
+    console.log(`tokenURI --> ${tx1}`);
 
-    // console.log(`_setbaseURI ${tx1Receipt}`);
+    // compiler throws an error while calling internal function.
+    // console.log("\n---------- Calling _setbaseURI ----------\n");
 
-    console.log(`\n---------- Calling tokenURI ----------`);
+    // const newURI = "ipfs://newURI/";
 
-    // const tokenId = 1;
-    // const tx2 = await nftCollection.connect().tokenURI(tokenId);
-    // // const tx2Receipt = await tx2.wait();
+    // const tx2 = await collection.connect(owner)._setbaseURI(newURI);
+    // const tx2Receipt = await tx2.wait();
 
-    // console.log(`tokenURI --> ${tx2}`);
+    // console.log(`New Base URI --> ${tx2Receipt}`);
 
-    console.log(`\n---------- Calling mintNewNFT ----------`);
+    console.log("\n---------- Calling mintNewNFT ----------\n");
 
-    // const _tokenId = 5;
-    // const tx3 = await nftCollection.connect(owner).mintNewNFT(_tokenId);
+    const newTokenId = 15;
+    const tx3 = await collection.connect(owner).mintNewNFT(newTokenId);
+    const tx3Receipt = await tx3.wait();
+
+    const newMintedNFTId = tx3Receipt.events[0].args.tokenId.toString();
+
+    console.log(`New minted NFT Id is --> ${newMintedNFTId}\n`);
 };
 
 main()
