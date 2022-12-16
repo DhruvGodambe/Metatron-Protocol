@@ -144,6 +144,23 @@ const main = async () => {
 
     console.log("<<<<===============================================================>>>>");
 
+    //@ 5. AUCTION Primary Market
+    console.log("@ 5. Auction Primary Market from ExchangeCore contract");
+
+    const tx9 = await ExchangeCore.connect(admin).auctionPrimarySale(NFT_COLLECTION,
+      nftPrice, 
+      tokenId, 
+      adminAddress,
+      enochTokenAddress,
+      // _hashedMessage,
+      // _signature
+    );
+
+    const receipt9 = await tx9.wait();
+    console.log("Primary sale for ", NFT_COLLECTION, " : ", receipt9);
+
+    console.log("<<<<===============================================================>>>>");
+
     const Collection = new ethers.Contract(NFT_COLLECTION, NFTCollectionabi.abi, provider);
     console.log("Nft Collection instance : ",Collection);
 
