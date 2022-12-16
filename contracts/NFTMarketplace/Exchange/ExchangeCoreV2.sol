@@ -52,9 +52,10 @@ contract ExchangeCore is Ownable, Pausable {
 
     event AuctionPrimarySaleExecuted(
         address nftCollection,
+        uint256 _nftPrice,
         uint256 tokenId,
-        address _exchange,
-        address _buyer
+        address _buyer,
+        address _buyerToken
     );
 
     event OrderCancelled(address nftContract, uint256 tokenId, address buyer);
@@ -81,11 +82,11 @@ contract ExchangeCore is Ownable, Pausable {
     function validateSeller(
         address _nftCollection,
         uint256 _tokenId,
-        address _exchange
+        address _seller
     ) internal view returns (bool) {
         // check if he owns the token
         address tokenOwner = IERC721(_nftCollection).ownerOf(_tokenId);
-        require(_exchange == tokenOwner, "Seller does not owns the token");
+        require(_seller == tokenOwner, "Seller does not owns the token");
 
         // check token approval
         address tokenApprovedAddress = IERC721(_nftCollection).getApproved(
@@ -197,11 +198,13 @@ contract ExchangeCore is Ownable, Pausable {
         bytes32 _s,
         address _buyer
     ) internal returns (bool) {
+        //Breakdown sign into r, s , v in javascript.
+        //Verify usin ecrecover
         bytes memory prefix = "\x19Ethereum Signed Message:\n32";
         bytes32 prefixedHashMessage = keccak256(abi.encodePacked(prefix, _hashedMessage));
         address signer = ecrecover(prefixedHashMessage, _v, _r, _s);
 
-        require(signer == _buyer, "Signer isn't matching the buyer");
+        require(signer == _buyer, "Signer doesn't match the buyer");
 
         emit SignatureVerified(signer);
 
@@ -213,50 +216,97 @@ contract ExchangeCore is Ownable, Pausable {
         address _nftCollection,
         uint256 _tokenId,
         uint256 _nftPrice,
-        address _exchange,
         address _buyer,
-        address _buyerToken,
-        uint256 _auctionEndTime,
-        bytes32 _hashedMessage,
-        uint8 _v,
-        bytes32 _r, 
-        bytes32 _s
+        address _buyerToken
     ) public onlyAdmin whenNotPaused {
 
         // Validating the signature of buyer
-        bool validSignature = VerifySignature(_hashedMessage, _v, _r, _s, _buyer);
-        require(validSignature, "Signature mismatched with buyer's signature");
+        // bool validSignature = VerifySignature(_hashedMessage, _v, _r, _s, _buyer);
+        // require(validSignature, "Signature mismatched with buyer's");
 
 
         // Validating all the requirements
-        bool validTime;
-        if (_auctionEndTime != 0) {
-            validTime = validateAuctionTime(_auctionEndTime);
-        } else {
-            validTime = true;
-        }
+        // bool validTime;
+        // if (_auctionEndTime != 0) {
+        //     validTime = validateAuctionTime(_auctionEndTime);
+        // } else {
+        //     validTime = true;
+        // }
+
+        bool validBuyer = validateBuyer(_buyer, _nftPrice, _buyerToken);
+
+        // bool isCancel = cancelledOrders[_buyer][_nftCollection][_tokenId];
+
+        // require(validTime, "Auction is already over");
+        require(validBuyer, "Buyer isn't valid");
+        // require(isCancel == false, "Order is cancelled");
+
+
+
+        IERC20(_buyerToken).transferFrom(_buyer, treasury, _nftPrice);
+
+        // transferring the NFT to the buyer
+        IERC721(_nftCollection).transferFrom(address(mintingFactory), _buyer, _tokenId);
+        // updating the NFT ownership in our Minting Factory
+        mintingFactory.updateOwner(
+            _nftCollection,
+            _tokenId,
+            _buyer
+        );
+
+        emit AuctionPrimarySaleExecuted(_nftCollection, _nftPrice ,_tokenId, _buyer, _buyerToken);
+    }
+
+
+    function auctionSecondarySale(
+        address _nftCollection,
+        uint256 _tokenId,
+        uint256 _nftPrice,
+        address _exchange,
+        address _buyer,
+        address _buyerToken
+
+    ) public onlyAdmin whenNotPaused {
+
+        // Validating the signature of buyer
+        // bool validSignature = VerifySignature(_hashedMessage, _v, _r, _s, _buyer);
+        // require(validSignature, "Signature mismatched with buyer's");
+
+
+        // Validating all the requirements
+        // bool validTime;
+        // if (_auctionEndTime != 0) {
+        //     validTime = validateAuctionTime(_auctionEndTime);
+        // } else {
+        //     validTime = true;
+        // }
 
         bool validSeller = validateSeller(_nftCollection, _tokenId, _exchange);
         bool validBuyer = validateBuyer(_buyer, _nftPrice, _buyerToken);
 
-        bool isCancel = cancelledOrders[_buyer][_nftCollection][_tokenId];
+        // bool isCancel = cancelledOrders[_buyer][_nftCollection][_tokenId];
 
-        require(validTime, "Auction is already over");
+        // require(validTime, "Auction is already over");
         require(validSeller, "Seller isn't valid");
         require(validBuyer, "Buyer isn't valid");
-        require(isCancel == false, "Order is cancelled");
+        // require(isCancel == false, "Order is cancelled");
 
         _nftPrice *= 1e18;
 
         // transfer tradingFee to the exchange 4%
+        //ERC20
         uint256 fee = _nftPrice.mul(tradingFeeFactor).div(tradingFeeFactorMax);
         IERC20(_buyerToken).transferFrom(_buyer, address(this), fee);
 
+
         // transferring the amount to the seller
-        uint256 transferableAmt = _nftPrice
-            .mul(tradingFeeFactorMax.sub(tradingFeeFactor))
-            .div(tradingFeeFactorMax);
-        IERC20(_buyerToken).transferFrom(_buyer, _exchange, transferableAmt);
+        uint256 transferableAmt = _nftPrice-fee;
+
+        // uint256 transferableAmt = _nftPrice
+        //     .mul(tradingFeeFactorMax.sub(tradingFeeFactor))
+        //     .div(tradingFeeFactorMax);
+        // IERC20(_buyerToken).transferFrom(_buyer, _exchange, transferableAmt);
+        IERC20(_buyerToken).transferFrom(_buyer, treasury, transferableAmt);
 
         // transferring the NFT to the buyer
         IERC721(_nftCollection).transferFrom(_exchange, _buyer, _tokenId);
@@ -267,7 +317,7 @@ contract ExchangeCore is Ownable, Pausable {
             _buyer
         );
 
-        emit AuctionPrimarySaleExecuted(_nftCollection, _tokenId, _exchange, _buyer);
+        emit AuctionPrimarySaleExecuted(_nftCollection, _nftPrice, _tokenId, _buyer, _buyerToken);
     }
     
 
