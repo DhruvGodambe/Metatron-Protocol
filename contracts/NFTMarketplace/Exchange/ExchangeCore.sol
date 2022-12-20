@@ -6,6 +6,7 @@ pragma solidity ^0.8.0;
 import "@openzeppelin/contracts/access/Ownable.sol";
 import "@openzeppelin/contracts/security/Pausable.sol";
 import "@openzeppelin/contracts/utils/math/SafeMath.sol";
+import "hardhat/console.sol";
 
 // import required interfaces
 import "../Interface/IERC20.sol";
@@ -17,10 +18,8 @@ contract ExchangeCore is Ownable, Pausable {
     using SafeMath for uint256;
 
     IMintingFactory internal mintingFactory;
-    IERC20 internal WETH;
 
     address public treasury;
-    address public exchange;
     address public adminRegistry;
 
     uint256 auctionTimeLimit = 28800;
@@ -59,14 +58,6 @@ contract ExchangeCore is Ownable, Pausable {
     );
 
     event OrderCancelled(address nftContract, uint256 tokenId, address buyer);
-
-    modifier onlyExchange() {
-        require(
-            exchange == msg.sender,
-            "Only Exchange can call this!"
-        );
-        _;
-    }
 
     modifier onlyAdmin() {
         require(
@@ -192,14 +183,15 @@ contract ExchangeCore is Ownable, Pausable {
 */
 
     function splitSignature(bytes memory _signature)
-        internal pure
-        returns (
-            bytes32 r,
-            bytes32 s,
-            uint8 v
-        )
+        internal
+        pure
+        returns (uint8, bytes32, bytes32)
     {
-        require(_signature.length == 65, "invalid signature length");
+        require(_signature.length == 65);
+
+        bytes32 r;
+        bytes32 s;
+        uint8 v;
 
         assembly {
             // first 32 bytes, after the length prefix
@@ -210,21 +202,22 @@ contract ExchangeCore is Ownable, Pausable {
             v := byte(0, mload(add(_signature, 96)))
         }
 
-        return (r,s,v);
+        return (v, r, s);
     }
+
 
     function verifySignature(
         bytes32 _hashedMessage,
         bytes memory _signature,
         address _buyer
-    ) internal returns (bool) {
+    ) public returns (bool) {
         
         // Adding prefix to hashed message
         bytes memory prefix = "\x19Ethereum Signed Message:\n32";
         bytes32 prefixedHashMessage = keccak256(abi.encodePacked(prefix, _hashedMessage));
 
         //calling splitSignature function
-        (bytes32 r, bytes32 s, uint8 v) = splitSignature(_signature);
+        (uint8 v, bytes32 r, bytes32 s) = splitSignature(_signature);
 
         address signer = ecrecover(prefixedHashMessage, v, r, s);
 
@@ -328,7 +321,7 @@ contract ExchangeCore is Ownable, Pausable {
             _buyer
         );
 
-        emit AuctionPrimarySaleExecuted(_nftCollection, _nftPrice, _tokenId, _buyer, _buyerToken);
+        emit AuctionSecondarySaleExecuted(_nftCollection, _nftPrice, _tokenId, _buyer, _buyerToken);
     }
 
 */

@@ -1,8 +1,11 @@
 import { Address } from "cluster";
+import { keccak256 } from "ethers/lib/utils";
 
 const { ethers} = require("hardhat");
 const hre = require("hardhat");
+const { Wallet, providers } = require("ethers");
 
+// const bytes32 = require('bytes32');
 const fs = require('fs');
 const { writeFileSync } = require("fs");
 const path = require('path');
@@ -24,28 +27,46 @@ const mintingFactoryAddress = Book.MINTING_FACTORY_ADDRESS;
 const exchangeCoreAddress = Book.EXCHANGE_CORE_ADDRESS;
 const enochTokenAddress = Book.ENOCHTOKEN_ADDRESS;
 
-const PrivateKey = process.env.PRIVATE_KEY_LOCALHOST_1;
-const providerURL = process.env.PROVIDER_URL;
+// const PrivateKey = process.env.PRIVATE_KEY_LOCALHOST_1;
+// const providerURL = process.env.PROVIDER_URL;
 
-const tokenId = 2;
+const tokenId = 1;
 const nftPrice = "550000050000050000500005";
+const _hashedMessage = "0x48656c6c6f546865726521000000000000000000000000000000000000000000";
+const _signature = "0xb2eeae6b144cea0408adf2d822e64e1c771322c09f9a7a3b66079c683dec746e27d225f672a85f8d6b5a5238805c8296ddfa0e2e83dd8f6ab4ea2fe3721de6f91b";
 
 /*
 marketplaceInteraction.ts requirements:
 1. createCollection
 2. mintNFT
 3. fixedPricePrimarySale
+4. auctionPrimarySale
 */
+/*
+const bytes32FromMessage = (message:string) => {
+  let hexMessage = ethers.utils.hexlify(ethers.utils.toUtf8Bytes(message));
+  // let hexMessage = keccak256(message);
+  let bytes32Message = ethers.utils.formatBytes32String(hexMessage,32);
+  console.log("message:",message);
+  console.log("hexMessage:",hexMessage);
+  // console.log("bytes32FromMessage:",bytes32Message);
+  return hexMessage;
+}
 
+const toBytes = (signature:string) => Array.from(Buffer.from(signature, 'utf8'));
+*/
 
 
 const main = async () => {
 
-  const provider = new ethers.providers.JsonRpcProvider(providerURL);
+  const provider = new ethers.providers.JsonRpcProvider("https://eth-goerli.g.alchemy.com/v2/OW3K8LQl3oZeZLxuOTzgbRkFsEBkThgA");
+  console.log(" PROVIDER : ", provider);
+
+  const admin = new ethers.Wallet( "0x1d6817ca1509086f55f2f4751cf8464f305dd6ba713778d31ade993bd7b984bb" , provider );
+  console.log(" Admin ADDRESS : ", admin.address);
 
     const accounts = await ethers.getSigners();
-    const admin  = accounts[0];
-    const treasury = accounts[9];
+    const treasury = "0x404DbBbD516d101b41Ce1671C9e5D0766272d047";
     console.log("Inside main function ========>");
     
 
@@ -127,8 +148,10 @@ const main = async () => {
     const tx7 = await EnochToken.connect(admin).allowance(adminAddress, exchangeCoreAddress);
     console.log("Allowance tx7 :", tx7);
 
-    console.log("<<<<===============================================================>>>>");
 
+
+    console.log("<<<<===============================================================>>>>");
+/*
     //@ 5. FIXED PRICE Primary Sale
     console.log("@ 5. Fixed Price Primary Sale from ExchangeCore contract");
 
@@ -142,6 +165,35 @@ const main = async () => {
     const receipt5 = await tx5.wait();
     console.log("Primary sale for ", NFT_COLLECTION, " : ", receipt5);
 
+*/    console.log("<<<<===============================================================>>>>");
+
+
+const tx10 = await ExchangeCore.connect(admin).verifySignature(_hashedMessage,
+  _signature,
+  adminAddress
+);
+
+const receipt10 = await tx10.wait();
+console.log("Signature verified");
+
+    console.log("verify Signature ",receipt10);
+
+    console.log("<<<<===============================================================>>>>");
+/*
+    //@ 1. Minting new NFT
+    console.log("@ 4. Minting new NFT");
+
+    const tx11 = await MintingFactory.connect(admin).mintNFT(NFT_COLLECTION, tokenId);
+
+    const receipt11 = await tx11.wait();
+
+    let event11 = receipt11.events?.find((event:any) => event.event === "NFTMinted");
+    console.log(event11);
+    
+
+    console.log("Collection is : ", event2?.args.nftCollection);
+    console.log("Token Id is : ", event11?.args.tokenId);
+*/
     console.log("<<<<===============================================================>>>>");
 
     //@ 5. AUCTION Primary Market
@@ -152,21 +204,21 @@ const main = async () => {
       tokenId, 
       adminAddress,
       enochTokenAddress,
-      // _hashedMessage,
-      // _signature
+      _hashedMessage,
+      _signature
     );
 
     const receipt9 = await tx9.wait();
     console.log("Primary sale for ", NFT_COLLECTION, " : ", receipt9);
 
     console.log("<<<<===============================================================>>>>");
-
+/*
     const Collection = new ethers.Contract(NFT_COLLECTION, NFTCollectionabi.abi, provider);
     console.log("Nft Collection instance : ",Collection);
 
     const tx8 = await Collection.tokenURI(tokenId);
     console.log("Token URI", tx8);
-
+*/
     
     // console.log("<<<<===============================================================>>>>");
 
