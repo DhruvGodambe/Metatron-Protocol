@@ -1,10 +1,19 @@
-const { ethers } = require("hardhat");
-const { assert, expect } = require("chai");
+import { ethers } from "hardhat";
+import { assert, expect } from "chai";
+import { AdminRegistry, AdminRegistry__factory } from "../../../typechain-types";
+import { Signer } from "ethers";
 
 describe("Admin Registry", () => {
-    let owner, user, user2, accounts;
-    let ownerAddress, userAddress, user2Address, treasuryAddress;
-    let AdminRegistry, adminRegistry;
+    let accounts: Signer[],
+        owner: Signer,
+        user: Signer,
+        user2: Signer,
+        treasurer: Signer;
+    let ownerAddress: string,
+        userAddress: string,
+        user2Address: string,
+        treasuryAddress: string;
+    let AdminRegistry: AdminRegistry__factory, adminRegistry: AdminRegistry;
 
     beforeEach(async () => {
         accounts = await ethers.getSigners();
@@ -18,7 +27,9 @@ describe("Admin Registry", () => {
         user2Address = await accounts[2].getAddress();
         treasuryAddress = await accounts[9].getAddress();
 
-        AdminRegistry = await ethers.getContractFactory("AdminRegistry");
+        AdminRegistry = (await ethers.getContractFactory(
+            "AdminRegistry"
+        )) as AdminRegistry__factory;
         adminRegistry = await AdminRegistry.deploy(
             ownerAddress,
             treasuryAddress
@@ -49,27 +60,31 @@ describe("Admin Registry", () => {
     });
 
     it("Only admin can add new admin", async () => {
-        const tx = await adminRegistry.connect(owner).addAdmin(user2Address);
+        const tx1 = await adminRegistry.connect(owner).addAdmin(user2Address);
+        const tx1Receipt = await tx1.wait();
+        const sender = tx1Receipt.events![0].args!.sender;
 
-        expect(tx).to.be.revertedWith("You are not a Admin!");
+        assert.equal(ownerAddress, sender);
     });
 
     // it("User can leave their role", async () => {});
     it("Only Admin can remove other admin role", async () => {
-        const tx = await adminRegistry.connect(owner).addAdmin(userAddress);
+        const tx1 = await adminRegistry.connect(owner).addAdmin(userAddress);
+        const tx1Receipt = await tx1.wait();
+        const sender = tx1Receipt.events![0].args!.sender;
 
-        expect(tx).to.be.revertedWith("You are not a Admin!");
+        assert.equal(ownerAddress, sender);
     });
 
     it("Returns Admin Role Members", async () => {
-        const numbOfAdmins = 1;
+        const numbOfAdmins: number = 1;
         const tx = await adminRegistry.connect(owner).getAdminRoleMembers();
 
         expect(tx).to.deep.equal([numbOfAdmins.toString(), [ownerAddress]]);
     });
 
     it("Should return Treasury Role Members", async () => {
-        const numbOfTreasurer = 1;
+        const numbOfTreasurer: number = 1;
         const tx = await adminRegistry.connect(owner).getTreasuryRoleMembers();
 
         expect(tx).to.deep.equal([
