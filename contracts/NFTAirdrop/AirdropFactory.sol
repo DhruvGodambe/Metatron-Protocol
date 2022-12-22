@@ -8,7 +8,7 @@ contract AirdropFactory {
     address public adminRegistry;
 
     //nftAddress => new airdrop address
-    mapping(address => address) public nftToAirdrop;
+    mapping(address => address[]) public nftToAirdrop;
 
     event NewAirdrop(
         address _nftAddress,
@@ -36,7 +36,7 @@ contract AirdropFactory {
     {
         address airdrop = address(new Airdrop(_nftAddress, _name));
 
-        nftToAirdrop[_nftAddress] = airdrop;
+        nftToAirdrop[_nftAddress].push(airdrop);
 
         emit NewAirdrop(_nftAddress, _name, airdrop, block.timestamp);
 

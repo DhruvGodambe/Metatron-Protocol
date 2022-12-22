@@ -7,7 +7,7 @@ import {
     Airdrop,
 } from "../../typechain-types";
 import { Signer } from "ethers";
-import { stringify } from "querystring";
+
 
 describe("Airdrop", () => {
     let MyNFT: MyNFT__factory,

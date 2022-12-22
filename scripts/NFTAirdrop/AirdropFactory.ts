@@ -96,6 +96,15 @@ const main = async () => {
             "en-GB"
         )}`
     );
+
+    console.log("\n---------------------------------------------\n");
+
+    let index: number = 0;
+    const tx2 = await airdropFactory
+        .connect(owner)
+        .nftToAirdrop(myNFTAddress, index);
+
+    console.log(`for given nft address airdrop address is --> ${tx2}`);
 };
 
 main()
