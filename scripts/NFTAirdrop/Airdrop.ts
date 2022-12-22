@@ -14,6 +14,8 @@ const main = async () => {
 
     let MyNFTAddress: string, airdropAddress: string;
 
+    let name: string = "ENOCH Airdrop";
+
     const accounts = await ethers.getSigners();
 
     const owner = accounts[0];
@@ -38,7 +40,7 @@ const main = async () => {
     console.log("\n---------- Deploying Airdrop Contract ----------");
 
     Airdrop = (await ethers.getContractFactory("Airdrop")) as Airdrop__factory;
-    airdrop = await Airdrop.deploy(MyNFTAddress);
+    airdrop = await Airdrop.deploy(MyNFTAddress, name);
     await airdrop.deployed();
     airdropAddress = airdrop.address;
 
@@ -84,7 +86,7 @@ const main = async () => {
 
     //convert unix timestamp into human readable form
 
-    var date = new Date(time * 1000);
+    let date = new Date(time * 1000);
 
     console.log(`From --> ${fromAddress}`);
     console.log(`total Address --> ${totalAddress.toString()}`);
