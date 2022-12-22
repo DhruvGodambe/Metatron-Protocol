@@ -117,6 +117,8 @@ contract ExchangeCore is Ownable, Pausable {
         address _buyerToken
         ) public onlyAdmin   {
 
+        _nftPrice *= 1e18;
+
         bool validBuyer = validateBuyer(_buyer, _nftPrice, _buyerToken);
         
         require(validBuyer, "Buyer isn't valid");
