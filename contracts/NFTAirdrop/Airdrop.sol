@@ -11,6 +11,7 @@ contract Airdrop is Ownable, Pausable {
     Counters.Counter public _airDropCounter;
 
     IERC721 public airDropNFt;
+    string public name;
 
     event Airdroped(
         address _from,
@@ -20,15 +21,15 @@ contract Airdrop is Ownable, Pausable {
         uint256 _timestamp
     );
 
-    constructor(address _airDropNft) {
+    constructor(address _airDropNft, string memory _name) {
         airDropNFt = IERC721(_airDropNft);
+        name = _name;
     }
 
     function airDropBatch(
         address[] calldata _recipients,
         uint256[] calldata _tokenIds
     ) public onlyOwner whenNotPaused returns (bool) {
-        
         uint256 totalAddress = _recipients.length;
         uint256 totalTokenIds = _tokenIds.length;
         require(
