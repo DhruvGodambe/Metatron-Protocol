@@ -122,6 +122,8 @@ contract ExchangeCore is Ownable, Pausable {
         address _buyerToken
         ) public onlyAdmin {
 
+        _nftPrice *= 1e18;
+
         bool validBuyer = validateBuyer(_buyer, _nftPrice, _buyerToken);
         
         require(validBuyer, "Buyer isn't valid");
@@ -243,13 +245,17 @@ contract ExchangeCore is Ownable, Pausable {
         bool validSignature = verifySignature(_hashedMessage, _signature, _buyer);
         require(validSignature, "Signature mismatched with buyer's");
 
+        _nftPrice *= 1e18;
+
         bool validBuyer = validateBuyer(_buyer, _nftPrice, _buyerToken);
         require(validBuyer, "Buyer isn't valid");
 
-        IERC20(_buyerToken).transferFrom(_buyer, treasury, _nftPrice);
+        require(IERC20(_buyerToken).allowance(_buyer, address(this)) >= _nftPrice, "Exchange is not allowed enough tokens");
 
-        // transferring the NFT to the buyer
-        IERC721(_nftCollection).transferFrom(address(mintingFactory), _buyer, _tokenId);
+
+        IERC20(_buyerToken).transferFrom(_buyer, treasury, _nftPrice);
+        mintAndTransfer(_nftCollection, _tokenId);
+
         // updating the NFT ownership in our Minting Factory
         mintingFactory.updateOwner(
             _nftCollection,
