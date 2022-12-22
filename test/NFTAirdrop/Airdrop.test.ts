@@ -27,6 +27,8 @@ describe("Airdrop", () => {
         user2: Signer,
         user3: Signer;
 
+    let name: string = "ENOCH Airdrop";
+
     beforeEach(async () => {
         accounts = await ethers.getSigners();
 
@@ -50,7 +52,7 @@ describe("Airdrop", () => {
         Airdrop = (await ethers.getContractFactory(
             "Airdrop"
         )) as Airdrop__factory;
-        airdrop = await Airdrop.deploy(MyNFTAddress);
+        airdrop = await Airdrop.deploy(MyNFTAddress, name);
         await airdrop.deployed();
         airdropAddress = airdrop.address;
     });
@@ -66,6 +68,12 @@ describe("Airdrop", () => {
             const nftAddress = await airdrop.connect(owner).airDropNFt();
 
             assert.equal(nftAddress, MyNFTAddress);
+        });
+
+        it("Should set Name correctly", async () => {
+            const airdropName = await airdrop.connect(owner).name();
+
+            assert.equal(airdropName, name);
         });
     });
 
