@@ -12,8 +12,9 @@ interface IMintingFactory {
 
     function mintNFT(
         address _nftCollection,
-        uint256 _tokenId
-    ) external returns (bool);
+        uint256 _tokenId,
+        string memory _nftId
+    ) external returns (bool, string memory);
     
     function updateOwner(
         address _nftCollection,

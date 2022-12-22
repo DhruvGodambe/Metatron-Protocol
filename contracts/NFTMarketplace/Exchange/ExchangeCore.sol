@@ -9,8 +9,8 @@ import "@openzeppelin/contracts/utils/math/SafeMath.sol";
 import "hardhat/console.sol";
 
 // import required interfaces
-import "../Interface/IERC20.sol";
 import "../Interface/IERC721.sol";
+import "../Interface/IERC20.sol";
 import "../Interface/IMintingFactory.sol";
 import "../../Registry/IAdminRegistry.sol";
 
@@ -39,7 +39,8 @@ contract ExchangeCore is Ownable, Pausable {
 
     event FixedPricePrimarySale(
         address _nftCollection, 
-        uint256 tokenId,
+        uint256 _tokenId,
+        string _tokenURL,
         uint256 _nftPrice,  
         address _buyer, 
         address _buyerToken
@@ -118,11 +119,12 @@ contract ExchangeCore is Ownable, Pausable {
         address _nftCollection, 
         uint256 _nftPrice,
         uint256 _tokenId,
+        string memory _nftId,
         address _buyer,
         address _buyerToken
         ) public onlyAdmin {
 
-        _nftPrice *= 1e18;
+         _nftPrice *= 1e18;
 
         bool validBuyer = validateBuyer(_buyer, _nftPrice, _buyerToken);
         
@@ -136,25 +138,28 @@ contract ExchangeCore is Ownable, Pausable {
 
 
         IERC20(_buyerToken).transferFrom(_buyer, treasury, _nftPrice);
-        mintAndTransfer(_nftCollection, _tokenId);
 
-        emit FixedPricePrimarySale(_nftCollection, _tokenId, _nftPrice,  _buyer, _buyerToken);
+        string memory _tokenURL  = mintAndTransfer(_nftCollection, _tokenId, _nftId);
+
+        emit FixedPricePrimarySale(_nftCollection, _tokenId, _tokenURL, _nftPrice,  _buyer, _buyerToken);
 
     }
 
 
     function mintAndTransfer(
         address _nftCollection,
-        uint256 _tokenId
-    ) internal {
-        // bool success;
-        // uint256 _tokenId;
+        uint256 _tokenId,
+        string memory _nftId
+    ) internal returns(string memory) {
         
-         (bool success) = IMintingFactory(mintingFactory).mintNFT(_nftCollection, _tokenId);
+        
+         (bool success, string memory _tokenURL) = IMintingFactory(mintingFactory).mintNFT(_nftCollection, _tokenId, _nftId);
         
         if(success){
             IERC721(_nftCollection).transferFrom(address(mintingFactory), msg.sender, _tokenId);
         }
+
+        return _tokenURL;
         
     }
 
@@ -235,6 +240,7 @@ contract ExchangeCore is Ownable, Pausable {
         address _nftCollection,
         uint256 _nftPrice,
         uint256 _tokenId,
+        string memory _nftId,
         address _buyer,
         address _buyerToken,
         bytes32 _hashedMessage,
@@ -254,7 +260,7 @@ contract ExchangeCore is Ownable, Pausable {
 
 
         IERC20(_buyerToken).transferFrom(_buyer, treasury, _nftPrice);
-        mintAndTransfer(_nftCollection, _tokenId);
+        mintAndTransfer(_nftCollection, _tokenId, _nftId);
 
         // updating the NFT ownership in our Minting Factory
         mintingFactory.updateOwner(
