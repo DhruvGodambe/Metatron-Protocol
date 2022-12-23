@@ -183,12 +183,12 @@ contract ExchangeCore is Ownable, Pausable {
 
     
     function getMessageHash(
-        string memory _message) internal pure returns (bytes memory) {
+        string memory _message) public pure returns (bytes memory) {
         return abi.encodePacked(_message);
     }
 
 
-    function getEthSignedMessageHash(bytes memory _messageHash) internal pure returns (bytes32)
+    function getEthSignedMessageHash(bytes memory _messageHash) public pure returns (bytes32)
     {  string memory msgLength = uint2str(_messageHash.length);
         return
             keccak256(abi.encodePacked("\x19Ethereum Signed Message:\n", msgLength, _messageHash));
@@ -206,12 +206,11 @@ contract ExchangeCore is Ownable, Pausable {
     }
 
     function verifySignature(
-        string memory _message,
+        bytes memory _messageHash,
         bytes memory signature,
         address _buyer
     ) public returns (bool) {
-        bytes memory messageHash = getMessageHash(_message);
-        bytes32 ethSignedMessageHash = getEthSignedMessageHash(messageHash);
+        bytes32 ethSignedMessageHash = getEthSignedMessageHash(_messageHash);
 
         address signer = recoverSigner(ethSignedMessageHash, signature);
 
@@ -240,12 +239,13 @@ contract ExchangeCore is Ownable, Pausable {
         string memory _nftId,
         address _buyer,
         address _buyerToken,
-        string memory _message,
+        bytes memory _messageHash,
         bytes memory _signature
     ) public onlyAdmin whenNotPaused {
 
         // Validating the signature of buyer
-        bool validSignature = verifySignature(_message, _signature, _buyer);
+        // bytes memory _messageHash = getMessageHash(_message);
+        bool validSignature = verifySignature(_messageHash, _signature, _buyer);
         require(validSignature, "Signature mismatched with buyer's");
 
         _nftPrice *= 1e18;

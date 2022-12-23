@@ -34,6 +34,7 @@ const tokenId = 1;
 const nftId = "evening/day1";
 const nftPrice = "550";
 const _message = {"nonce":326843,"timestamp":"1671607403144","message":"I am signing in at 2022-12-21T07:23:23.144Z"};
+const _stringMessage =  JSON.stringify(_message);
 const _signature = "0x6e6af43443ea1324faa048a4a64d98d38b96ab33d876c97c55fd59302b47f68217ea7a335e452b306f4080cf01cf0dd0683dd86a845bc23586601d8e3acaf4841c";
 
 /*
@@ -203,19 +204,33 @@ console.log("Signature verified");
 */
     console.log("<<<<===============================================================>>>>");
 
-    const tx10 = await ExchangeCore.recoverSigner("0xc8f5743d4dbe14ae91ffe5b5a1732c187426769c6827250bf2dd16979143780b","0x6e6af43443ea1324faa048a4a64d98d38b96ab33d876c97c55fd59302b47f68217ea7a335e452b306f4080cf01cf0dd0683dd86a845bc23586601d8e3acaf4841c");
-    const receipt10 = await tx10.wait();
+    
+    const tx11 = await ExchangeCore.getMessageHash(_stringMessage);
+    console.log("get message hash : ", tx11);
+    
+    const tx12 = await ExchangeCore.getEthSignedMessageHash(tx11);
+    console.log("get eth signed message hash : ", tx12);
+    
+    const tx10 = await ExchangeCore.recoverSigner(tx12, _signature);
+    console.log("REcover signer : ", tx10);
+    console.log("_buyer : ", adminAddress);
+
+    const tx13 = await ExchangeCore.connect(admin).verifySignature(_stringMessage, _signature, adminAddress);
+    console.log("verify signature : ", tx13);
+    
 
     //@ 5. AUCTION Primary Market
     console.log("@ 5. Auction Primary Market from ExchangeCore contract");
 
-    const tx9 = await ExchangeCore.connect(admin).auctionPrimarySale(NFT_COLLECTION,
+    const tx9 = await ExchangeCore.connect(admin).auctionPrimarySale
+    (
+      NFT_COLLECTION,
       nftPrice, 
       tokenId, 
       nftId,
       adminAddress,
       enochTokenAddress,
-      _message,
+      tx11,
       _signature
     );
 
