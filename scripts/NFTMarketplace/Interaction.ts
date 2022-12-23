@@ -33,8 +33,8 @@ const enochTokenAddress = Book.ENOCHTOKEN_ADDRESS;
 const tokenId = 1;
 const nftId = "evening/day1";
 const nftPrice = "550";
-const _hashedMessage = "0x48656c6c6f546865726521000000000000000000000000000000000000000000";
-const _signature = "0xb2eeae6b144cea0408adf2d822e64e1c771322c09f9a7a3b66079c683dec746e27d225f672a85f8d6b5a5238805c8296ddfa0e2e83dd8f6ab4ea2fe3721de6f91b";
+const _message = {"nonce":326843,"timestamp":"1671607403144","message":"I am signing in at 2022-12-21T07:23:23.144Z"};
+const _signature = "0x6e6af43443ea1324faa048a4a64d98d38b96ab33d876c97c55fd59302b47f68217ea7a335e452b306f4080cf01cf0dd0683dd86a845bc23586601d8e3acaf4841c";
 
 /*
 marketplaceInteraction.ts requirements:
@@ -139,7 +139,7 @@ const main = async () => {
 
     //@ Approving buyer token to exchange core by admin
 
-    const tx6 = await EnochToken.connect(admin).approve(exchangeCoreAddress, "555000000000000000000");
+    const tx6 = await EnochToken.connect(admin).approve(exchangeCoreAddress, "55500000000000000000000000");
     const receipt6 = await tx6.wait();
     console.log("Approve receipt6 :", receipt6);
 
@@ -152,7 +152,7 @@ const main = async () => {
 
 
     console.log("<<<<===============================================================>>>>");
-
+/*
     //@ 5. FIXED PRICE Primary Sale
     console.log("@ 5. Fixed Price Primary Sale from ExchangeCore contract");
 
@@ -171,7 +171,7 @@ const main = async () => {
     console.log(event5);
 
     console.log("TOken URL is for the corresponding token Id is  : ", event5?.args._tokenURL);
-
+*/
     console.log("<<<<===============================================================>>>>");
 
 /*
@@ -203,21 +203,25 @@ console.log("Signature verified");
 */
     console.log("<<<<===============================================================>>>>");
 
-/*    //@ 5. AUCTION Primary Market
+    const tx10 = await ExchangeCore.recoverSigner("0xc8f5743d4dbe14ae91ffe5b5a1732c187426769c6827250bf2dd16979143780b","0x6e6af43443ea1324faa048a4a64d98d38b96ab33d876c97c55fd59302b47f68217ea7a335e452b306f4080cf01cf0dd0683dd86a845bc23586601d8e3acaf4841c");
+    const receipt10 = await tx10.wait();
+
+    //@ 5. AUCTION Primary Market
     console.log("@ 5. Auction Primary Market from ExchangeCore contract");
 
     const tx9 = await ExchangeCore.connect(admin).auctionPrimarySale(NFT_COLLECTION,
       nftPrice, 
       tokenId, 
+      nftId,
       adminAddress,
       enochTokenAddress,
-      _hashedMessage,
+      _message,
       _signature
     );
 
     const receipt9 = await tx9.wait();
     console.log("Primary sale for ", NFT_COLLECTION, " : ", receipt9);
-*/
+
     console.log("<<<<===============================================================>>>>");
 /*
     const Collection = new ethers.Contract(NFT_COLLECTION, NFTCollectionabi.abi, provider);

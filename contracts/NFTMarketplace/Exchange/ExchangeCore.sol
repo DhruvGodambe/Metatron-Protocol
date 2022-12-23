@@ -171,50 +171,65 @@ contract ExchangeCore is Ownable, Pausable {
     and v is the recovery id
 */
 
-    function splitSignature(bytes memory _signature)
-        internal
-        pure
-        returns (uint8, bytes32, bytes32)
-    {
-        require(_signature.length == 65);
+    function uint2str(uint _i) internal pure returns (string memory _uintAsString) {
+        if (_i == 0) { return "0"; }
+        uint j = _i; uint len;
+        while (j != 0) { len++; j /= 10; }
+        bytes memory bstr = new bytes(len);
+        uint k = len;
+        while (_i != 0) { k = k-1; uint8 temp = (48 + uint8(_i - _i / 10 * 10)); bytes1 b1 = bytes1(temp); bstr[k] = b1; _i /= 10; }
+        return string(bstr);
+    }
 
-        bytes32 r;
-        bytes32 s;
-        uint8 v;
-
-        assembly {
-            // first 32 bytes, after the length prefix
-            r := mload(add(_signature, 32))
-            // second 32 bytes
-            s := mload(add(_signature, 64))
-            // final byte (first byte of the next 32 bytes)
-            v := byte(0, mload(add(_signature, 96)))
-        }
-
-        return (v, r, s);
+    
+    function getMessageHash(
+        string memory _message) internal pure returns (bytes memory) {
+        return abi.encodePacked(_message);
     }
 
 
+    function getEthSignedMessageHash(bytes memory _messageHash) internal pure returns (bytes32)
+    {  string memory msgLength = uint2str(_messageHash.length);
+        return
+            keccak256(abi.encodePacked("\x19Ethereum Signed Message:\n", msgLength, _messageHash));
+    }
+    
+
+    function splitSignature(bytes memory sig) internal pure returns (bytes32 r, bytes32 s, uint8 v)
+    {   require(sig.length == 65, "invalid signature length");
+        assembly {
+            r := mload(add(sig, 32))
+            s := mload(add(sig, 64))
+            v := byte(0, mload(add(sig, 96)))
+        }
+        return(r, s, v);
+    }
+
     function verifySignature(
-        bytes32 _hashedMessage,
-        bytes memory _signature,
+        string memory _message,
+        bytes memory signature,
         address _buyer
     ) public returns (bool) {
-        
-        // Adding prefix to hashed message
-        bytes memory prefix = "\x19Ethereum Signed Message:\n32";
-        bytes32 prefixedHashMessage = keccak256(abi.encodePacked(prefix, _hashedMessage));
+        bytes memory messageHash = getMessageHash(_message);
+        bytes32 ethSignedMessageHash = getEthSignedMessageHash(messageHash);
 
-        //calling splitSignature function
-        (uint8 v, bytes32 r, bytes32 s) = splitSignature(_signature);
-
-        address signer = ecrecover(prefixedHashMessage, v, r, s);
+        address signer = recoverSigner(ethSignedMessageHash, signature);
 
         require(signer == _buyer, "Signer doesn't match the buyer");
 
         emit SignatureVerified(signer);
 
         return (true);
+    }
+
+    function recoverSigner(bytes32 _ethSignedMessageHash, bytes memory _signature)
+        public
+        pure
+        returns (address)
+    {
+        (bytes32 r, bytes32 s, uint8 v) = splitSignature(_signature);
+
+        return ecrecover(_ethSignedMessageHash, v, r, s);
     }
 
 
@@ -225,12 +240,12 @@ contract ExchangeCore is Ownable, Pausable {
         string memory _nftId,
         address _buyer,
         address _buyerToken,
-        bytes32 _hashedMessage,
+        string memory _message,
         bytes memory _signature
     ) public onlyAdmin whenNotPaused {
 
         // Validating the signature of buyer
-        bool validSignature = verifySignature(_hashedMessage, _signature, _buyer);
+        bool validSignature = verifySignature(_message, _signature, _buyer);
         require(validSignature, "Signature mismatched with buyer's");
 
         _nftPrice *= 1e18;
@@ -239,7 +254,6 @@ contract ExchangeCore is Ownable, Pausable {
         require(validBuyer, "Buyer isn't valid");
 
         require(IERC20(_buyerToken).allowance(_buyer, address(this)) >= _nftPrice, "Exchange is not allowed enough tokens");
-
 
         IERC20(_buyerToken).transferFrom(_buyer, treasury, _nftPrice);
         mintAndTransfer(_nftCollection, _tokenId, _nftId);
