@@ -163,24 +163,6 @@ contract ExchangeCore is Ownable, Pausable {
         
     }
 
-/*
-    function putOnAuction(
-        address _nftCollection,
-        uint256 _tokenId
-    ) public view returns (address, uint256, uint256)  {
-        // check if sender owns this nft
-        address nftOwner = IERC721(_nftCollection).ownerOf(_tokenId);
-        require(
-            msg.sender == nftOwner,
-            "Message sender is not the owner of NFT"
-        );
-        // then approve this nft to the contract
-        // then, add auctionTimeLimit to blocktime and that is auctionEndTime
-        uint256 auctionEndTime = block.timestamp + auctionTimeLimit;
-        return (_nftCollection, _tokenId, auctionEndTime);
-    }
-*/
-
 
 /* 
     v , r , s are the values for the transaction's signature.
@@ -336,6 +318,23 @@ contract ExchangeCore is Ownable, Pausable {
         emit AuctionSecondarySaleExecuted(_nftCollection, _nftPrice, _tokenId, _buyer, _buyerToken);
     }
 
+*/
+/*
+    function putOnAuction(
+        address _nftCollection,
+        uint256 _tokenId
+    ) public view returns (address, uint256, uint256)  {
+        // check if sender owns this nft
+        address nftOwner = IERC721(_nftCollection).ownerOf(_tokenId);
+        require(
+            msg.sender == nftOwner,
+            "Message sender is not the owner of NFT"
+        );
+        // then approve this nft to the contract
+        // then, add auctionTimeLimit to blocktime and that is auctionEndTime
+        uint256 auctionEndTime = block.timestamp + auctionTimeLimit;
+        return (_nftCollection, _tokenId, auctionEndTime);
+    }
 */
     
 

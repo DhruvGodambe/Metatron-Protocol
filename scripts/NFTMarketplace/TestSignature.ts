@@ -2,10 +2,6 @@ import {ethers} from 'hardhat';
 const hre = require("hardhat");
 
 const runmain = async () => {
-
-    const accounts = await ethers.getSigners();
-    const admin  = accounts[0];
-
     
     console.log("Deploying test sign...");
 
@@ -13,39 +9,29 @@ const runmain = async () => {
     const testSign = await TestSign.deploy();
 
     await testSign.deployed();
-    console.log("Address : ", testSign.address);
+    console.log("TestSign Address : ", testSign.address);
 
-    const obj = {"nonce":326843,"timestamp":"1671607403144","message":"I am signing in at 2022-12-21T07:23:23.144Z"};
-    // const obj = "0x48656c6c6f414b00000000000000000000000000000000000000000000000000";
+    const obj = {"nonce":326843,"message":"Ankit is here signing in at 2022-12-21T07:23:23.144Z"} ;
+    const signature = "0x54a901522b301ce452cbe0d288ecc0eeec55957621271c12a781f5cb006e69684635dbf63c537a465b0b75d88c53b2032a69157fca1da1d4b98f4a7b1b654bf71b";
+
     const str = JSON.stringify(obj);
+    console.log("str : ", str);
 
-    // console.log("str : ", str);
+    //Step 1
+    let tx1 = await testSign.getMessageHash(str);
+    console.log("get message hash tx11 : ", tx1);
     
-
-    // let tx1 = await testSign.getMessageHash(obj);
-    // console.log("get message hash tx : ", tx1);
+    //Step 2
+    let tx2 = await testSign.getEthSignedMessageHash(tx1);
+    console.log("get eth signed message hash :", tx2);
     
-    // let tx2 = await testSign.getEthSignedMessageHash(tx1);
-    // console.log("get eth signed message hash :", tx2);
+    //Step 3
+    let tx3 = await testSign.recoverSigner(tx2, signature);
+    console.log("recover signer : ", tx3 );
 
-    const signature = "0x6e6af43443ea1324faa048a4a64d98d38b96ab33d876c97c55fd59302b47f68217ea7a335e452b306f4080cf01cf0dd0683dd86a845bc23586601d8e3acaf4841c";
-    let verified = await ethers.utils.verifyMessage(str, signature);
-    console.log("verified : ",verified);
-    
-
-    // let tx3 = await testSign.recoverSigner(tx2, signature);
-    // console.log("recover signer : ", tx3 );
-
-    // let tx4 = await testSign.verify("0xCB61f141D37C320B4357173ec28Af37A5E09d949", obj, signature);
-    // console.log("tx4 : ", tx4);
-    
-    
-
-
-    
-
-
-
+    //Step 4
+    let tx4 = await testSign.verify("0xdcb04bdea6d21a638d0161405f31fc8511867d3f", tx1, signature);
+    console.log("Signer matching : ", tx4);
 
 
 
