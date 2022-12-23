@@ -17,6 +17,8 @@ contract NFTCollection is ERC721 {
     string public baseURI;
     address public adminRegistry;
 
+    mapping(uint256 => string) public tokenIdToNftId;
+
     constructor(string memory _name, string memory _symbol, address _adminRegistry, string memory _baseURI)
         ERC721(_name, _symbol)
     {
@@ -25,6 +27,7 @@ contract NFTCollection is ERC721 {
         adminRegistry = _adminRegistry;
         baseURI = _baseURI;
     }
+
 
      modifier onlyMintingFactory() {
         require(
@@ -54,23 +57,23 @@ contract NFTCollection is ERC721 {
     }
 
 
-    function tokenURI(uint256 tokenId)
+    function tokenURI(uint256 _tokenId)
         public
-        view virtual 
-        override 
+        view virtual override
         returns (string memory)
-    {         
-
-            return string(abi.encodePacked(baseURI, tokenId.toString()));
-
+    {       string memory _nftId = tokenIdToNftId[_tokenId];
+            return string(abi.encodePacked(baseURI, _nftId));
     }
 
 
-    function mintNewNFT(uint256 _tokenId) public onlyMintingFactory returns (uint256) {
+    function mintNewNFT(uint256 _tokenId, string memory _nftId) public onlyMintingFactory returns (uint256, string memory) {
+
+        tokenIdToNftId[_tokenId] =_nftId;
 
         _mint(mintingFactory, _tokenId);
+
+        return (_tokenId ,string(abi.encodePacked(baseURI, _nftId)));
         
-        return _tokenId;
     }
 
 
