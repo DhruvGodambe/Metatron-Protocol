@@ -7,7 +7,7 @@ import {
     StakingPool,
     StakingPool__factory,
 } from "../../typechain-types";
-import { setTimeout } from "timers/promises";
+import { BigNumber } from "ethers";
 
 const main = async () => {
     let RjToken: RjToken__factory,
@@ -23,6 +23,8 @@ const main = async () => {
     let RWDTokenName: string = "RWDToken";
     let RWDTokenSymobol: string = "RWD";
     let rjTokenAddress: string, rwdTokenAddress: string, poolAddress: string;
+
+    let interval: BigNumber;
 
     const accounts = await ethers.getSigners();
 
@@ -62,26 +64,44 @@ const main = async () => {
     stakingPool = await StakingPool.deploy(rjTokenAddress, rwdTokenAddress);
     const poolReceipt = await stakingPool.deployed();
     poolAddress = stakingPool.address;
+    interval = await stakingPool.minDuration();
 
-    console.log(poolReceipt);
+    console.log(poolAddress);
 
-    console.log("\n----------------------------------------------\n");
+    console.log(
+        "\n----------------------Mint & Approve of RJToken------------------------\n"
+    );
     const mintAmount: number = 20000000;
     const mint = await rjToken.connect(owner).mint(ownerAddress, mintAmount);
-
-    const rjBalance = await rjToken.connect(owner).balanceOf(ownerAddress);
-    console.log(rjBalance);
 
     const approve = await rjToken
         .connect(owner)
         .approve(poolAddress, mintAmount);
 
-    console.log("\n----------------------------------------------\n");
+    const rjBalance = await rjToken.connect(owner).balanceOf(ownerAddress);
+    console.log(`BalanceOf Owner-->${rjBalance.toNumber()}`);
+
+    console.log("\n-------------------Mint RWDToken------------------------\n");
+
+    const mintRWDAmount: number = 20000000;
+    const mintRWD = await rwdToken
+        .connect(owner)
+        .mint(poolAddress, mintRWDAmount);
+
+    const balanceOfPool = await rwdToken.connect(owner).balanceOf(poolAddress);
+    console.log(`BalanceOf Pool-->${balanceOfPool.toNumber()}`);
+
+    console.log("\n-------------Reward before Staking----------------------\n");
+
+    const rwdBalance = await rwdToken.connect(owner).balanceOf(ownerAddress);
+    console.log(`RewardOf Owner-->${rwdBalance.toNumber()}`);
+
+    console.log("\n------------------Staking----------------------------\n");
 
     let _amount: number = 10000000;
     const tx1 = await stakingPool.connect(owner).stake(_amount);
     const tx1Receipt = await tx1.wait();
-    console.log(tx1Receipt);
+    // console.log(tx1Receipt);
 
     let time = tx1Receipt.events![2].args!._timestamp;
     let date = new Date(time * 1000).toLocaleTimeString("it-IT");
@@ -92,18 +112,21 @@ const main = async () => {
     console.log(`\nStaked Amount -->${tx1Receipt.events![2].args!._amount}`);
     console.log(`\nStaked Time -->${date}`);
 
-    console.log("\n----------------------------------------------\n");
-
-    const rwdBalance = await rwdToken.connect(owner).balanceOf(ownerAddress);
-    console.log(rwdBalance);
-
-    console.log("\n----------------------------------------------\n");
+    console.log("\n---------------------Unstake-------------------------\n");
     const _positionIndex: number = 0;
+    await ethers.provider.send("evm_increaseTime", [interval.toNumber() + 120]);
 
     const tx2 = await stakingPool.connect(owner).Unstake(_positionIndex);
-    
     const tx2Receipt = await tx2.wait();
-    console.log(tx2Receipt);
+
+    const rewardAmount = tx2Receipt.events![2].args!._rewardAmount;
+    const stakedAmount = tx2Receipt.events![2].args!._stakedAmount;
+    const unstakeTime = tx2Receipt.events![2].args!._timestamp;
+    let unstakeDate = new Date(unstakeTime * 1000).toLocaleTimeString("it-IT");
+
+    console.log(`Reward Amount --> ${rewardAmount}\n`);
+    console.log(`Staked Amount --> ${stakedAmount}\n`);
+    console.log(`Unstake Time -->${unstakeDate}\n`);
 };
 
 main()
