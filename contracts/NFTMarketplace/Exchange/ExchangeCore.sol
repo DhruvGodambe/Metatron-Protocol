@@ -51,10 +51,11 @@ contract ExchangeCore is Ownable, Pausable {
     );
 
     event AuctionPrimarySaleExecuted(
-        address nftCollection,
-        uint256 _nftPrice,
-        uint256 tokenId,
-        address _buyer,
+        address _nftCollection, 
+        uint256 _tokenId,
+        string _tokenURL,
+        uint256 _nftPrice,  
+        address _buyer, 
         address _buyerToken
     );
 
@@ -206,10 +207,12 @@ contract ExchangeCore is Ownable, Pausable {
     }
 
     function verifySignature(
-        bytes memory _messageHash,
+        string memory _message,
         bytes memory signature,
         address _buyer
     ) public returns (bool) {
+        bytes memory _messageHash = getMessageHash(_message);
+
         bytes32 ethSignedMessageHash = getEthSignedMessageHash(_messageHash);
 
         address signer = recoverSigner(ethSignedMessageHash, signature);
@@ -239,13 +242,11 @@ contract ExchangeCore is Ownable, Pausable {
         string memory _nftId,
         address _buyer,
         address _buyerToken,
-        bytes memory _messageHash,
+        string memory _message,
         bytes memory _signature
     ) public onlyAdmin whenNotPaused {
-
-        // Validating the signature of buyer
-        // bytes memory _messageHash = getMessageHash(_message);
-        bool validSignature = verifySignature(_messageHash, _signature, _buyer);
+        
+        bool validSignature = verifySignature(_message, _signature, _buyer);
         require(validSignature, "Signature mismatched with buyer's");
 
         _nftPrice *= 1e18;
@@ -256,16 +257,19 @@ contract ExchangeCore is Ownable, Pausable {
         require(IERC20(_buyerToken).allowance(_buyer, address(this)) >= _nftPrice, "Exchange is not allowed enough tokens");
 
         IERC20(_buyerToken).transferFrom(_buyer, treasury, _nftPrice);
-        mintAndTransfer(_nftCollection, _tokenId, _nftId);
+       
+        string memory _tokenURL  = mintAndTransfer(_nftCollection, _tokenId, _nftId);
 
-        // updating the NFT ownership in our Minting Factory
-        mintingFactory.updateOwner(
-            _nftCollection,
-            _tokenId,
-            _buyer
-        );
+        IMintingFactory(mintingFactory).updateOwner(_nftCollection, _buyer, _tokenId);
 
-        emit AuctionPrimarySaleExecuted(_nftCollection, _nftPrice ,_tokenId, _buyer, _buyerToken);
+        // // updating the NFT ownership in our Minting Factory
+        // mintingFactory.updateOwner(
+        //     _nftCollection,
+        //     _tokenId,
+        //     _buyer
+        // );
+
+        emit AuctionPrimarySaleExecuted(_nftCollection, _tokenId, _tokenURL, _nftPrice ,_buyer, _buyerToken);
     }
 
 

@@ -30,7 +30,7 @@ const enochTokenAddress = Book.ENOCHTOKEN_ADDRESS;
 // const PrivateKey = process.env.PRIVATE_KEY_LOCALHOST_1;
 // const providerURL = process.env.PROVIDER_URL;
 
-const tokenId = 1;
+const tokenId = 5;
 const nftId = "evening/day1";
 const nftPrice = "550";
 const _message = {"nonce":326843,"timestamp":"1671607403144","message":"I am signing in at 2022-12-21T07:23:23.144Z"};
@@ -87,7 +87,7 @@ const main = async () => {
     //@ 1. Create NFT Collection
     console.log("@ 1. Creating NFT Collection");
 
-    const tx2 = await MintingFactory.connect(admin).createNFTCollection("StephCurry", "SC", "https://ipfs.io/ipfs/");
+    const tx2 = await MintingFactory.connect(admin).createNFTCollection("KingJames", "KJ", "https://ipfs.io/ipfs/ENOCH/");
 
     const receipt2 = await tx2.wait();
 
@@ -140,7 +140,7 @@ const main = async () => {
 
     //@ Approving buyer token to exchange core by admin
 
-    const tx6 = await EnochToken.connect(admin).approve(exchangeCoreAddress, "55500000000000000000000000");
+    const tx6 = await EnochToken.connect(admin).approve(exchangeCoreAddress, "5550000000000000000000000000");
     const receipt6 = await tx6.wait();
     console.log("Approve receipt6 :", receipt6);
 
@@ -162,7 +162,9 @@ const main = async () => {
       tokenId,
       nftId,
       adminAddress,
-      enochTokenAddress
+      enochTokenAddress,
+      _stringMessage,
+      _signature
     );
 
     const receipt5 = await tx5.wait();
@@ -171,37 +173,9 @@ const main = async () => {
     let event5 = receipt5.events?.find((event:any) => event.event === "FixedPricePrimarySale");
     console.log(event5);
 
-    console.log("TOken URL is for the corresponding token Id is  : ", event5?.args._tokenURL);
+    console.log("TOken URL for the corresponding token Id is  : ", event5?.args._tokenURL);
 */
-    console.log("<<<<===============================================================>>>>");
-
-/*
-const tx10 = await ExchangeCore.connect(admin).verifySignature(_hashedMessage,
-  _signature,
-  adminAddress
-);
-
-const receipt10 = await tx10.wait();
-console.log("Signature verified");
-
-    console.log("verify Signature ",receipt10);
-*/
-    console.log("<<<<===============================================================>>>>");
-/*
-    //@ 1. Minting new NFT
-    console.log("@ 4. Minting new NFT");
-
-    const tx11 = await MintingFactory.connect(admin).mintNFT(NFT_COLLECTION, tokenId);
-
-    const receipt11 = await tx11.wait();
-
-    let event11 = receipt11.events?.find((event:any) => event.event === "NFTMinted");
-    console.log(event11);
     
-
-    console.log("Collection is : ", event2?.args.nftCollection);
-    console.log("Token Id is : ", event11?.args.tokenId);
-*/
     console.log("<<<<===============================================================>>>>");
 
     
@@ -216,26 +190,32 @@ console.log("Signature verified");
     console.log("_buyer : ", adminAddress);
 
     const tx13 = await ExchangeCore.connect(admin).verifySignature(_stringMessage, _signature, adminAddress);
-    console.log("verify signature : ", tx13);
+    const receipt13 = await tx13.wait();
+    console.log("verify signature receipt ", receipt13);
+    let event13 = receipt13.events?.find((event:any) => event.event === "SignatureVerified");
+    console.log(event13);
     
 
     //@ 5. AUCTION Primary Market
     console.log("@ 5. Auction Primary Market from ExchangeCore contract");
 
-    const tx9 = await ExchangeCore.connect(admin).auctionPrimarySale
-    (
-      NFT_COLLECTION,
+    const tx20 = await ExchangeCore.connect(admin).auctionPrimarySale(NFT_COLLECTION,
       nftPrice, 
-      tokenId, 
+      tokenId,
       nftId,
       adminAddress,
       enochTokenAddress,
-      tx11,
+      _stringMessage,
       _signature
     );
+      console.log("Auction completed");
+      
+    const receipt20 = await tx20.wait();
+    console.log("Auction Primary sale for ", NFT_COLLECTION, " : ", receipt20);
+    let event20 = receipt20.events?.find((event:any) => event.event === "AuctionPrimarySaleExecuted");
+    console.log(event20);
 
-    const receipt9 = await tx9.wait();
-    console.log("Primary sale for ", NFT_COLLECTION, " : ", receipt9);
+    console.log("Token URL for the corresponding token Id is  : ", event20?.args._tokenURL);
 
     console.log("<<<<===============================================================>>>>");
 /*
