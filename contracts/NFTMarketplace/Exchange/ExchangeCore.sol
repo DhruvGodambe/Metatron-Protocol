@@ -21,10 +21,11 @@ contract ExchangeCore is Ownable, Pausable {
 
     address public treasury;
     address public adminRegistry;
-
+/*
     uint256 auctionTimeLimit = 28800;
     uint256 public constant tradingFeeFactorMax = 10000; // 100%
     uint256 public tradingFeeFactor = 400; // 4%
+*/
 
     constructor(IMintingFactory _mintingFactory, address _adminRegistry, address _treasury) {
         mintingFactory = IMintingFactory(_mintingFactory);
@@ -32,7 +33,6 @@ contract ExchangeCore is Ownable, Pausable {
         treasury = _treasury;
     }
 
-    // One who bids for an nft, can cancel it anytime before auction ends
 
     mapping(address => mapping(address => mapping(uint256 => bool)))
         public cancelledOrders;
@@ -128,19 +128,18 @@ contract ExchangeCore is Ownable, Pausable {
          _nftPrice *= 1e18;
 
         bool validBuyer = validateBuyer(_buyer, _nftPrice, _buyerToken);
-        
         require(validBuyer, "Buyer isn't valid");
 
         bool isCancelled = cancelledOrders[_buyer][_nftCollection][_tokenId];
-
         require(!isCancelled , "Order has been cancelled");
 
         require(IERC20(_buyerToken).allowance(_buyer, address(this)) >= _nftPrice, "Exchange is not allowed enough tokens");
 
-
         IERC20(_buyerToken).transferFrom(_buyer, treasury, _nftPrice);
 
         string memory _tokenURL  = mintAndTransfer(_nftCollection, _tokenId, _nftId);
+
+        IMintingFactory(mintingFactory).updateOwner(_nftCollection, _buyer, _tokenId);
 
         emit FixedPricePrimarySale(_nftCollection, _tokenId, _tokenURL, _nftPrice,  _buyer, _buyerToken);
 
@@ -153,15 +152,13 @@ contract ExchangeCore is Ownable, Pausable {
         string memory _nftId
     ) internal returns(string memory) {
         
-        
-         (bool success, string memory _tokenURL) = IMintingFactory(mintingFactory).mintNFT(_nftCollection, _tokenId, _nftId);
+        (bool success, string memory _tokenURL) = IMintingFactory(mintingFactory).mintNFT(_nftCollection, _tokenId, _nftId);
         
         if(success){
             IERC721(_nftCollection).transferFrom(address(mintingFactory), msg.sender, _tokenId);
         }
 
         return _tokenURL;
-        
     }
 
 
@@ -184,12 +181,12 @@ contract ExchangeCore is Ownable, Pausable {
 
     
     function getMessageHash(
-        string memory _message) public pure returns (bytes memory) {
+        string memory _message) internal pure returns (bytes memory) {
         return abi.encodePacked(_message);
     }
 
 
-    function getEthSignedMessageHash(bytes memory _messageHash) public pure returns (bytes32)
+    function getEthSignedMessageHash(bytes memory _messageHash) internal pure returns (bytes32)
     {  string memory msgLength = uint2str(_messageHash.length);
         return
             keccak256(abi.encodePacked("\x19Ethereum Signed Message:\n", msgLength, _messageHash));
@@ -210,7 +207,7 @@ contract ExchangeCore is Ownable, Pausable {
         string memory _message,
         bytes memory signature,
         address _buyer
-    ) public returns (bool) {
+    ) internal returns (bool) {
         bytes memory _messageHash = getMessageHash(_message);
 
         bytes32 ethSignedMessageHash = getEthSignedMessageHash(_messageHash);
@@ -225,7 +222,7 @@ contract ExchangeCore is Ownable, Pausable {
     }
 
     function recoverSigner(bytes32 _ethSignedMessageHash, bytes memory _signature)
-        public
+        internal
         pure
         returns (address)
     {
@@ -356,7 +353,7 @@ contract ExchangeCore is Ownable, Pausable {
 */
     
 
-    function validateAuctionTime(uint256 _auctionEndTime)
+/*    function validateAuctionTime(uint256 _auctionEndTime)
         internal
         view
         returns (bool)
@@ -364,8 +361,9 @@ contract ExchangeCore is Ownable, Pausable {
         require(_auctionEndTime > block.timestamp, "Auction has ended");
         return true;
     }
+*/
 
-
+/*
     function setTradingFeeFactor(uint256 _tradingFeeFactor) public onlyAdmin {
         require(_tradingFeeFactor != 0, "Fee cannot be zero");
         tradingFeeFactor = _tradingFeeFactor;
@@ -374,7 +372,7 @@ contract ExchangeCore is Ownable, Pausable {
     function getTradingFeeFactor() public view returns (uint256) {
         return tradingFeeFactor;
     }
-
+*/
 
     function cancelOrder(
         address _nftCollection,

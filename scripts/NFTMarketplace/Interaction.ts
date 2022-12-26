@@ -153,8 +153,8 @@ const main = async () => {
 
 
     console.log("<<<<===============================================================>>>>");
-/*
-    //@ 5. FIXED PRICE Primary Sale
+
+/*    //@ 5. FIXED PRICE Primary Sale
     console.log("@ 5. Fixed Price Primary Sale from ExchangeCore contract");
 
     const tx5 = await ExchangeCore.connect(admin).fixedPricePrimarySale(NFT_COLLECTION,
@@ -162,9 +162,7 @@ const main = async () => {
       tokenId,
       nftId,
       adminAddress,
-      enochTokenAddress,
-      _stringMessage,
-      _signature
+      enochTokenAddress
     );
 
     const receipt5 = await tx5.wait();
@@ -173,13 +171,13 @@ const main = async () => {
     let event5 = receipt5.events?.find((event:any) => event.event === "FixedPricePrimarySale");
     console.log(event5);
 
-    console.log("TOken URL for the corresponding token Id is  : ", event5?.args._tokenURL);
-*/
-    
+    console.log("Token URL for the corresponding token Id is  : ", event5?.args._tokenURL);
+
+*/    
     console.log("<<<<===============================================================>>>>");
 
-    
-    const tx11 = await ExchangeCore.getMessageHash(_stringMessage);
+   
+/*    const tx11 = await ExchangeCore.getMessageHash(_stringMessage);
     console.log("get message hash : ", tx11);
     
     const tx12 = await ExchangeCore.getEthSignedMessageHash(tx11);
@@ -194,7 +192,7 @@ const main = async () => {
     console.log("verify signature receipt ", receipt13);
     let event13 = receipt13.events?.find((event:any) => event.event === "SignatureVerified");
     console.log(event13);
-    
+*/    
 
     //@ 5. AUCTION Primary Market
     console.log("@ 5. Auction Primary Market from ExchangeCore contract");

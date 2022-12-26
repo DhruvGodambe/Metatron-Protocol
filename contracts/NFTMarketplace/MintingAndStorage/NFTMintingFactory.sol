@@ -36,13 +36,14 @@ contract NFTMintingFactory {
     event OwnerUpdated(address nftCollection, address newOwner, uint256 tokenId);
     event ExchangeAddressChanged(address oldExchange, address newExchange);
 
-    modifier onlyOwner(address _nftCollection) {
+/*    modifier onlyOwner(address _nftCollection) {
         require(
             collectionToOwner[_nftCollection] == msg.sender,
             "Only Creator can call this!"
         );
         _;
     }
+*/
 
     modifier onlyExchange() {
         require(msg.sender == exchangeAddress, 
@@ -124,21 +125,14 @@ contract NFTMintingFactory {
     }
 
 
-    // // lists all NFT IDs for a collection of owner
-    // function getIdsForCollectionToOwner(address _nftCollection, address user)
-    //     public
-    //     view
-    //     returns (uint256[] memory)
-    // {
-    //     return collectionToOwnerToId[_nftCollection][user];
-    // }
+    // lists all NFT IDs for a collection of owner
+    function getIdsForCollectionToOwner(address _nftCollection, address user)
+        public
+        view
+        returns (uint256)
+    {
+        return collectionToOwnerToId[_nftCollection][user] ;
+    }
 
-    // get total NFTs minted for a contract
-    // function getTotalNFTsMinted(address _nftCollection)
-    //     public
-    //     view
-    //     returns (uint256)
-    // {
-    //     return NFTCollection(_nftCollection).getTotalNFTs();
-    // }
+
 }
