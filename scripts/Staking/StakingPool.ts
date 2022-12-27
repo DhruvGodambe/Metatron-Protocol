@@ -1,28 +1,25 @@
 import { ethers } from "hardhat";
 import {
-    RWDToken,
-    RWDToken__factory,
-    RjToken,
-    RjToken__factory,
+    StakingToken,
+    StakingToken__factory,
+    RewardToken,
+    RewardToken__factory,
     StakingPool,
     StakingPool__factory,
 } from "../../typechain-types";
 import { BigNumber } from "ethers";
 
 const main = async () => {
-    let RjToken: RjToken__factory,
-        rjToken: RjToken,
-        RWDToken: RWDToken__factory,
-        rwdToken: RWDToken,
+    let StakingToken: StakingToken__factory,
+        stakingToken: StakingToken,
+        RewardToken: RewardToken__factory,
+        rewardToken: RewardToken,
         StakingPool: StakingPool__factory,
         stakingPool: StakingPool;
 
-    let RjTokenName: string = "RjToken";
-    let RjTokenSymobol: string = "RJT";
-
-    let RWDTokenName: string = "RWDToken";
-    let RWDTokenSymobol: string = "RWD";
-    let rjTokenAddress: string, rwdTokenAddress: string, poolAddress: string;
+    let StakingTokenAddress: string,
+        RewardTokenAddress: string,
+        poolAddress: string;
 
     let interval: BigNumber;
 
@@ -38,30 +35,35 @@ const main = async () => {
 
     console.log("\n---------- Deploying RJToken Contract ----------");
 
-    RjToken = (await ethers.getContractFactory("RjToken")) as RjToken__factory;
-    rjToken = await RjToken.deploy(RjTokenName, RjTokenSymobol);
-    await rjToken.deployed();
-    rjTokenAddress = rjToken.address;
+    StakingToken = (await ethers.getContractFactory(
+        "StakingToken"
+    )) as StakingToken__factory;
+    stakingToken = await StakingToken.deploy();
+    await stakingToken.deployed();
+    StakingTokenAddress = stakingToken.address;
 
-    console.log(`RjToken deployed at --> ${rjTokenAddress}`);
+    console.log(`RjToken deployed at --> ${StakingTokenAddress}`);
 
     console.log("\n---------- Deploying RWDToken Contract ----------");
 
-    RWDToken = (await ethers.getContractFactory(
-        "RWDToken"
-    )) as RWDToken__factory;
-    rwdToken = await RWDToken.deploy(RWDTokenName, RWDTokenSymobol);
-    await rwdToken.deployed();
-    rwdTokenAddress = rwdToken.address;
+    RewardToken = (await ethers.getContractFactory(
+        "RewardToken"
+    )) as RewardToken__factory;
+    rewardToken = await RewardToken.deploy();
+    await rewardToken.deployed();
+    RewardTokenAddress = rewardToken.address;
 
-    console.log(`RWDToken deployed at --> ${rwdTokenAddress}`);
+    console.log(`RWDToken deployed at --> ${RewardTokenAddress}`);
 
     console.log("\n---------- Deploying StakingPool Contract ----------");
 
     StakingPool = (await ethers.getContractFactory(
         "StakingPool"
     )) as StakingPool__factory;
-    stakingPool = await StakingPool.deploy(rjTokenAddress, rwdTokenAddress);
+    stakingPool = await StakingPool.deploy(
+        StakingTokenAddress,
+        RewardTokenAddress
+    );
     const poolReceipt = await stakingPool.deployed();
     poolAddress = stakingPool.address;
     interval = await stakingPool.minDuration();
@@ -71,34 +73,42 @@ const main = async () => {
     console.log(
         "\n----------------------Mint & Approve of RJToken------------------------\n"
     );
-    const mintAmount: number = 20000000;
-    const mint = await rjToken.connect(owner).mint(ownerAddress, mintAmount);
 
-    const approve = await rjToken
+    const mintAmount: BigNumber = ethers.utils.parseUnits("200.0");
+
+    const mint = await stakingToken
+        .connect(owner)
+        .mint(ownerAddress, mintAmount);
+
+    const approve = await stakingToken
         .connect(owner)
         .approve(poolAddress, mintAmount);
 
-    const rjBalance = await rjToken.connect(owner).balanceOf(ownerAddress);
-    console.log(`BalanceOf Owner-->${rjBalance.toNumber()}`);
+    const rjBalance = await stakingToken.connect(owner).balanceOf(ownerAddress);
+    console.log(`BalanceOf Owner-->${rjBalance.toString()}`);
 
     console.log("\n-------------------Mint RWDToken------------------------\n");
 
-    const mintRWDAmount: number = 20000000;
-    const mintRWD = await rwdToken
+    const mintRWDAmount: BigNumber = ethers.utils.parseUnits("200.0");
+
+    const mintRWD = await rewardToken
         .connect(owner)
         .mint(poolAddress, mintRWDAmount);
 
-    const balanceOfPool = await rwdToken.connect(owner).balanceOf(poolAddress);
-    console.log(`BalanceOf Pool-->${balanceOfPool.toNumber()}`);
+    const balanceOfPool = await rewardToken
+        .connect(owner)
+        .balanceOf(poolAddress);
+    console.log(`BalanceOf Pool-->${balanceOfPool.toString()}`);
 
     console.log("\n-------------Reward before Staking----------------------\n");
 
-    const rwdBalance = await rwdToken.connect(owner).balanceOf(ownerAddress);
-    console.log(`RewardOf Owner-->${rwdBalance.toNumber()}`);
+    const rwdBalance = await rewardToken.connect(owner).balanceOf(ownerAddress);
+    console.log(`RewardOf Owner-->${rwdBalance.toString()}`);
 
     console.log("\n------------------Staking----------------------------\n");
 
-    let _amount: number = 10000000;
+    const _amount: BigNumber = ethers.utils.parseUnits("100.0");
+
     const tx1 = await stakingPool.connect(owner).stake(_amount);
     const tx1Receipt = await tx1.wait();
     // console.log(tx1Receipt);
@@ -114,7 +124,7 @@ const main = async () => {
 
     console.log("\n---------------------Unstake-------------------------\n");
     const _positionIndex: number = 0;
-    await ethers.provider.send("evm_increaseTime", [interval.toNumber() + 120]);
+    await ethers.provider.send("evm_increaseTime", [interval.toNumber()]);
 
     const tx2 = await stakingPool.connect(owner).Unstake(_positionIndex);
     const tx2Receipt = await tx2.wait();

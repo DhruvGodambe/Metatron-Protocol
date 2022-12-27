@@ -1,35 +1,32 @@
 import { ethers } from "hardhat";
 import { assert, expect } from "chai";
 import {
-    RWDToken,
-    RWDToken__factory,
-    RjToken,
-    RjToken__factory,
+    StakingToken,
+    StakingToken__factory,
+    RewardToken,
+    RewardToken__factory,
     StakingPool,
     StakingPool__factory,
 } from "../../typechain-types";
 import { BigNumber, Signer } from "ethers";
 import { time } from "@nomicfoundation/hardhat-network-helpers";
+import { createVerifySignaturesInstructionsSolana } from "@certusone/wormhole-sdk";
 
 describe("Staking Pool", () => {
     let accounts: Signer[], owner: Signer, user: Signer, user2: Signer;
 
     let ownerAddress: string, userAddress: string, user2Address: string;
 
-    let rjTokenAddress: string, rwdTokenAddress: string, poolAddress: string;
+    let stakingTokenAddress: string,
+        rewardTokenAddress: string,
+        poolAddress: string;
 
-    let RjToken: RjToken__factory,
-        rjToken: RjToken,
-        RWDToken: RWDToken__factory,
-        rwdToken: RWDToken,
+    let StakingToken: StakingToken__factory,
+        stakingToken: StakingToken,
+        RewardToken: RewardToken__factory,
+        rewardToken: RewardToken,
         StakingPool: StakingPool__factory,
         stakingPool: StakingPool;
-
-    let RjTokenName: string = "RjToken";
-    let RjTokenSymobol: string = "RJT";
-
-    let RWDTokenName: string = "RWDToken";
-    let RWDTokenSymobol: string = "RWD";
 
     let interval: BigNumber;
 
@@ -45,44 +42,48 @@ describe("Staking Pool", () => {
 
         //Staking Token
 
-        RjToken = (await ethers.getContractFactory(
-            "RjToken"
-        )) as RjToken__factory;
-        rjToken = await RjToken.deploy(RjTokenName, RjTokenSymobol);
-        await rjToken.deployed();
-        rjTokenAddress = rjToken.address;
+        StakingToken = (await ethers.getContractFactory(
+            "StakingToken"
+        )) as StakingToken__factory;
+        stakingToken = await StakingToken.deploy();
+        await stakingToken.deployed();
+        stakingTokenAddress = stakingToken.address;
 
         // Reward Token
 
-        RWDToken = (await ethers.getContractFactory(
-            "RWDToken"
-        )) as RWDToken__factory;
-        rwdToken = await RWDToken.deploy(RWDTokenName, RWDTokenSymobol);
-        await rwdToken.deployed();
-        rwdTokenAddress = rwdToken.address;
+        RewardToken = (await ethers.getContractFactory(
+            "RewardToken"
+        )) as RewardToken__factory;
+        rewardToken = await RewardToken.deploy();
+        await rewardToken.deployed();
+        rewardTokenAddress = rewardToken.address;
 
         // Staking Pool
 
         StakingPool = (await ethers.getContractFactory(
             "StakingPool"
         )) as StakingPool__factory;
-        stakingPool = await StakingPool.deploy(rjTokenAddress, rwdTokenAddress);
+        stakingPool = await StakingPool.deploy(
+            stakingTokenAddress,
+            rewardTokenAddress
+        );
         const poolReceipt = await stakingPool.deployed();
         poolAddress = stakingPool.address;
         interval = await stakingPool.minDuration();
 
         // Mint & Approve
-        const mintAmount: number = 20000000;
-        const mint = await rjToken
+        const mintAmount: BigNumber = ethers.utils.parseUnits("200.0");
+        const mint = await stakingToken
             .connect(owner)
             .mint(ownerAddress, mintAmount);
 
-        const approve = await rjToken
+        const approve = await stakingToken
             .connect(owner)
             .approve(poolAddress, mintAmount);
 
-        const mintRWDAmount: number = 20000000;
-        const mintRWD = await rwdToken
+        const mintRWDAmount: BigNumber = ethers.utils.parseUnits("200.0");
+      
+        const mintRWD = await rewardToken
             .connect(owner)
             .mint(poolAddress, mintRWDAmount);
 
@@ -93,13 +94,13 @@ describe("Staking Pool", () => {
         it("Should set Staking Token Address correctly", async () => {
             const stakingAddress = await stakingPool.stakingToken();
 
-            assert.equal(stakingAddress, rjTokenAddress);
+            assert.equal(stakingAddress, stakingTokenAddress);
         });
 
         it("Should set Reward Token Address correctly", async () => {
             const rewardAddress = await stakingPool.rewardToken();
 
-            assert.equal(rewardAddress, rwdTokenAddress);
+            assert.equal(rewardAddress, rewardTokenAddress);
         });
     });
 
@@ -112,7 +113,7 @@ describe("Staking Pool", () => {
         });
 
         it("Should return value of Annual reward percentage", async () => {
-            let percentage: number = 20;
+            let percentage: number = 2000;
             const rewardPercentage = await stakingPool.rewardPercentage();
 
             assert.equal(rewardPercentage.toNumber(), percentage);
@@ -128,22 +129,22 @@ describe("Staking Pool", () => {
 
     describe("Stake", () => {
         it("When User Stake, StakingToken will be sent to Staking Contract", async () => {
-            const _amount: number = 10000000;
+            const _amount: BigNumber = ethers.utils.parseUnits("100.0");
 
             const stake = await stakingPool.connect(owner).stake(_amount);
             const stakeReceipt = await stake.wait();
 
-            const balanceOfPool = await rjToken
+            const balanceOfPool = await stakingToken
                 .connect(owner)
                 .balanceOf(poolAddress);
 
-            assert.equal(_amount, balanceOfPool.toNumber());
+            assert.equal(_amount.toString(), balanceOfPool.toString());
         });
     });
 
     describe("Unstake", () => {
         it("When User Unstake, reward token should be sent to user", async () => {
-            const _amount: number = 10000000;
+            const _amount: BigNumber = ethers.utils.parseUnits("100.0");
 
             const stake = await stakingPool.connect(owner).stake(_amount);
             await stake.wait();
@@ -162,7 +163,7 @@ describe("Staking Pool", () => {
 
             const reward = unstakeReceipt.events![2].args!._rewardAmount;
 
-            const balanceOfUserRWD = await rwdToken
+            const balanceOfUserRWD = await rewardToken
                 .connect(owner)
                 .balanceOf(ownerAddress);
 
@@ -170,7 +171,7 @@ describe("Staking Pool", () => {
         });
 
         it("When User Unstake, Staking token should be sent to user", async () => {
-            const _amount: number = 10000000;
+            const _amount: BigNumber = ethers.utils.parseUnits("100.0");
 
             const stake = await stakingPool.connect(owner).stake(_amount);
             await stake.wait();
@@ -189,16 +190,13 @@ describe("Staking Pool", () => {
 
             const intialAmount = unstakeReceipt.events![2].args!._stakedAmount;
 
-            const balanceOfUserRJ = await rjToken
+            const balanceOfUserRJ = await stakingToken
                 .connect(owner)
                 .balanceOf(ownerAddress);
 
-            const currentBalance: number = 10000000;
+            const currentBalance: BigNumber = ethers.utils.parseUnits("100.0");
 
-            assert.equal(
-                intialAmount,
-                balanceOfUserRJ.toNumber() - currentBalance
-            );
+            assert.equal(intialAmount.toString(), _amount.toString());
         });
     });
 });
