@@ -25,6 +25,8 @@ describe("NFTMintingFactory", () => {
         AdminRegistry: AdminRegistry__factory,
         adminRegistry: AdminRegistry;
 
+    let aRegistryAddress: string;
+
     beforeEach(async () => {
         accounts = await ethers.getSigners();
         owner = accounts[0];
@@ -49,7 +51,7 @@ describe("NFTMintingFactory", () => {
             treasuryAddress
         );
         await adminRegistry.deployed();
-        const aRegistryAddress = adminRegistry.address;
+        aRegistryAddress = adminRegistry.address;
 
         // NFTMinting Factory
 
@@ -58,9 +60,29 @@ describe("NFTMintingFactory", () => {
         )) as NFTMintingFactory__factory;
         nftMintingFactory = await NFTMintingFactory.deploy(aRegistryAddress);
         await nftMintingFactory.deployed();
+
+        // Update Exchange Address
+        const updateExchangeAddress = await nftMintingFactory
+            .connect(owner)
+            .updateExchangeAddress(exchangeAddress);
+        await updateExchangeAddress.wait();
     });
 
-    // it("should set constructor addresses correctly", async () => {});
+    it("should set adminRegistry addresses correctly", async () => {
+        const adminRegistry = await nftMintingFactory
+            .connect(owner)
+            .adminRegistry();
+
+        assert.equal(adminRegistry, aRegistryAddress);
+    });
+
+    it("should set exchang addresses correctly", async () => {
+        const mewExchangeAddress = await nftMintingFactory
+            .connect(owner)
+            .exchangeAddress();
+
+        assert.equal(exchangeAddress, mewExchangeAddress);
+    });
 
     it("Only Admin can create NFT Collection", async () => {
         const name: string = "Friday";
@@ -84,6 +106,7 @@ describe("NFTMintingFactory", () => {
         const symbol: string = "FRI";
         const baseURI: string = "ipfs://";
         const tokenId: number = 10;
+        const nftId: string = "0x00";
 
         const tx2 = await nftMintingFactory
             .connect(owner)
@@ -93,20 +116,15 @@ describe("NFTMintingFactory", () => {
         const NFTCollection = tx2Receipt.events![1].args!.nftCollection;
 
         const tx3 = await nftMintingFactory
-            .connect(owner)
-            .updateExchangeAddress(exchangeAddress);
-        await tx3.wait();
-
-        const tx4 = await nftMintingFactory
             .connect(exchange)
-            .mintNFT(NFTCollection, tokenId);
-        const tx4Receipt = await tx4.wait();
+            .mintNFT(NFTCollection, tokenId, nftId);
+        const tx3Receipt = await tx3.wait();
 
-        const tx4NFTCollection = tx4Receipt.events![1].args!.nftCollection;
-        const tx4TokenId = tx4Receipt.events![1].args!.tokenId;
+        const tx3NFTCollection = tx3Receipt.events![1].args!.nftCollection;
+        const tx3TokenId = tx3Receipt.events![1].args!.tokenId;
 
-        assert.equal(NFTCollection, tx4NFTCollection);
-        assert.equal(tokenId, tx4TokenId);
+        assert.equal(NFTCollection, tx3NFTCollection);
+        assert.equal(tokenId, tx3TokenId);
     });
 
     it("Only Exchange can update Owner", async () => {
@@ -114,6 +132,7 @@ describe("NFTMintingFactory", () => {
         const symbol: string = "FRI";
         const baseURI: string = "ipfs://";
         const tokenId: number = 10;
+        const nftId: string = "0x00";
 
         const tx2 = await nftMintingFactory
             .connect(owner)
@@ -129,7 +148,7 @@ describe("NFTMintingFactory", () => {
 
         const tx4 = await nftMintingFactory
             .connect(exchange)
-            .mintNFT(NFTCollection, tokenId);
+            .mintNFT(NFTCollection, tokenId, nftId);
         await tx4.wait();
 
         const newOwner = user2Address;

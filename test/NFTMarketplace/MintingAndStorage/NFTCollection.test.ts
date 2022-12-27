@@ -98,14 +98,20 @@ describe("NFT Collection", () => {
 
     describe("Token URI", () => {
         it("tokenURI function should return URI for given tokenId", async () => {
-            let tokenId: number = 12;
-            const getURI = await nftCollection.connect(owner).tokenURI(tokenId);
-            let newTokenURI = baseURI + tokenId;
+            let tokenId: string = "12";
+            const newTokenURI = baseURI + tokenId;
 
-            assert.equal(getURI, newTokenURI);
+            const tokenURI = await nftCollection
+                .connect(owner)
+                .tokenURI(tokenId);
+
+            console.log(`tx--> ${tokenURI}\n\n`);
+            console.log(newTokenURI);
+            
+            assert.equal(tokenURI, newTokenURI);
         });
     });
-    
+
     // _setbaseURI is Internal function, therefore cannot be tested .
 
     describe("Mint New NFT", () => {
@@ -113,13 +119,14 @@ describe("NFT Collection", () => {
             //here onlyMintingFactory signet is owner
 
             let tokenId: number = 12;
+            let nftId: string = "0x00";
             const mintNFT = await nftCollection
                 .connect(owner)
-                .mintNewNFT(tokenId);
+                .mintNewNFT(tokenId, nftId);
             const minNFTReceipt = await mintNFT.wait();
-            let newNFTId = minNFTReceipt.events![0].args!.tokenId.toString();
+            let newTokenId = minNFTReceipt.events![0].args!.tokenId.toString();
 
-            assert.equal(tokenId, newNFTId);
+            assert.equal(tokenId, newTokenId);
         });
     });
 });

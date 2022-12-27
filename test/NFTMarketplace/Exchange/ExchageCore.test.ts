@@ -10,7 +10,7 @@ import {
     ExchangeCore__factory,
     ExchangeCore,
 } from "../../../typechain-types";
-import { Signer } from "ethers";
+import { BigNumber, Signer } from "ethers";
 describe("ExchangeCore", () => {
     let accounts: Signer[],
         owner: Signer,
@@ -115,21 +115,6 @@ describe("ExchangeCore", () => {
     });
 
     //cannot test variables that visibility is internal
-    // it("Should check auction Time Limit", async () => {});
-
-    it("Should check trading Fee Factor Max", async () => {
-        const tradingFeeFactorMax: string = "10000"; // 100%
-        const tx1 = await exchangeCore.connect(owner).tradingFeeFactorMax();
-
-        assert.strictEqual(tx1.toString(), tradingFeeFactorMax);
-    });
-
-    it("Should check trading Fee Factor", async () => {
-        const tradingFeeFactor: string = "400";
-        const tx1 = await exchangeCore.connect(owner).tradingFeeFactor();
-
-        assert.equal(tx1.toString(), tradingFeeFactor);
-    });
 
     // cannot test function that visibility is internal
     // it("Should return true for validate Seller", async () => {});
@@ -141,6 +126,7 @@ describe("ExchangeCore", () => {
         const name: string = "Monday";
         const symbol: string = "MON";
         const baseURI: string = "ipfs://";
+        const nftId: string = "0x00";
 
         const tx1 = await nftMintingFactory
             .connect(owner)
@@ -148,20 +134,27 @@ describe("ExchangeCore", () => {
         const tx1Receipt = await tx1.wait();
 
         const NFTCollection = tx1Receipt.events![1].args!.nftCollection;
-        const nftPrice: number = 1;
+
+        const nftPrice: BigNumber = ethers.utils.parseUnits("1.0");
+        const approvedAmt: BigNumber = ethers.utils.parseUnits("2.0");
+
         const tokenId: number = 21;
         const buyer = userAddress;
-        const approvedAmt: number = 5;
 
         const transfer = await wETHToken
             .connect(owner)
             .transfer(userAddress, approvedAmt);
         await transfer.wait();
 
-        const allowance = await wETHToken
+        const approve = await wETHToken
             .connect(user)
             .approve(exchangeCoreAddress, approvedAmt);
-        await allowance.wait();
+        await approve.wait();
+
+        console.log(await wETHToken.balanceOf(userAddress));
+        console.log(
+            await wETHToken.allowance(userAddress, exchangeCoreAddress)
+        );
 
         //'Only Exchange can call this!' error
 
@@ -171,6 +164,7 @@ describe("ExchangeCore", () => {
                 NFTCollection,
                 nftPrice,
                 tokenId,
+                nftId,
                 buyer,
                 wETHAddress
             );
@@ -183,10 +177,13 @@ describe("ExchangeCore", () => {
     // cannot test function that visibility is internal
     // it("Should mint And Transfer", async () => {});
 
-    it("Should check Order is Cancelled or not", async () => {
+    it("Only Admin can call auctionPrimarySale", async () => {
         const name: string = "Monday";
         const symbol: string = "MON";
         const baseURI: string = "ipfs://";
+        const nftId: string = "0x00";
+        const msg: string = "msg";
+        const sign: any = 0x993dab3dd91f5c6dc28e17439be475478f5635c92a56e17e82349d3fb2f166196f466c0b4e0c146f285204f0dcb13e5ae67bc33f4b888ec32dfe0a063e8f3f781b;
 
         const tx1 = await nftMintingFactory
             .connect(owner)
@@ -194,17 +191,42 @@ describe("ExchangeCore", () => {
         const tx1Receipt = await tx1.wait();
 
         const NFTCollection = tx1Receipt.events![1].args!.nftCollection;
+
+        const nftPrice: BigNumber = ethers.utils.parseUnits("1.0");
+        const approvedAmt: BigNumber = ethers.utils.parseUnits("2.0");
+
         const tokenId: number = 21;
         const buyer = userAddress;
 
-        const tx2 = await exchangeCore.isOrderCancelled(
-            NFTCollection,
-            tokenId,
-            buyer
+        const transfer = await wETHToken
+            .connect(owner)
+            .transfer(userAddress, approvedAmt);
+        await transfer.wait();
+
+        const approve = await wETHToken
+            .connect(user)
+            .approve(exchangeCoreAddress, approvedAmt);
+        await approve.wait();
+
+        console.log(await wETHToken.balanceOf(userAddress));
+        console.log(
+            await wETHToken.allowance(userAddress, exchangeCoreAddress)
         );
 
-        /*this should log false cause there is no cancel order listed for
-        this NFTCollection */
-        assert.isFalse(tx2);
+        const tx2 = await exchangeCore
+            .connect(owner)
+            .auctionPrimarySale(
+                NFTCollection,
+                nftPrice,
+                tokenId,
+                nftId,
+                buyer,
+                wETHAddress,
+                msg,
+                sign
+            );
+
+        const tx2Receipt = await tx2.wait();
+        console.log(tx2Receipt);
     });
 });
