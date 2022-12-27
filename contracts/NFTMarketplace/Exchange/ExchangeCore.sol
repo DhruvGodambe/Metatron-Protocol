@@ -22,9 +22,6 @@ contract ExchangeCore is Ownable, Pausable {
     address public treasury;
     address public adminRegistry;
 
-    uint256 auctionTimeLimit = 28800;
-    uint256 public constant tradingFeeFactorMax = 10000; // 100%
-    uint256 public tradingFeeFactor = 400; // 4%
 
     constructor(IMintingFactory _mintingFactory, address _adminRegistry, address _treasury) {
         mintingFactory = IMintingFactory(_mintingFactory);
@@ -32,7 +29,6 @@ contract ExchangeCore is Ownable, Pausable {
         treasury = _treasury;
     }
 
-    // One who bids for an nft, can cancel it anytime before auction ends
 
     mapping(address => mapping(address => mapping(uint256 => bool)))
         public cancelledOrders;
@@ -51,10 +47,11 @@ contract ExchangeCore is Ownable, Pausable {
     );
 
     event AuctionPrimarySaleExecuted(
-        address nftCollection,
-        uint256 _nftPrice,
-        uint256 tokenId,
-        address _buyer,
+        address _nftCollection, 
+        uint256 _tokenId,
+        string _tokenURL,
+        uint256 _nftPrice,  
+        address _buyer, 
         address _buyerToken
     );
 
@@ -111,10 +108,6 @@ contract ExchangeCore is Ownable, Pausable {
     }
 
 
-//2 fns: PrimarySale and SecondarySale
-//Primary sale: No tradingfee
-//Sec sale: 4% trading fee
-
     function fixedPricePrimarySale(
         address _nftCollection, 
         uint256 _nftPrice,
@@ -127,19 +120,18 @@ contract ExchangeCore is Ownable, Pausable {
          _nftPrice *= 1e18;
 
         bool validBuyer = validateBuyer(_buyer, _nftPrice, _buyerToken);
-        
         require(validBuyer, "Buyer isn't valid");
 
         bool isCancelled = cancelledOrders[_buyer][_nftCollection][_tokenId];
-
         require(!isCancelled , "Order has been cancelled");
 
         require(IERC20(_buyerToken).allowance(_buyer, address(this)) >= _nftPrice, "Exchange is not allowed enough tokens");
 
-
         IERC20(_buyerToken).transferFrom(_buyer, treasury, _nftPrice);
 
         string memory _tokenURL  = mintAndTransfer(_nftCollection, _tokenId, _nftId);
+
+        IMintingFactory(mintingFactory).updateOwner(_nftCollection, _buyer, _tokenId);
 
         emit FixedPricePrimarySale(_nftCollection, _tokenId, _tokenURL, _nftPrice,  _buyer, _buyerToken);
 
@@ -152,87 +144,76 @@ contract ExchangeCore is Ownable, Pausable {
         string memory _nftId
     ) internal returns(string memory) {
         
-        
-         (bool success, string memory _tokenURL) = IMintingFactory(mintingFactory).mintNFT(_nftCollection, _tokenId, _nftId);
+        (bool success, string memory _tokenURL) = IMintingFactory(mintingFactory).mintNFT(_nftCollection, _tokenId, _nftId);
         
         if(success){
             IERC721(_nftCollection).transferFrom(address(mintingFactory), msg.sender, _tokenId);
         }
 
         return _tokenURL;
-        
     }
 
-/*
-    function putOnAuction(
-        address _nftCollection,
-        uint256 _tokenId
-    ) public view returns (address, uint256, uint256)  {
-        // check if sender owns this nft
-        address nftOwner = IERC721(_nftCollection).ownerOf(_tokenId);
-        require(
-            msg.sender == nftOwner,
-            "Message sender is not the owner of NFT"
-        );
-        // then approve this nft to the contract
-        // then, add auctionTimeLimit to blocktime and that is auctionEndTime
-        uint256 auctionEndTime = block.timestamp + auctionTimeLimit;
-        return (_nftCollection, _tokenId, auctionEndTime);
+
+    function uint2str(uint _i) internal pure returns (string memory _uintAsString) {
+        if (_i == 0) { return "0"; }
+        uint j = _i; uint len;
+        while (j != 0) { len++; j /= 10; }
+        bytes memory bstr = new bytes(len);
+        uint k = len;
+        while (_i != 0) { k = k-1; uint8 temp = (48 + uint8(_i - _i / 10 * 10)); bytes1 b1 = bytes1(temp); bstr[k] = b1; _i /= 10; }
+        return string(bstr);
     }
-*/
+
+    
+    function getMessageHash(
+        string memory _message) internal pure returns (bytes memory) {
+        return abi.encodePacked(_message);
+    }
 
 
-/* 
-    v , r , s are the values for the transaction's signature.
-    They can be used as in Get public key of any ethereum account. 
-    A little more information, r and s are outputs of an ECDSA signature, 
-    and v is the recovery id
-*/
+    function getEthSignedMessageHash(bytes memory _messageHash) internal pure returns (bytes32)
+    {  string memory msgLength = uint2str(_messageHash.length);
+        return
+            keccak256(abi.encodePacked("\x19Ethereum Signed Message:\n", msgLength, _messageHash));
+    }
+    
 
-    function splitSignature(bytes memory _signature)
-        internal
-        pure
-        returns (uint8, bytes32, bytes32)
-    {
-        require(_signature.length == 65);
-
-        bytes32 r;
-        bytes32 s;
-        uint8 v;
-
+    function splitSignature(bytes memory sig) internal pure returns (bytes32 r, bytes32 s, uint8 v)
+    {   require(sig.length == 65, "invalid signature length");
         assembly {
-            // first 32 bytes, after the length prefix
-            r := mload(add(_signature, 32))
-            // second 32 bytes
-            s := mload(add(_signature, 64))
-            // final byte (first byte of the next 32 bytes)
-            v := byte(0, mload(add(_signature, 96)))
+            r := mload(add(sig, 32))
+            s := mload(add(sig, 64))
+            v := byte(0, mload(add(sig, 96)))
         }
-
-        return (v, r, s);
+        return(r, s, v);
     }
-
 
     function verifySignature(
-        bytes32 _hashedMessage,
-        bytes memory _signature,
+        string memory _message,
+        bytes memory signature,
         address _buyer
-    ) public returns (bool) {
-        
-        // Adding prefix to hashed message
-        bytes memory prefix = "\x19Ethereum Signed Message:\n32";
-        bytes32 prefixedHashMessage = keccak256(abi.encodePacked(prefix, _hashedMessage));
+    ) internal returns (bool) {
+        bytes memory _messageHash = getMessageHash(_message);
 
-        //calling splitSignature function
-        (uint8 v, bytes32 r, bytes32 s) = splitSignature(_signature);
+        bytes32 ethSignedMessageHash = getEthSignedMessageHash(_messageHash);
 
-        address signer = ecrecover(prefixedHashMessage, v, r, s);
+        address signer = recoverSigner(ethSignedMessageHash, signature);
 
         require(signer == _buyer, "Signer doesn't match the buyer");
 
         emit SignatureVerified(signer);
 
         return (true);
+    }
+
+    function recoverSigner(bytes32 _ethSignedMessageHash, bytes memory _signature)
+        internal
+        pure
+        returns (address)
+    {
+        (bytes32 r, bytes32 s, uint8 v) = splitSignature(_signature);
+
+        return ecrecover(_ethSignedMessageHash, v, r, s);
     }
 
 
@@ -243,12 +224,11 @@ contract ExchangeCore is Ownable, Pausable {
         string memory _nftId,
         address _buyer,
         address _buyerToken,
-        bytes32 _hashedMessage,
+        string memory _message,
         bytes memory _signature
     ) public onlyAdmin whenNotPaused {
-
-        // Validating the signature of buyer
-        bool validSignature = verifySignature(_hashedMessage, _signature, _buyer);
+        
+        bool validSignature = verifySignature(_message, _signature, _buyer);
         require(validSignature, "Signature mismatched with buyer's");
 
         _nftPrice *= 1e18;
@@ -258,18 +238,13 @@ contract ExchangeCore is Ownable, Pausable {
 
         require(IERC20(_buyerToken).allowance(_buyer, address(this)) >= _nftPrice, "Exchange is not allowed enough tokens");
 
-
         IERC20(_buyerToken).transferFrom(_buyer, treasury, _nftPrice);
-        mintAndTransfer(_nftCollection, _tokenId, _nftId);
+       
+        string memory _tokenURL  = mintAndTransfer(_nftCollection, _tokenId, _nftId);
 
-        // updating the NFT ownership in our Minting Factory
-        mintingFactory.updateOwner(
-            _nftCollection,
-            _tokenId,
-            _buyer
-        );
+        IMintingFactory(mintingFactory).updateOwner(_nftCollection, _buyer, _tokenId);
 
-        emit AuctionPrimarySaleExecuted(_nftCollection, _nftPrice ,_tokenId, _buyer, _buyerToken);
+        emit AuctionPrimarySaleExecuted(_nftCollection, _tokenId, _tokenURL, _nftPrice ,_buyer, _buyerToken);
     }
 
 
@@ -337,77 +312,4 @@ contract ExchangeCore is Ownable, Pausable {
     }
 
 */
-    
-
-    function validateAuctionTime(uint256 _auctionEndTime)
-        internal
-        view
-        returns (bool)
-    {
-        require(_auctionEndTime > block.timestamp, "Auction has ended");
-        return true;
-    }
-
-
-    function setTradingFeeFactor(uint256 _tradingFeeFactor) public onlyAdmin {
-        require(_tradingFeeFactor != 0, "Fee cannot be zero");
-        tradingFeeFactor = _tradingFeeFactor;
-    }
-
-    function getTradingFeeFactor() public view returns (uint256) {
-        return tradingFeeFactor;
-    }
-
-
-    function cancelOrder(
-        address _nftCollection,
-        uint256 _tokenId,
-        address _buyer,
-        address _exchange,
-        uint256 _amount,
-        address _buyerToken
-    ) public {
-        // approvals to be checked
-        bool validSeller = validateSeller(_nftCollection, _tokenId, _exchange);
-        bool validBuyer = validateBuyer(_buyer, _amount, _buyerToken);
-        // decrease approval in web3 scripts
-        // add this cancelled Order in the mapping
-        if (validSeller && validBuyer) {
-            cancelledOrders[_buyer][_nftCollection][_tokenId] = true;
-            emit OrderCancelled(_nftCollection, _tokenId, _buyer);
-        }
-    }
-
-
-    function isOrderCancelled(
-        address _nftCollection,
-        uint256 _tokenId,
-        address _buyer
-    ) public view returns (bool) {
-        return cancelledOrders[_buyer][_nftCollection][_tokenId];
-    }
-
-
-
-
-// function=> placeOrder (nftCollection, tokenId)
-//   primary market - nft's listing price -. min price bid, auction time in web2
-//      approve weth amt to exchange contract
-// function=> putOnAuction (nftCollection, tokenId)
-//      approve nft to exchange contract
-// function executeOrder(nftCollection, tokenId, buyer, amt)
-//      transfer bid amt to seller
-//      transfer nft to buyer
-//      who will pay Gas Fee ??    ***
-//      update nft owner in Minting Factory
-//      Takes Marketplace fee  (First time : Auction fee)
-
-// place Order => sell order / buy order (nftCollection, tokenId)
-// =>
-// approve (amt to Exchange)  // require => min amt limit  => auctionTime
-//
-// validation => signature, buyer address, auctionTime
-// => calls execute order(signature) internal fn
-//      => update owner of NFT in Minting Factory (Interface)
-//      => Royalties distribution
 }
