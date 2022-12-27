@@ -1,4 +1,5 @@
 require("@nomiclabs/hardhat-etherscan");
+import '@nomiclabs/hardhat-ethers'
 require("@openzeppelin/hardhat-upgrades");
 require("dotenv").config();
 require('@nomicfoundation/hardhat-toolbox');

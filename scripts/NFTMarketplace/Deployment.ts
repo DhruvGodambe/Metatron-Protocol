@@ -68,7 +68,7 @@ const main = async () => {
     console.log("Setting Exchange Address in Minting Factory");
 
     let tx1 = await mintingFactory.updateExchangeAddress(exchangeCore.address);
-    console.log("Update Exchange Address tx : ", tx1);
+    // console.log("Update Exchange Address tx : ", tx1);
 
     const receipt1 = await tx1.wait();
     let event = receipt1.events?.find((event:any) => event.event === "ExchangeAddressChanged");
