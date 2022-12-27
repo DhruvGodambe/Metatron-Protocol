@@ -21,11 +21,7 @@ contract ExchangeCore is Ownable, Pausable {
 
     address public treasury;
     address public adminRegistry;
-/*
-    uint256 auctionTimeLimit = 28800;
-    uint256 public constant tradingFeeFactorMax = 10000; // 100%
-    uint256 public tradingFeeFactor = 400; // 4%
-*/
+
 
     constructor(IMintingFactory _mintingFactory, address _adminRegistry, address _treasury) {
         mintingFactory = IMintingFactory(_mintingFactory);
@@ -112,10 +108,6 @@ contract ExchangeCore is Ownable, Pausable {
     }
 
 
-//2 fns: PrimarySale and SecondarySale
-//Primary sale: No tradingfee
-//Sec sale: 4% trading fee
-
     function fixedPricePrimarySale(
         address _nftCollection, 
         uint256 _nftPrice,
@@ -161,13 +153,6 @@ contract ExchangeCore is Ownable, Pausable {
         return _tokenURL;
     }
 
-
-/* 
-    v , r , s are the values for the transaction's signature.
-    They can be used as in Get public key of any ethereum account. 
-    A little more information, r and s are outputs of an ECDSA signature, 
-    and v is the recovery id
-*/
 
     function uint2str(uint _i) internal pure returns (string memory _uintAsString) {
         if (_i == 0) { return "0"; }
@@ -259,13 +244,6 @@ contract ExchangeCore is Ownable, Pausable {
 
         IMintingFactory(mintingFactory).updateOwner(_nftCollection, _buyer, _tokenId);
 
-        // // updating the NFT ownership in our Minting Factory
-        // mintingFactory.updateOwner(
-        //     _nftCollection,
-        //     _tokenId,
-        //     _buyer
-        // );
-
         emit AuctionPrimarySaleExecuted(_nftCollection, _tokenId, _tokenURL, _nftPrice ,_buyer, _buyerToken);
     }
 
@@ -334,95 +312,4 @@ contract ExchangeCore is Ownable, Pausable {
     }
 
 */
-/*
-    function putOnAuction(
-        address _nftCollection,
-        uint256 _tokenId
-    ) public view returns (address, uint256, uint256)  {
-        // check if sender owns this nft
-        address nftOwner = IERC721(_nftCollection).ownerOf(_tokenId);
-        require(
-            msg.sender == nftOwner,
-            "Message sender is not the owner of NFT"
-        );
-        // then approve this nft to the contract
-        // then, add auctionTimeLimit to blocktime and that is auctionEndTime
-        uint256 auctionEndTime = block.timestamp + auctionTimeLimit;
-        return (_nftCollection, _tokenId, auctionEndTime);
-    }
-*/
-    
-
-/*    function validateAuctionTime(uint256 _auctionEndTime)
-        internal
-        view
-        returns (bool)
-    {
-        require(_auctionEndTime > block.timestamp, "Auction has ended");
-        return true;
-    }
-*/
-
-/*
-    function setTradingFeeFactor(uint256 _tradingFeeFactor) public onlyAdmin {
-        require(_tradingFeeFactor != 0, "Fee cannot be zero");
-        tradingFeeFactor = _tradingFeeFactor;
-    }
-
-    function getTradingFeeFactor() public view returns (uint256) {
-        return tradingFeeFactor;
-    }
-*/
-
-    function cancelOrder(
-        address _nftCollection,
-        uint256 _tokenId,
-        address _buyer,
-        address _exchange,
-        uint256 _amount,
-        address _buyerToken
-    ) public {
-        // approvals to be checked
-        bool validSeller = validateSeller(_nftCollection, _tokenId, _exchange);
-        bool validBuyer = validateBuyer(_buyer, _amount, _buyerToken);
-        // decrease approval in web3 scripts
-        // add this cancelled Order in the mapping
-        if (validSeller && validBuyer) {
-            cancelledOrders[_buyer][_nftCollection][_tokenId] = true;
-            emit OrderCancelled(_nftCollection, _tokenId, _buyer);
-        }
-    }
-
-
-    function isOrderCancelled(
-        address _nftCollection,
-        uint256 _tokenId,
-        address _buyer
-    ) public view returns (bool) {
-        return cancelledOrders[_buyer][_nftCollection][_tokenId];
-    }
-
-
-
-
-// function=> placeOrder (nftCollection, tokenId)
-//   primary market - nft's listing price -. min price bid, auction time in web2
-//      approve weth amt to exchange contract
-// function=> putOnAuction (nftCollection, tokenId)
-//      approve nft to exchange contract
-// function executeOrder(nftCollection, tokenId, buyer, amt)
-//      transfer bid amt to seller
-//      transfer nft to buyer
-//      who will pay Gas Fee ??    ***
-//      update nft owner in Minting Factory
-//      Takes Marketplace fee  (First time : Auction fee)
-
-// place Order => sell order / buy order (nftCollection, tokenId)
-// =>
-// approve (amt to Exchange)  // require => min amt limit  => auctionTime
-//
-// validation => signature, buyer address, auctionTime
-// => calls execute order(signature) internal fn
-//      => update owner of NFT in Minting Factory (Interface)
-//      => Royalties distribution
 }

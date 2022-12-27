@@ -174,25 +174,7 @@ const main = async () => {
     console.log("Token URL for the corresponding token Id is  : ", event5?.args._tokenURL);
 
 */    
-    console.log("<<<<===============================================================>>>>");
-
-   
-/*    const tx11 = await ExchangeCore.getMessageHash(_stringMessage);
-    console.log("get message hash : ", tx11);
-    
-    const tx12 = await ExchangeCore.getEthSignedMessageHash(tx11);
-    console.log("get eth signed message hash : ", tx12);
-    
-    const tx10 = await ExchangeCore.recoverSigner(tx12, _signature);
-    console.log("REcover signer : ", tx10);
-    console.log("_buyer : ", adminAddress);
-
-    const tx13 = await ExchangeCore.connect(admin).verifySignature(_stringMessage, _signature, adminAddress);
-    const receipt13 = await tx13.wait();
-    console.log("verify signature receipt ", receipt13);
-    let event13 = receipt13.events?.find((event:any) => event.event === "SignatureVerified");
-    console.log(event13);
-*/    
+    console.log("<<<<===============================================================>>>>");   
 
     //@ 5. AUCTION Primary Market
     console.log("@ 5. Auction Primary Market from ExchangeCore contract");
@@ -223,27 +205,6 @@ const main = async () => {
     const tx8 = await Collection.tokenURI(tokenId);
     console.log("Token URI", tx8);
 */
-    
-    // console.log("<<<<===============================================================>>>>");
-
-    // //@ 3. mintNewNFT
-    // console.log("@ 3. Minting New NFT from NFT Collection contract");
-
-    // const NFTCollection = await hre.ethers.getContractFactory('NFTCollection');
-    // const nftCollection1 = await NFTCollection.deploy(
-    //   "Saturday",
-    //   "Sat",
-    //   adminRegistryAddress,
-    //   "https://ipfs.io/ipfs/"
-    // );
-    // await nftCollection1.deployed();
-
-    // const tx3 = await nftCollection1.connect(admin).mintNewNFT();
-
-    // const receipt3 = await tx3.wait();
-    // console.log("receipt3 :", receipt3);
-
-    // console.log("NFT  Minted from NFT Collection");
     
 
   /*  console.log("<<<<===============================================================>>>>");
