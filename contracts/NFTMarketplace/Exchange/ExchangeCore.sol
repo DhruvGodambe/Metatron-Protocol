@@ -3,6 +3,7 @@
 pragma solidity ^0.8.0;
 
 // make it ownable
+import "@openzeppelin/contracts/security/ReentrancyGuard.sol";
 import "@openzeppelin/contracts/access/Ownable.sol";
 import "@openzeppelin/contracts/security/Pausable.sol";
 import "@openzeppelin/contracts/utils/math/SafeMath.sol";
@@ -14,7 +15,7 @@ import "../Interface/IERC20.sol";
 import "../Interface/IMintingFactory.sol";
 import "../../Registry/IAdminRegistry.sol";
 
-contract ExchangeCore is Ownable, Pausable {
+contract ExchangeCore is Ownable, Pausable, ReentrancyGuard {
     using SafeMath for uint256;
 
     IMintingFactory internal mintingFactory;
@@ -28,10 +29,6 @@ contract ExchangeCore is Ownable, Pausable {
         adminRegistry = _adminRegistry;
         treasury = _treasury;
     }
-
-
-    mapping(address => mapping(address => mapping(uint256 => bool)))
-        public cancelledOrders;
 
     event FixedPricePrimarySale(
         address _nftCollection, 
@@ -55,7 +52,6 @@ contract ExchangeCore is Ownable, Pausable {
         address _buyerToken
     );
 
-    event OrderCancelled(address nftContract, uint256 tokenId, address buyer);
 
     modifier onlyAdmin() {
         require(
@@ -115,15 +111,12 @@ contract ExchangeCore is Ownable, Pausable {
         string memory _nftId,
         address _buyer,
         address _buyerToken
-        ) public onlyAdmin {
+        ) public onlyAdmin nonReentrant {
 
          _nftPrice *= 1e18;
 
         bool validBuyer = validateBuyer(_buyer, _nftPrice, _buyerToken);
         require(validBuyer, "Buyer isn't valid");
-
-        bool isCancelled = cancelledOrders[_buyer][_nftCollection][_tokenId];
-        require(!isCancelled , "Order has been cancelled");
 
         require(IERC20(_buyerToken).allowance(_buyer, address(this)) >= _nftPrice, "Exchange is not allowed enough tokens");
 
@@ -226,7 +219,7 @@ contract ExchangeCore is Ownable, Pausable {
         address _buyerToken,
         string memory _message,
         bytes memory _signature
-    ) public onlyAdmin whenNotPaused {
+    ) public onlyAdmin nonReentrant whenNotPaused {
         
         bool validSignature = verifySignature(_message, _signature, _buyer);
         require(validSignature, "Signature mismatched with buyer's");
