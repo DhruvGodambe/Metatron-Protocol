@@ -3,19 +3,15 @@ pragma solidity ^0.8.4;
 
 import "hardhat/console.sol";
 import "@openzeppelin/contracts/token/ERC721/ERC721.sol";
-import "@openzeppelin/contracts/token/ERC721/extensions/ERC721URIStorage.sol";
 import "@openzeppelin/contracts/utils/Counters.sol";
 
 import "../../Registry/IAdminRegistry.sol";
 
 contract NFTCollection is ERC721 {
 
-    using Strings for uint256;
-
-    address public mintingFactory;
-    address public exchange;
-    string public baseURI;
     address public adminRegistry;
+    address public mintingFactory;
+    string public baseURI;
 
     mapping(uint256 => string) public tokenIdToNftId;
 

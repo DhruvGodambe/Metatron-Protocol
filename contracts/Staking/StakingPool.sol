@@ -1,171 +1,118 @@
 //SPDX-License-Identifier: MIT
 pragma solidity ^0.8.10;
 
-import "@openzeppelin/contracts/utils/Counters.sol";
-import "../Tokens/IERC20.sol";
-import "hardhat/console.sol";
+import "@openzeppelin/contracts/access/Ownable.sol";
+import "@openzeppelin/contracts/security/Pausable.sol";
+import "@openzeppelin/contracts/token/ERC20/IERC20.sol";
+import "@openzeppelin/contracts/security/ReentrancyGuard.sol";
 
-error StakingPool__StakeFailed(uint256 required);
-error StakingPool__WithdrawFailed(uint256 required);
-
-contract StakingPool {
-    using Counters for Counters.Counter;
-    Counters.Counter private positionIdCounter;
-
-    address public owner;
-
-    struct UserInfo {
-        uint256 positionId;
-        uint256 startTime;
-        uint256 endTime;
-        uint256 tokenStakedAmount;
-    }
-    // UserInfo[] public userInfo;
-
+contract StakingPool is Ownable, Pausable, ReentrancyGuard {
     IERC20 public immutable stakingToken; //RJToken
     IERC20 public immutable rewardToken; //RWDToken
 
-    // Mapping from user address to array of positions
-    mapping(address => UserInfo[]) public userPositions;
-    // User address => rewards already claimed
-    mapping(address => uint256) public rewards;
+    uint256 public minDuration = 60; // 3 Month
 
-    // use openzepplin counter contract
-    // uint32 public positionIdCounter;
-    uint256 public APY;
+    // Annual reward percentage
+    uint256 public rewardPercentage = 2000; //20%
+
     uint256 public constant PRECISION_CONSTANT = 10000;
-    uint256 public stakingTimeConstant;
+
+    uint256 public constant YEAR = 31536000; //365days * 24hours * 60min * 60sec
+
+    struct StakePosition {
+        uint256 amount;
+        uint256 duration;
+        //bool redeemed;
+    }
+
+    //user address to an array of their staked amounts and durations
+    mapping(address => StakePosition[]) public stakes;
 
     event Staked(
         address indexed _user,
         uint256 indexed _amount,
-        uint256 _timestamp,
-        uint256 indexed positionId
-    );
-    event Unstake(
-        address indexed _user,
-        uint256 indexed _amount,
         uint256 _timestamp
     );
+
     event RewardsClaimed(
         address indexed _user,
+        uint256 _stakedAmount,
         uint256 _rewardAmount,
         uint256 _timestamp
     );
 
-    constructor(
-        address _stakingToken,
-        address _rewardToken,
-        uint256 _APY,
-        uint256 _stakingTimeConstant
-    ) {
-        owner = msg.sender;
+    constructor(address _stakingToken, address _rewardToken) {
         stakingToken = IERC20(_stakingToken); //RJToken
         rewardToken = IERC20(_rewardToken); //RWDToken
-        APY = _APY; // 20 %
-        stakingTimeConstant = _stakingTimeConstant; // e.g. 2HR = 2*60*60 = 7200 sec
     }
 
-    modifier onlyOwner() {
-        require(msg.sender == owner, "not authorized");
-        _;
-    }
-
-    function stake(uint _amount) external {
+    function stake(uint256 _amount) public whenNotPaused nonReentrant {
         require(_amount > 0, "amount cannot be 0");
-
-        // check for approval
         require(
             stakingToken.allowance(msg.sender, address(this)) >= _amount,
             "Staking Contract is not approved for this Token or approved amount is not equal to given amount"
         );
-        uint256 newPositionId =  positionIdCounter.current();
-        positionIdCounter.increment();
 
-        UserInfo memory currentUserInfo = UserInfo(
-            newPositionId,
-            block.timestamp,
-            block.timestamp + stakingTimeConstant,
-            _amount
-        );
+        // Create a new staked amount and duration for the user
+        StakePosition memory newStake = StakePosition(_amount, block.timestamp);
+        stakes[msg.sender].push(newStake);
 
-        UserInfo[] memory currentUserPositions = userPositions[msg.sender];
+        stakingToken.transferFrom(msg.sender, address(this), _amount);
 
-    // incomplete 
-    // if user has existing position then push new position
-    // else create a new array containing new position
-
-        if (currentUserPositions.length > 0) {
-            userPositions[msg.sender].push(currentUserInfo);
-        } //else {
-        //     UserInfo[] storage storableUserPosition;
-        //     storableUserPosition.push(currentUserInfo);
-        //     userPositions[msg.sender] = storableUserPosition;
-        // }
-
-        bool success = stakingToken.transferFrom(
-            msg.sender,
-            address(this),
-            _amount
-        );
-        if (!success) {
-            revert StakingPool__StakeFailed({required: _amount});
-        }
-
-        // 1. get users existing position and store it an array
-        // 2. condition if user position empty creatae new array or else push new position in the user position array
-        // set position id
-        //3. update user position for perticular user
-        // increment position id counter
-
-        emit Staked(
-            msg.sender,
-            _amount,
-            block.timestamp,
-            newPositionId
-        );
+        emit Staked(msg.sender, _amount, block.timestamp);
     }
 
-    function withdraw(uint256 _positionId) external {
-        // for loop on which user position of msg sender will return an array
-        // in for loop compare every element of every array with positioId of the argument
-        //if the postionid matches with struct use that struct withdrawing further
-        // uint256 balance = userPositions[msg.sender]._positionId.tokenStakedAmount; // create position for balances
-        // require(balance > 0, "you have not staked token");
-        // uint256 position = userPositions[msg.sender].positionId;
-        // require(position > 0 , "you have to stack first");
-        // require((block.timestamp - userPositions[msg.sender].startTime) >= stakingTimeConstant, "User cannot claim rewards before due time!");
-        // userPositions[msg.sender].endTime = block.timestamp;
-        // bool success = stakingToken.transfer(msg.sender, balance);
-        // if (!success) {
-        //     revert StakingPool__WithdrawFailed({required: balance});
-        // }
-        // emit Unstake(msg.sender, balance, block.timestamp);
+    function Unstake(uint256 _positionIndex) public nonReentrant {
+        require(_positionIndex < stakes[msg.sender].length, "Invalid position");
+        //check struct bool here
+        //require redeem should be false to unstake user token
+
+        // Get the staked amount and duration for the specified position
+        StakePosition memory stake = stakes[msg.sender][_positionIndex];
+        uint256 amount = stake.amount;
+        uint256 duration = block.timestamp - stake.duration;
+
+        uint256 rewardAmount = ((amount * rewardPercentage * duration) /
+            (PRECISION_CONSTANT * YEAR));
+
+        require(duration >= minDuration, "Minimum staking duration not met");
+
+        stakingToken.transfer(msg.sender, amount);
+        rewardToken.transfer(msg.sender, rewardAmount);
+
+        delete stakes[msg.sender][_positionIndex];
+        stakes[msg.sender][_positionIndex] = stakes[msg.sender][
+            stakes[msg.sender].length - 1
+        ];
+        delete stakes[msg.sender][stakes[msg.sender].length - 1];
+        //make redeem status true after complition
+
+        emit RewardsClaimed(msg.sender, amount, rewardAmount, block.timestamp);
     }
 
-    function getReward(address _account) public view returns (uint256) {
-        // uint256 balance = userPositions[msg.sender].tokenStakedAmount;
-        // require(balance > 0, "you have not staked token");
-        // // get user position
-        // for(uint i = 0; i<= userPositions[msg.sender].positionId; i++) {
-        // return (userPositions[msg.sender].i.tokenStakedAmount *(((block.timestamp - userPositions[_account].startTime)) * APY) / PRECISION_CONSTANT);
+    function getReward(uint256 _positionIndex) public view returns (uint256) {
+        require(_positionIndex < stakes[msg.sender].length, "Invalid position");
+
+        // Get the staked amount and duration for the specified position
+        StakePosition memory getStake = stakes[msg.sender][_positionIndex];
+        uint256 amount = getStake.amount;
+        uint256 duration = block.timestamp - getStake.duration;
+
+        uint256 rewardAmount = ((amount * rewardPercentage * duration) /
+            (PRECISION_CONSTANT * YEAR));
+
+        return rewardAmount;
     }
-    // based on user positions claculate reward for each position for loop
-    // create precision constant = 10000
-    // save it in reward var
 
-    // function claimReward(address _account, uint _positionId) external {
-    //     uint256 reward = userPositions[_account]._positionId.tokenStakedAmount * ((((block.timestamp - userPositions[_account].startTime) ) * APY) / PRECISION_CONSTANT );
-    //     bool success = rewardToken.mint(msg.sender, reward);
-    //     if(! success) {
-    //         revert StakingPool__WithdrawFailed({required: reward});
-    //     }
+    function getTotalStakedAmount() public view returns (uint256) {
+        return stakingToken.balanceOf(address(this));
+    }
 
-    //     emit RewardsClaimed(_account, reward, block.timestap);
-    // }
+    function pause() external onlyOwner {
+        _pause();
+    }
 
-    // // get all position of the given user
-    // function getPositions (address _account) public view returns (uint256) {
-    //     return userPositions[msg.sender];
-    // }
+    function unpause() external onlyOwner {
+        _unpause();
+    }
 }

@@ -18,7 +18,7 @@ interface IMintingFactory {
     
     function updateOwner(
         address _nftCollection,
-        uint256 _tokenId,
-        address _newOwner
+        address _newOwner,
+        uint256 _tokenId
     ) external;
 }
