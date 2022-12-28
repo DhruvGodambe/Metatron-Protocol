@@ -5,3 +5,5 @@ artifacts
 deploy.json
 request.json
 typechain-types
+.prettierrc
+.prettierignore
