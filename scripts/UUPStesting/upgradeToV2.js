@@ -1,6 +1,10 @@
 const { ethers, upgrades} = require("hardhat");
 const hre = require("hardhat");
 
+const mintingFactoryAddress = Book.MINTING_FACTORY_ADDRESS;
+const adminRegistryAddress = Book.ADMIN_REGISTRY_ADDRESS;
+const treasuryAddress = Book.TREASURY_ADDRESS;
+
 const main = async () => {
 
     const ExchangeCore = await hre.ethers.getContractFactory("ExchangeCoreV2");
@@ -10,9 +14,9 @@ const main = async () => {
     await ExchangeCoreV2.deployed();
 
     const tx1 = await ExchangeCoreV2.initialize(
-          "0x9725caA9Dc09884ABEDf8eD4C00703554027Fb49", //MintingFactory
-          "0x69D260289D8422496F0BD50A17d6Ed6B98F1851E", //AdminRegistry
-          "0x404DbBbD516d101b41Ce1671C9e5D0766272d047" //Treasury
+          mintingFactoryAddress, //MintingFactory
+          adminRegistryAddress, //AdminRegistry
+          treasuryAddress //Treasury
       );
      const receipt1=  await tx1.wait();
       console.log("Exchange Core V2: ", ExchangeCoreV2);

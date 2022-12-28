@@ -4,9 +4,9 @@ const hre = require("hardhat");
 const ProxyJSON = require('../../artifacts/contracts/NFTMarketplace/Exchange/ExchangeCoreProxy.sol/ExchangeCoreProxy.json');
 const Book = require("../NFTMarketplace/Addresses.json");
 
+const mintingFactoryAddress = Book.MINTING_FACTORY_ADDRESS;
 const adminRegistryAddress = Book.ADMIN_REGISTRY_ADDRESS;
 const treasuryAddress = Book.TREASURY_ADDRESS;
-const mintingFactoryAddress = Book.MINTING_FACTORY_ADDRESS;
 const proxyContract = "0x112801EF14322a07aD8Dd2e32A1b19AB4F167610";
 const verson1Logic = "0x81f82eB6fbc4F5a5a419b8a10cbc30512981935E";
 const currentLogic = "0xeA3C03A0E1ff7fF6F2005C425F9ED6953F365093";
