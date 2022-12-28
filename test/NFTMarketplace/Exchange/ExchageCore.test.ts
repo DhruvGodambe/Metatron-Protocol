@@ -11,6 +11,7 @@ import {
     ExchangeCore,
 } from "../../../typechain-types";
 import { BigNumber, Signer } from "ethers";
+
 describe("ExchangeCore", () => {
     let accounts: Signer[],
         owner: Signer,
