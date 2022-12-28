@@ -100,11 +100,11 @@ contract ExchangeCore is Ownable, Pausable {
     ) internal view returns (bool)  {
 
         require(
-            IERC20(_buyerToken).allowance(_buyer, address(this)) > _amount,
+            IERC20(_buyerToken).allowance(_buyer, address(this)) >= _amount,
             "Allowance is less than the NFT's price."
         );
         require(
-            IERC20(_buyerToken).balanceOf(_buyer) > _amount,
+            IERC20(_buyerToken).balanceOf(_buyer) >= _amount,
             "Buyer doesn't have sufficient funds"
         );
         return true;

@@ -28,7 +28,8 @@ const PrivateKey = process.env.PRIVATE_KEY_LOCALHOST_1;
 const providerURL = process.env.PROVIDER_URL;
 
 const tokenId = 2;
-const nftPrice = "550000050000050000500005";
+const nftPrice = "49";
+const nftId = "UnderArmour"
 
 /*
 marketplaceInteraction.ts requirements:
@@ -41,7 +42,7 @@ marketplaceInteraction.ts requirements:
 
 const main = async () => {
 
-  const provider = new ethers.providers.JsonRpcProvider(providerURL);
+  const provider = new ethers.providers.JsonRpcProvider("https://eth-goerli.g.alchemy.com/v2/OW3K8LQl3oZeZLxuOTzgbRkFsEBkThgA");
 
     const accounts = await ethers.getSigners();
     const admin  = accounts[0];
@@ -117,7 +118,7 @@ const main = async () => {
 
     //@ Approving buyer token to exchange core by admin
 
-    const tx6 = await EnochToken.connect(admin).approve(exchangeCoreAddress, "55550000050000050000500005");
+    const tx6 = await EnochToken.connect(admin).approve(exchangeCoreAddress, "50000000000000000000");
     const receipt6 = await tx6.wait();
     console.log("Approve receipt6 :", receipt6);
 
@@ -134,7 +135,8 @@ const main = async () => {
 
     const tx5 = await ExchangeCore.connect(admin).fixedPricePrimarySale(NFT_COLLECTION,
       nftPrice, 
-      tokenId, 
+      tokenId,
+      nftId, 
       adminAddress,
       enochTokenAddress
     );
@@ -143,7 +145,7 @@ const main = async () => {
     console.log("Primary sale for ", NFT_COLLECTION, " : ", receipt5);
 
     console.log("<<<<===============================================================>>>>");
-
+/*
     //@ 5. AUCTION Primary Market
     console.log("@ 5. Auction Primary Market from ExchangeCore contract");
 
@@ -158,15 +160,15 @@ const main = async () => {
 
     const receipt9 = await tx9.wait();
     console.log("Primary sale for ", NFT_COLLECTION, " : ", receipt9);
-
     console.log("<<<<===============================================================>>>>");
-
+    
     const Collection = new ethers.Contract(NFT_COLLECTION, NFTCollectionabi.abi, provider);
     console.log("Nft Collection instance : ",Collection);
-
+    
     const tx8 = await Collection.tokenURI(tokenId);
     console.log("Token URI", tx8);
-
+    
+    */
     
     // console.log("<<<<===============================================================>>>>");
 
