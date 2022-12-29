@@ -5,7 +5,7 @@ const mintingFactoryAddress = Book.MINTING_FACTORY_ADDRESS;
 const adminRegistryAddress = Book.ADMIN_REGISTRY_ADDRESS;
 const treasuryAddress = Book.TREASURY_ADDRESS;
 //make main functin as logic and call in main fn;
-const main = async () => {
+const logic = async () => {
 
     const ExchangeCore = await hre.ethers.getContractFactory("ExchangeCore");
     console.log("Deploying ExchangeCore...");
@@ -14,9 +14,9 @@ const main = async () => {
     await ExchangeCoreV1.deployed();
 
     const tx1 = await ExchangeCoreV1.initialize(
-          mintingFactoryAddress, //MintingFactory
-          adminRegistryAddress, //AdminRegistry
-          treasuryAddress //Treasury
+          mintingFactoryAddress,
+          adminRegistryAddress,
+          treasuryAddress
       );
      const receipt1=  await tx1.wait();
       console.log("Exchange Core V1: ", ExchangeCoreV1);
@@ -24,9 +24,10 @@ const main = async () => {
 
     console.log("ExchangeCoreV1 Contract deployed to: ", ExchangeCoreV1.address);
 
+}
 
-    // <==========================================================================> //    
-
+const main = async () => {
+    await logic();
 }
 
 main()
