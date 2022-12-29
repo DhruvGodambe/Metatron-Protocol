@@ -24,7 +24,7 @@ marketplaceDeployment.ts requirements:
 
 
 
-const main = async () => {
+const deployment = async () => {
 
     const accounts = await ethers.getSigners();
     const admin  = accounts[0];
@@ -115,8 +115,21 @@ const main = async () => {
             console.log("<=====  Written ADDRESSES in marketplaceAddress.json  =====>");
 
 
+      return({ADMIN_ADDRESS,
+        TREASURY_ADDRESS,
+        ADMIN_REGISTRY_ADDRESS,
+        MINTING_FACTORY_ADDRESS,
+        EXCHANGE_CORE_ADDRESS,
+        ENOCHTOKEN_ADDRESS
+      });
+
+
 
 };
+
+const main = async () => {
+      await deployment();
+}
 
 main()
   .then(() => process.exit(0))
