@@ -6,10 +6,14 @@ import "@openzeppelin/contracts/access/Ownable.sol";
 
 contract ExchangeCoreProxy is ERC1967Proxy, Ownable {
 
-    constructor(address _logic, bytes memory _data)
+    uint256 public ID;
+
+    constructor(address _logic, bytes memory _data, uint256 _id)
         payable
         ERC1967Proxy(_logic, _data)
-    {}
+    {
+        ID = _id;
+    }
 
     function getImplementation() public view returns (address) {
         return _getImplementation();

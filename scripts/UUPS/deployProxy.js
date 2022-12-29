@@ -16,7 +16,7 @@ const main = async () => {
 
 
   // @** TO DEPLOY PROXY ========================================>
-/*
+
     const constructorABI = [{
         "inputs": [
           {
@@ -55,16 +55,17 @@ const main = async () => {
     const proxy = await ExchangeCoreProxy.deploy
     (
         verson1Logic, // implementation V1 contract
-        encodedData // bytes memory data
+        encodedData, // bytes memory data
+        "29"
     );
     
     await proxy.deployed();
     console.log("Exchange Core PROXY : ", proxy);
     console.log("Exchange Core PROXY address: ", proxy.address);
-*/
+
     // <========================Deploying Proxy ENDS here! ============================>
 
-
+/*
     
     // @** TO Upgrade Implementation contract ================================================>
 
@@ -95,7 +96,7 @@ const main = async () => {
     console.log("Upgraded Implementation address : ", UpgradedImplementation);
 
     // <==========================================================================> //    
-
+*/
 }
 
 main()
