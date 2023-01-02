@@ -127,7 +127,7 @@ contract ExchangeCore is
         address _buyerToken
         ) public onlyAdmin nonReentrant {
 
-         _nftPrice *= 1e18;
+        _nftPrice *= 1e18;
 
         bool validBuyer = validateBuyer(_buyer, _nftPrice, _buyerToken);
         require(validBuyer, "Buyer isn't valid");

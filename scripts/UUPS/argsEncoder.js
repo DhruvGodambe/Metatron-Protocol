@@ -4,24 +4,25 @@ const hre = require("hardhat");
 const main = async () => {
 
     const constructorABI = [{
-        "inputs": [
-            {
-                "internalType": "string",
-                "name": "_name",
-                "type": "string"
-            }
-        ],
-        "name": "initialize",
-        "outputs": [],
-        "stateMutability": "nonpayable",
-        "type": "function"
-    }];
+			"inputs": [
+				{
+					"internalType": "string",
+					"name": "_nickName",
+					"type": "string"
+				}
+			],
+			"name": "initialize",
+			"outputs": [],
+			"stateMutability": "nonpayable",
+			"type": "function"
+		}];
 
-    const args = ["ankit"]
+    const args = ["anku"]
 
     let interface= new ethers.utils.Interface(constructorABI);
     const encodedData = interface.encodeFunctionData("initialize", args);
     console.log("encodedData : ", encodedData);
+
 
 
 }
