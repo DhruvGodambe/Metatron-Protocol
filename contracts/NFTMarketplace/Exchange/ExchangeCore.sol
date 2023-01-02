@@ -114,7 +114,7 @@ contract ExchangeCore is Ownable, Pausable, ReentrancyGuard {
         address _buyerToken
         ) public onlyAdmin nonReentrant {
 
-         _nftPrice *= 1e18;
+        //  _nftPrice *= 1e18;
 
         bool validBuyer = validateBuyer(_buyer, _nftPrice, _buyerToken);
         require(validBuyer, "Buyer isn't valid");
@@ -162,7 +162,7 @@ contract ExchangeCore is Ownable, Pausable, ReentrancyGuard {
         bool validSignature = SignatureLib.verifySignature(_message, _signature, _buyer);
         require(validSignature, "Signature mismatched with buyer's");
 
-        _nftPrice *= 1e18;
+        // _nftPrice *= 1e18;
 
         bool validBuyer = validateBuyer(_buyer, _nftPrice, _buyerToken);
         require(validBuyer, "Buyer isn't valid");
