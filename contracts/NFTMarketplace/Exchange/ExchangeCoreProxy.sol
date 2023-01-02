@@ -15,7 +15,7 @@ contract ExchangeCoreProxy is ERC1967Proxy, Ownable {
         return _getImplementation();
     }
 
-    function upgradeTo(address newImplementation) public onlyOwner {
+    function upgradeToNewImplementation(address newImplementation) public onlyOwner {
         _upgradeTo(newImplementation);
     }
 }

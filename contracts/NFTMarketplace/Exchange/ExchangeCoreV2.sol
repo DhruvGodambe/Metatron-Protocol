@@ -8,9 +8,7 @@ import "@openzeppelin/contracts-upgradeable/proxy/utils/UUPSUpgradeable.sol";
 import "@openzeppelin/contracts-upgradeable/security/PausableUpgradeable.sol";
 import "@openzeppelin/contracts-upgradeable/access/OwnableUpgradeable.sol";
 import "@openzeppelin/contracts/utils/math/SafeMath.sol";
-import "hardhat/console.sol";
 
-// import required interfaces
 import "../Interface/IERC721.sol";
 import "../Interface/IERC20.sol";
 import "../Interface/IMintingFactory.sol";
@@ -29,6 +27,7 @@ contract ExchangeCoreV2 is
 
     address public treasury;
     address public adminRegistry;
+    uint256 public ID;
 
     event FixedPricePrimarySale(
         address _nftCollection, 
@@ -62,18 +61,11 @@ contract ExchangeCoreV2 is
     }
 
     
-    function initialize(
-        IMintingFactory _mintingFactory, 
-        address _adminRegistry, 
-        address _treasury
-    ) external initializer {
+    function initialize( ) external virtual reinitializer(2) {
         __UUPSUpgradeable_init();
-        __Ownable_init();
         __Pausable_init();
         __ReentrancyGuard_init();
-        mintingFactory = IMintingFactory(_mintingFactory);
-        adminRegistry = _adminRegistry;
-        treasury = _treasury;
+        ID = 101;
     }
 
     
@@ -116,6 +108,32 @@ contract ExchangeCoreV2 is
         );
         return true;
     }
+
+
+    function fixedPricePrimarySale(
+        address _nftCollection, 
+        uint256 _nftPrice,
+        uint256 _tokenId,
+        string memory _nftId,
+        address _buyer,
+        address _buyerToken
+        ) public onlyAdmin nonReentrant {
+
+        bool validBuyer = validateBuyer(_buyer, _nftPrice, _buyerToken);
+        require(validBuyer, "Buyer isn't valid");
+
+        require(IERC20(_buyerToken).allowance(_buyer, address(this)) >= _nftPrice, "Exchange is not allowed enough tokens");
+
+        IERC20(_buyerToken).transferFrom(_buyer, treasury, _nftPrice);
+
+        string memory _tokenURL  = mintAndTransfer(_nftCollection, _tokenId, _nftId);
+
+        IMintingFactory(mintingFactory).updateOwner(_nftCollection, _buyer, _tokenId);
+
+        emit FixedPricePrimarySale(_nftCollection, _tokenId, _tokenURL, _nftPrice,  _buyer, _buyerToken);
+
+    }
+
 
     function mintAndTransfer(
         address _nftCollection,
@@ -210,8 +228,6 @@ contract ExchangeCoreV2 is
         bool validSignature = verifySignature(_message, _signature, _buyer);
         require(validSignature, "Signature mismatched with buyer's");
 
-        _nftPrice *= 1e18;
-
         bool validBuyer = validateBuyer(_buyer, _nftPrice, _buyerToken);
         require(validBuyer, "Buyer isn't valid");
 
@@ -227,7 +243,80 @@ contract ExchangeCoreV2 is
     }
 
 
- 
+ /*   
+    function auctionSecondarySale(
+        address _nftCollection,
+        uint256 _tokenId,
+        uint256 _nftPrice,
+        address _exchange,
+        address _buyer,
+        address _buyerToken
+
+    ) public onlyAdmin whenNotPaused {
+
+        // Validating the signature of buyer
+        // bool validSignature = VerifySignature(_hashedMessage, _v, _r, _s, _buyer);
+        // require(validSignature, "Signature mismatched with buyer's");
+
+
+        // Validating all the requirements
+        // bool validTime;
+        // if (_auctionEndTime != 0) {
+        //     validTime = validateAuctionTime(_auctionEndTime);
+        // } else {
+        //     validTime = true;
+        // }
+
+        bool validSeller = validateSeller(_nftCollection, _tokenId, _exchange);
+        bool validBuyer = validateBuyer(_buyer, _nftPrice, _buyerToken);
+
+        // bool isCancel = cancelledOrders[_buyer][_nftCollection][_tokenId];
+
+        // require(validTime, "Auction is already over");
+        require(validSeller, "Seller isn't valid");
+        require(validBuyer, "Buyer isn't valid");
+        // require(isCancel == false, "Order is cancelled");
+
+        _nftPrice *= 1e18;
+
+        // transfer tradingFee to the exchange 4%
+        //ERC20
+        uint256 fee = _nftPrice.mul(tradingFeeFactor).div(tradingFeeFactorMax);
+        IERC20(_buyerToken).transferFrom(_buyer, address(this), fee);
+
+
+        // transferring the amount to the seller
+        uint256 transferableAmt = _nftPrice-fee;
+
+        // uint256 transferableAmt = _nftPrice
+        //     .mul(tradingFeeFactorMax.sub(tradingFeeFactor))
+        //     .div(tradingFeeFactorMax);
+        // IERC20(_buyerToken).transferFrom(_buyer, _exchange, transferableAmt);
+        IERC20(_buyerToken).transferFrom(_buyer, treasury, transferableAmt);
+
+        // transferring the NFT to the buyer
+        IERC721(_nftCollection).transferFrom(_exchange, _buyer, _tokenId);
+        // updating the NFT ownership in our Minting Factory
+        IMintingFactory(mintingFactory).updateOwner(
+            _nftCollection,
+            _tokenId,
+            _buyer
+        );
+
+        emit AuctionSecondarySaleExecuted(_nftCollection, _nftPrice, _tokenId, _buyer, _buyerToken);
+    }
+
+*/
 
     function _authorizeUpgrade(address _newImplementation) internal onlyAdmin override {}
+
+    
+    function pause() public onlyAdmin whenNotPaused{
+        _pause();
+    }
+
+    function unPause() public onlyAdmin whenPaused{
+        _unpause();
+    }
+
 }

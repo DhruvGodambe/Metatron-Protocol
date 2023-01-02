@@ -8,9 +8,7 @@ import "@openzeppelin/contracts-upgradeable/proxy/utils/UUPSUpgradeable.sol";
 import "@openzeppelin/contracts-upgradeable/security/PausableUpgradeable.sol";
 import "@openzeppelin/contracts-upgradeable/access/OwnableUpgradeable.sol";
 import "@openzeppelin/contracts/utils/math/SafeMath.sol";
-import "hardhat/console.sol";
 
-// import required interfaces
 import "../Interface/IERC721.sol";
 import "../Interface/IERC20.sol";
 import "../Interface/IMintingFactory.sol";
@@ -66,9 +64,8 @@ contract ExchangeCore is
         IMintingFactory _mintingFactory, 
         address _adminRegistry, 
         address _treasury
-    ) external initializer {
+    ) external virtual initializer {
         __UUPSUpgradeable_init();
-        __Ownable_init();
         __Pausable_init();
         __ReentrancyGuard_init();
         mintingFactory = IMintingFactory(_mintingFactory);
@@ -126,8 +123,6 @@ contract ExchangeCore is
         address _buyer,
         address _buyerToken
         ) public onlyAdmin nonReentrant {
-
-        _nftPrice *= 1e18;
 
         bool validBuyer = validateBuyer(_buyer, _nftPrice, _buyerToken);
         require(validBuyer, "Buyer isn't valid");
@@ -238,8 +233,6 @@ contract ExchangeCore is
         bool validSignature = verifySignature(_message, _signature, _buyer);
         require(validSignature, "Signature mismatched with buyer's");
 
-        _nftPrice *= 1e18;
-
         bool validBuyer = validateBuyer(_buyer, _nftPrice, _buyerToken);
         require(validBuyer, "Buyer isn't valid");
 
@@ -321,4 +314,14 @@ contract ExchangeCore is
 */
 
     function _authorizeUpgrade(address _newImplementation) internal onlyAdmin override {}
+
+    
+    function pause() public onlyAdmin whenNotPaused{
+        _pause();
+    }
+
+    function unPause() public onlyAdmin whenPaused{
+        _unpause();
+    }
+
 }
