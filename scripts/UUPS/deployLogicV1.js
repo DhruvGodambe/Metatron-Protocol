@@ -7,22 +7,18 @@ const mintingFactoryAddress = Book.MINTING_FACTORY_ADDRESS;
 const adminRegistryAddress = Book.ADMIN_REGISTRY_ADDRESS;
 const treasuryAddress = Book.TREASURY_ADDRESS;
 
-const logic = async () => {
+const main = async () => {
 
-    const ExchangeCore = await hre.ethers.getContractFactory("ExchangeCore");
+    const exchangeCore = await hre.ethers.getContractFactory("ExchangeCore");
     console.log("Deploying ExchangeCore...");
 
-    const ExchangeCoreV1 = await ExchangeCore.deploy();
+    const ExchangeCoreV1 = await exchangeCore.deploy();
     await ExchangeCoreV1.deployed();
 
     console.log("ExchangeCore deployed");
 
     console.log("ExchangeCoreV1 Contract deployed to: ", ExchangeCoreV1.address);
 
-}
-
-const main = async () => {
-    await logic();
 }
 
 main()

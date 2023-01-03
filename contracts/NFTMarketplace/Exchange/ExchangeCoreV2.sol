@@ -27,7 +27,7 @@ contract ExchangeCoreV2 is
 
     address public treasury;
     address public adminRegistry;
-    uint256 public ID;
+    string public ID;
 
     event FixedPricePrimarySale(
         address _nftCollection, 
@@ -61,11 +61,11 @@ contract ExchangeCoreV2 is
     }
 
     
-    function initialize( ) external virtual reinitializer(2) {
+    function initialize2() external virtual reinitializer(3) {
         __UUPSUpgradeable_init();
         __Pausable_init();
         __ReentrancyGuard_init();
-        ID = 101;
+        ID = "101";
     }
 
     
@@ -107,31 +107,6 @@ contract ExchangeCoreV2 is
             "Buyer doesn't have sufficient funds"
         );
         return true;
-    }
-
-
-    function fixedPricePrimarySale(
-        address _nftCollection, 
-        uint256 _nftPrice,
-        uint256 _tokenId,
-        string memory _nftId,
-        address _buyer,
-        address _buyerToken
-        ) public onlyAdmin nonReentrant {
-
-        bool validBuyer = validateBuyer(_buyer, _nftPrice, _buyerToken);
-        require(validBuyer, "Buyer isn't valid");
-
-        require(IERC20(_buyerToken).allowance(_buyer, address(this)) >= _nftPrice, "Exchange is not allowed enough tokens");
-
-        IERC20(_buyerToken).transferFrom(_buyer, treasury, _nftPrice);
-
-        string memory _tokenURL  = mintAndTransfer(_nftCollection, _tokenId, _nftId);
-
-        IMintingFactory(mintingFactory).updateOwner(_nftCollection, _buyer, _tokenId);
-
-        emit FixedPricePrimarySale(_nftCollection, _tokenId, _tokenURL, _nftPrice,  _buyer, _buyerToken);
-
     }
 
 
