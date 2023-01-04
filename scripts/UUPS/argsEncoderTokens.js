@@ -12,6 +12,11 @@ const main = async () => {
 				"internalType": "address",
 				"name": "_adminRegistry",
 				"type": "address"
+			},
+			{
+				"internalType": "uint256",
+				"name": "_initialSupply",
+				"type": "uint256"
 			}
 		],
 		"name": "initialize",
@@ -20,7 +25,13 @@ const main = async () => {
 		"type": "function"
 	}];
 
-    const args = [adminRegistryAddress]
+
+	const decimals = 18;
+	const EnochSupply = "180000000";
+	const LoveSupply = "1000000000";
+	const _initialSupply = ethers.utils.parseUnits(input, decimals);
+
+    const args = [adminRegistryAddress, _initialSupply];
 
     let interface= new ethers.utils.Interface(constructorABI);
     const encodedData = interface.encodeFunctionData("initialize", args);
