@@ -51,11 +51,12 @@ const deployProxy = async (LOGIC_V1_ADDRESS) => {
     const proxy = await exchangeCoreProxy.deploy
     (
       LOGIC_V1_ADDRESS, // implementation V1 contract
-      encodedData // bytes memory data
+      encodedData, // bytes memory data
+      adminRegistryAddress
     );
 
     await proxy.deployed();
-    console.log("Exchange Core PROXY : ", proxy);
+    // console.log("Exchange Core PROXY : ", proxy);
     PROXY_ADDRESS = proxy.address;
     console.log("Exchange Core PROXY address: ", proxy.address);
 
@@ -80,13 +81,13 @@ const upgradeTo = async (proxyContract, upgradedLogic) => {
 
   const accounts = await ethers.getSigners();
   const admin  = accounts[0];
-    console.log("admin", admin);
+    // console.log("admin", admin);
 
   const provider = new ethers.providers.JsonRpcProvider("https://eth-goerli.g.alchemy.com/v2/OW3K8LQl3oZeZLxuOTzgbRkFsEBkThgA");
-    console.log(" PROVIDER : ", provider);
+    // console.log(" PROVIDER : ", provider);
 
   const proxy = new ethers.Contract(proxyContract, ProxyJSON.abi, provider);
-    console.log("Proxy : ", proxy);
+    // console.log("Proxy : ", proxy);
 
     console.log("Getting Current Implementation address");
   const CurrentImplementation  = await proxy.getImplementation();
@@ -94,7 +95,7 @@ const upgradeTo = async (proxyContract, upgradedLogic) => {
 
 
   const UpgradeImplementation  = await proxy.connect(admin).upgradeToNewImplementation(upgradedLogic);
-    console.log("Upgrade Implementation : ", UpgradeImplementation);
+    // console.log("Upgrade Implementation : ", UpgradeImplementation);
   await UpgradeImplementation.wait(1);
     console.log("Congratulations! Implementation successfully upgraded");
 
@@ -108,13 +109,13 @@ const initializeV2 = async (proxyContract) => {
 
   const accounts = await ethers.getSigners();
   const admin  = accounts[0];
-    console.log("admin", admin);
+    // console.log("admin", admin);
 
   const provider = new ethers.providers.JsonRpcProvider("https://eth-goerli.g.alchemy.com/v2/OW3K8LQl3oZeZLxuOTzgbRkFsEBkThgA");
-    console.log(" PROVIDER : ", provider);
+    // console.log(" PROVIDER : ", provider);
 
   const LogicV2atProxy = new ethers.Contract(proxyContract, ExchangeCoreV2abi.abi, provider);
-    console.log("Logic V2 at Proxy : ", LogicV2atProxy);
+    // console.log("Logic V2 at Proxy : ", LogicV2atProxy);
     console.log("proxyContract address : ", proxyContract);
 
     const Treasury_Address  = await LogicV2atProxy.treasury();
@@ -124,6 +125,11 @@ const initializeV2 = async (proxyContract) => {
 
     const ID  = await LogicV2atProxy.ID();
     console.log("ID before initializing : ", ID);
+
+
+    const proxy = new ethers.Contract(proxyContract, ProxyJSON.abi, provider);
+    const CurrentImplementation  = await proxy.getImplementation();
+    console.log("Upgraded Implementation address : ", CurrentImplementation);
     
     const V2initializing  = await LogicV2atProxy.connect(admin).initialize2();
     await V2initializing.wait(1);
@@ -134,13 +140,11 @@ const initializeV2 = async (proxyContract) => {
     
     console.log("Congratulations! Implementation V2 successfully initialized");
 
-    
-
 }
 
 const main = async () => {
     await deployProxy(
-      "0x17B46147eF2f2263B278462E9534fE50FC6dA85A" //LogicV1 address
+      "0x89853A763C91B6C341B8467a5Fb6310096D599e8" //LogicV1 address
       );
 
     await deploylogicV2();

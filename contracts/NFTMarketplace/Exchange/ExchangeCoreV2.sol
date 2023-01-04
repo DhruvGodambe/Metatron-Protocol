@@ -61,10 +61,7 @@ contract ExchangeCoreV2 is
     }
 
     
-    function initialize2() external virtual reinitializer(3) {
-        __UUPSUpgradeable_init();
-        __Pausable_init();
-        __ReentrancyGuard_init();
+    function initialize2() external virtual reinitializer(2) {
         ID = "101";
     }
 
