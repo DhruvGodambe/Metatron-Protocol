@@ -61,8 +61,12 @@ contract ExchangeCoreV2 is
     }
 
     
-    function initialize2() external virtual reinitializer(2) {
+    function initialize() public onlyAdmin {
         ID = "101";
+    }
+
+    function setID(string memory _id) public onlyAdmin {
+        ID = _id;
     }
 
     
