@@ -10,7 +10,7 @@ import "@openzeppelin/contracts-upgradeable/security/PausableUpgradeable.sol";
 import "./NFTCollection.sol";
 import "../../Registry//IAdminRegistry.sol";
 
-contract NFTMintingFactory is 
+contract NFTMintingFactoryV2 is 
     Initializable,
     UUPSUpgradeable,
     ReentrancyGuardUpgradeable,
@@ -19,15 +19,15 @@ contract NFTMintingFactory is
 
     address public exchangeAddress;
     address public adminRegistry;
+    string public ID;
 
 
-    function initialize(
-        address _adminRegistry
-    ) external virtual initializer {
-        __UUPSUpgradeable_init();
-        __Pausable_init();
-        __ReentrancyGuard_init();
-        adminRegistry = _adminRegistry;
+    function initialize() public onlyAdmin {
+        ID = "101";
+    }
+
+    function setID(string memory _id) public onlyAdmin {
+        ID = _id;
     }
 
     mapping(address => address[]) public ownerToCollection;
