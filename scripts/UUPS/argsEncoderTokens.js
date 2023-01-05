@@ -27,9 +27,9 @@ const main = async () => {
 
 
 	const decimals = 18;
-	const EnochSupply = "180000000";
-	const LoveSupply = "1000000000";
-	const _initialSupply = ethers.utils.parseUnits(input, decimals);
+	const EnochSupply = "180000000"; // $180M
+	const LoveSupply = "1000000000"; // $1B
+	const _initialSupply = ethers.utils.parseUnits(EnochSupply, decimals);
 
     const args = [adminRegistryAddress, _initialSupply];
 

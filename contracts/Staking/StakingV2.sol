@@ -9,7 +9,7 @@ import "@openzeppelin/contracts/utils/math/SafeMath.sol";
 
 import "../Registry/IAdminRegistry.sol";
 import "../Tokens/IPremiumNFT.sol";
-import "../Tokens/Enoch.sol";
+import "../Tokens/EnochUUPS/Enoch.sol";
 import "hardhat/console.sol";
 
 // APY - 90%
