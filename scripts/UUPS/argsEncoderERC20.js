@@ -1,5 +1,4 @@
 const { ethers} = require("hardhat");
-const hre = require("hardhat");
 
 const Book = require("../NFTMarketplace/Addresses.json");
 const adminRegistryAddress = Book.ADMIN_REGISTRY_ADDRESS;

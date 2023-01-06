@@ -5,9 +5,9 @@ import "hardhat/console.sol";
 import "@openzeppelin/contracts/token/ERC721/ERC721.sol";
 import "@openzeppelin/contracts/utils/Counters.sol";
 
-import "../../Registry/IAdminRegistry.sol";
+import "../../../Registry/IAdminRegistry.sol";
 
-contract NFTCollection is ERC721 {
+contract Collection is ERC721 {
 
     address public adminRegistry;
     address public mintingFactory;

@@ -7,10 +7,10 @@ import "@openzeppelin/contracts-upgradeable/proxy/utils/UUPSUpgradeable.sol";
 import "@openzeppelin/contracts-upgradeable/security/PausableUpgradeable.sol";
 
 //interfaces
-import "./NFTCollection.sol";
-import "../../Registry//IAdminRegistry.sol";
+import "../../MintingAndStorage/Collection/Collection.sol";
+import "../../../Registry//IAdminRegistry.sol";
 
-contract NFTMintingFactoryV2 is 
+contract MintingFactory is 
     Initializable,
     UUPSUpgradeable,
     ReentrancyGuardUpgradeable,
@@ -19,15 +19,15 @@ contract NFTMintingFactoryV2 is
 
     address public exchangeAddress;
     address public adminRegistry;
-    string public ID;
 
 
-    function initialize() public onlyAdmin {
-        ID = "101";
-    }
-
-    function setID(string memory _id) public onlyAdmin {
-        ID = _id;
+    function initialize(
+        address _adminRegistry
+    ) external virtual initializer {
+        __UUPSUpgradeable_init();
+        __Pausable_init();
+        __ReentrancyGuard_init();
+        adminRegistry = _adminRegistry;
     }
 
     mapping(address => address[]) public ownerToCollection;
@@ -61,7 +61,7 @@ contract NFTMintingFactoryV2 is
         returns (address _nftCollection)
     {
         // create new contract
-        address nftCollection = address(new NFTCollection(_name, _symbol, adminRegistry, _baseURI));
+        address nftCollection = address(new Collection(_name, _symbol, adminRegistry, _baseURI));
         // update mapping of owner to NFTCollections
         ownerToCollection[msg.sender].push(nftCollection);
         collectionToOwner[nftCollection] = msg.sender;
@@ -79,7 +79,7 @@ contract NFTMintingFactoryV2 is
         onlyExchange
         returns (bool, string memory)
     {
-        (uint256 tokenId, string memory tokenURL) = NFTCollection(_nftCollection).mintNewNFT(_tokenId, _nftId);
+        (uint256 tokenId, string memory tokenURL) = Collection(_nftCollection).mintNewNFT(_tokenId, _nftId);
 
         emit NFTMinted(_nftCollection, tokenId);
         return (true, tokenURL);

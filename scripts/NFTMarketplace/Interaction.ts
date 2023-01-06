@@ -2,20 +2,15 @@ import { Address } from "cluster";
 import { keccak256 } from "ethers/lib/utils";
 
 const { ethers} = require("hardhat");
-const hre = require("hardhat");
-const { Wallet, providers } = require("ethers");
 
-// const bytes32 = require('bytes32');
+
 const fs = require('fs');
 const { writeFileSync } = require("fs");
 const path = require('path');
 const Book = require("../NFTMarketplace/Addresses.json");
 
-const NFTCollectionabi = require('../../artifacts/contracts/NFTMarketplace/MintingAndStorage/NFTCollection.sol/NFTCollection.json');
-const IMintingFactory = require('../../artifacts/contracts/NFTMarketplace/Interface/IMintingFactory.sol/IMintingFactory.json');
-const IAdminRegistry = require('../../artifacts/contracts/Registry/IAdminRegistry.sol/IAdminRegistry.json');
 const AdminRegistryabi = require('../../artifacts/contracts/Registry/AdminRegistry.sol/AdminRegistry.json');
-const mintingFactoryabi = require('../../artifacts/contracts/NFTMarketplace/MintingAndStorage/NFTMintingFactory.sol/NFTMintingFactory.json');
+const mintingFactoryabi = require('../../artifacts/contracts/NFTMarketplace/MintingAndStorage/MintingFactory/MintingFactory.sol/MintingFactory.json');
 const exchangeCoreabi = require('../../artifacts/contracts/NFTMarketplace/Exchange/ExchangeCore.sol/ExchangeCore.json');
 const enochTokenabi = require('../../artifacts/contracts/Tokens/Enoch.sol/Enoch.json');
 

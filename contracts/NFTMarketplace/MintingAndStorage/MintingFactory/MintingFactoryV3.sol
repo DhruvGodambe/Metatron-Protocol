@@ -7,10 +7,10 @@ import "@openzeppelin/contracts-upgradeable/proxy/utils/UUPSUpgradeable.sol";
 import "@openzeppelin/contracts-upgradeable/security/PausableUpgradeable.sol";
 
 //interfaces
-import "./NFTCollection.sol";
-import "../../Registry//IAdminRegistry.sol";
+import "../../MintingAndStorage/Collection/Collection.sol";
+import "../../../Registry//IAdminRegistry.sol";
 
-contract NFTMintingFactoryV3 is 
+contract MintingFactoryV3 is 
     Initializable,
     UUPSUpgradeable,
     ReentrancyGuardUpgradeable,
@@ -66,7 +66,7 @@ contract NFTMintingFactoryV3 is
         returns (address _nftCollection)
     {
         // create new contract
-        address nftCollection = address(new NFTCollection(_name, _symbol, adminRegistry, _baseURI));
+        address nftCollection = address(new Collection(_name, _symbol, adminRegistry, _baseURI));
         // update mapping of owner to NFTCollections
         ownerToCollection[msg.sender].push(nftCollection);
         collectionToOwner[nftCollection] = msg.sender;
@@ -84,7 +84,7 @@ contract NFTMintingFactoryV3 is
         onlyExchange
         returns (bool, string memory)
     {
-        (uint256 tokenId, string memory tokenURL) = NFTCollection(_nftCollection).mintNewNFT(_tokenId, _nftId);
+        (uint256 tokenId, string memory tokenURL) = Collection(_nftCollection).mintNewNFT(_tokenId, _nftId);
 
         emit NFTMinted(_nftCollection, tokenId);
         return (true, tokenURL);

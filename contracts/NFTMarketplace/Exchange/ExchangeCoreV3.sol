@@ -73,7 +73,6 @@ contract ExchangeCoreV3 is
     }
 
     
-    //@ Make validateSeller and validateBuyer as modifier later.
     function validateSeller(
         address _nftCollection,
         uint256 _tokenId,

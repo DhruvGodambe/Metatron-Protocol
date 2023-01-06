@@ -1,13 +1,10 @@
 const { ethers, upgrades } = require("hardhat");
 
-const NFTCollectionabi = require('../../artifacts/contracts/NFTMarketplace/MintingAndStorage/NFTCollection.sol/NFTCollection.json');
-
-
 const main = async () => {
     [admin] = await ethers.getSigners();
     console.log("Admin address : ", admin.address);
 
-    const mintingFactoryContract = await hre.ethers.getContractFactory("NFTMintingFactory");
+    const mintingFactoryContract = await hre.ethers.getContractFactory("MintingFactory");
     console.log("Deploying ERC721 Minting Factory Proxy...");
     const mintingFactoryProxy = await upgrades.deployProxy(mintingFactoryContract, {
         initializer : "initialize",

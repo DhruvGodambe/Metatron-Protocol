@@ -1,5 +1,4 @@
 const { ethers} = require("hardhat");
-const hre = require("hardhat");
 
 const Book = require("../NFTMarketplace/Addresses.json");
 const mintingFactoryAddress = Book.MINTING_FACTORY_ADDRESS;

@@ -67,8 +67,7 @@ contract ExchangeCoreV2 is
         ID = _id;
     }
 
-    
-    //@ Make validateSeller and validateBuyer as modifier later.
+
     function validateSeller(
         address _nftCollection,
         uint256 _tokenId,
