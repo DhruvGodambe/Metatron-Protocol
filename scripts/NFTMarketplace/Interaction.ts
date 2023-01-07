@@ -92,7 +92,7 @@ const main = async () => {
     console.log("Name of Collection is : ", event2?.args.name);
     console.log("Symbol of Collection is : ", event2?.args.symbol);
     console.log("Collection is : ", event2?.args.nftCollection);
-    
+
     console.log("<<<<=====================================================>>>>");
 
     console.log("Saving the data of Create Collection in a json file");
@@ -119,6 +119,11 @@ const main = async () => {
                 
             console.log("<=====  Written NFT Collection data in nftCollection.json  =====>");
 
+
+    const CollectionInstance = new ethers.Contract(NFT_COLLECTION, NFTCollectionabi.abi, provider);
+
+    const checkMintingAddress = await CollectionInstance.mintingFactory();
+    console.log("Minting Factory address set in collection is : ", checkMintingAddress);
 
 
     console.log("<<<<=====================================================>>>>");
