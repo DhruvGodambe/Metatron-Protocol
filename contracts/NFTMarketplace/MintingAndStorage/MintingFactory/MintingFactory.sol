@@ -38,9 +38,12 @@ contract MintingFactory is
     event NFTMinted(address nftCollection, uint256 tokenId);
     event OwnerUpdated(address nftCollection, address newOwner, uint256 tokenId);
     event ExchangeAddressChanged(address oldExchange, address newExchange);
+    event MintExecutedinMintingFactory(address signer);
 
 
     modifier onlyExchange() {
+        console.log("msg.sender is : ", msg.sender);
+        console.log("exchangeAddress is : ", exchangeAddress);
         require(msg.sender == exchangeAddress, 
         "Only Exchange can call this!");
         _;
@@ -82,6 +85,8 @@ contract MintingFactory is
         (uint256 tokenId, string memory tokenURL) = Collection(_nftCollection).mintNewNFT(_tokenId, _nftId);
 
         emit NFTMinted(_nftCollection, tokenId);
+        emit MintExecutedinMintingFactory(msg.sender);
+        console.log("msg.sender in minting factory is : ", msg.sender );
         return (true, tokenURL);
     }
 
