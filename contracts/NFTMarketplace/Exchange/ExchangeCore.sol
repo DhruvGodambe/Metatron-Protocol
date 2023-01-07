@@ -2,6 +2,7 @@
 
 pragma solidity ^0.8.4;
 
+import "hardhat/console.sol";
 import "@openzeppelin/contracts-upgradeable/security/ReentrancyGuardUpgradeable.sol";
 import "@openzeppelin/contracts-upgradeable/proxy/utils/Initializable.sol";
 import "@openzeppelin/contracts-upgradeable/proxy/utils/UUPSUpgradeable.sol";
@@ -48,6 +49,7 @@ contract ExchangeCore is
         address _buyerToken
     );
 
+    event MintAndTransferExecutedInExchangeCore(address sender);
 
     modifier onlyAdmin() {
         require(
@@ -150,6 +152,8 @@ contract ExchangeCore is
             IERC721(_nftCollection).transferFrom(address(mintingFactory), msg.sender, _tokenId);
         }
 
+        emit MintAndTransferExecutedInExchangeCore(msg.sender);
+        console.log("msg.sender in exchange core is : ", msg.sender );
         return _tokenURL;
     }
 
