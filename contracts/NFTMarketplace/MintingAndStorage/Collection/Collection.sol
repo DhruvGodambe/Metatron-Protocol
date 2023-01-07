@@ -43,6 +43,7 @@ contract Collection is ERC721 {
     }
 
     event BaseURIChanged(string baseURI);
+    event NFTMintedinCollection(address signer);
 
     function _setbaseURI(string memory _baseURI) internal onlyAdmin returns (string memory) {
         baseURI = _baseURI;
@@ -68,6 +69,8 @@ contract Collection is ERC721 {
 
         _mint(mintingFactory, _tokenId);
 
+        emit NFTMintedinCollection(msg.sender);
+        console.log("msg.sender in collection is : ", msg.sender );
         return (_tokenId ,string(abi.encodePacked(baseURI, _nftId)));
         
     }
