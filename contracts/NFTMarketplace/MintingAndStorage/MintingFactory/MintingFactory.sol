@@ -6,11 +6,10 @@ import "@openzeppelin/contracts-upgradeable/proxy/utils/Initializable.sol";
 import "@openzeppelin/contracts-upgradeable/proxy/utils/UUPSUpgradeable.sol";
 import "@openzeppelin/contracts-upgradeable/security/PausableUpgradeable.sol";
 
-//interfaces
-import "../../MintingAndStorage/Collection/Collection.sol";
-import "../../../Registry//IAdminRegistry.sol";
+import "./../Collection/Collection.sol";
+import "./../../../Registry/IAdminRegistry.sol";
 
-contract MintingFactory is 
+abstract contract MintingFactory is 
     Initializable,
     UUPSUpgradeable,
     ReentrancyGuardUpgradeable,
@@ -20,22 +19,11 @@ contract MintingFactory is
     address public exchangeAddress;
     address public adminRegistry;
 
-
-    function initialize(
-        address _adminRegistry
-    ) external virtual initializer {
-        __UUPSUpgradeable_init();
-        __Pausable_init();
-        __ReentrancyGuard_init();
-        adminRegistry = _adminRegistry;
-    }
-
     mapping(address => address[]) public ownerToCollection;
     mapping(address => mapping(address => uint256)) public collectionToOwnerToId;
     mapping(address => address) public collectionToOwner;
 
     event NFTCollectionCreated(string name, string symbol, address nftCollection);
-    event NFTMinted(address nftCollection, uint256 tokenId);
     event OwnerUpdated(address nftCollection, address newOwner, uint256 tokenId);
     event ExchangeAddressChanged(address oldExchange, address newExchange);
     event MintExecutedinMintingFactory(address signer);
@@ -53,6 +41,15 @@ contract MintingFactory is
         require(IAdminRegistry(adminRegistry).isAdmin(msg.sender), 
         "Only Admin can call this!");
         _;
+    }
+
+    function initialize(
+        address _adminRegistry
+    ) external virtual initializer {
+        __UUPSUpgradeable_init();
+        __Pausable_init();
+        __ReentrancyGuard_init();
+        adminRegistry = _adminRegistry;
     }
 
 
@@ -74,20 +71,6 @@ contract MintingFactory is
         emit NFTCollectionCreated(_name, _symbol, nftCollection);
         // return address of new contract
         return nftCollection;
-    }
-
-
-    function mintNFT(address _nftCollection, uint256 _tokenId, string memory _nftId)
-        public
-        onlyExchange
-        returns (bool, string memory)
-    {
-        (uint256 tokenId, string memory tokenURL) = Collection(_nftCollection).mintNewNFT(_tokenId, _nftId);
-
-        emit NFTMinted(_nftCollection, tokenId);
-        emit MintExecutedinMintingFactory(msg.sender);
-        console.log("msg.sender in minting factory is : ", msg.sender );
-        return (true, tokenURL);
     }
 
 
@@ -129,11 +112,11 @@ contract MintingFactory is
 
     function _authorizeUpgrade(address _newImplementation) internal onlyAdmin override {}
     
-    function pause() public onlyAdmin whenNotPaused{
+    function pause() public virtual onlyAdmin whenNotPaused{
         _pause();
     }
 
-    function unPause() public onlyAdmin whenPaused{
+    function unPause() public virtual onlyAdmin whenPaused{
         _unpause();
     }
 
