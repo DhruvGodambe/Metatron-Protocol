@@ -116,7 +116,7 @@ const initializeV2 = async (proxyContract) => {
     // console.log(" PROVIDER : ", provider);
 
   const LogicV2atProxy = new ethers.Contract(proxyContract, ExchangeCoreV2abi.abi, provider);
-    // console.log("Logic V2 at Proxy : ", LogicV2atProxy);
+    console.log("Logic V2 at Proxy : ", LogicV2atProxy);
     console.log("proxyContract address : ", proxyContract);
 
     const Treasury_Address  = await LogicV2atProxy.treasury();
@@ -229,7 +229,7 @@ const initializeV3 = async (proxyContract) => {
 
 const main = async () => {
 
-    LogicV1 = "0xB4E42F0c17248bEB48B35e814211659365Ce656C";
+    LogicV1 = "0x187e90F7c5126a577Bd4383b05e232fD3b788490";
 
     await deployProxy(
       LogicV1 //LogicV1 address

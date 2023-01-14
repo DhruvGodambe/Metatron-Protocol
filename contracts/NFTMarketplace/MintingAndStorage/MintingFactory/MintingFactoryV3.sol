@@ -6,8 +6,7 @@ import "@openzeppelin/contracts-upgradeable/proxy/utils/Initializable.sol";
 import "@openzeppelin/contracts-upgradeable/proxy/utils/UUPSUpgradeable.sol";
 import "@openzeppelin/contracts-upgradeable/security/PausableUpgradeable.sol";
 
-//interfaces
-import "../../MintingAndStorage/Collection/Collection.sol";
+import "./../Collection/Collection.sol";
 import "../../../Registry//IAdminRegistry.sol";
 
 contract MintingFactoryV3 is 
@@ -79,18 +78,6 @@ contract MintingFactoryV3 is
     }
 
 
-    function mintNFT(address _nftCollection, uint256 _tokenId, string memory _nftId)
-        public
-        onlyExchange
-        returns (bool, string memory)
-    {
-        (uint256 tokenId, string memory tokenURL) = Collection(_nftCollection).mintNewNFT(_tokenId, _nftId);
-
-        emit NFTMinted(_nftCollection, tokenId);
-        return (true, tokenURL);
-    }
-
-
     function updateOwner(
         address _nftCollection,
         address _newOwner,
@@ -129,11 +116,11 @@ contract MintingFactoryV3 is
 
     function _authorizeUpgrade(address _newImplementation) internal onlyAdmin override {}
     
-    function pause() public onlyAdmin whenNotPaused{
+    function pause() public virtual onlyAdmin whenNotPaused{
         _pause();
     }
 
-    function unPause() public onlyAdmin whenPaused{
+    function unPause() public virtual onlyAdmin whenPaused{
         _unpause();
     }
 
