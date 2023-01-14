@@ -8,7 +8,7 @@ import "@openzeppelin/contracts-upgradeable/proxy/utils/Initializable.sol";
 import "./VersionAware.sol";
 import "./../../../Registry/IAdminRegistry.sol";
 
-contract Collection is Initializable, ERC721Upgradeable, VersionAware {
+contract CollectionV2 is Initializable, ERC721Upgradeable, VersionAware {
 
     address public adminRegistry;
     address public exchangeAddress;
@@ -16,17 +16,13 @@ contract Collection is Initializable, ERC721Upgradeable, VersionAware {
 
     mapping(uint256 => string) public tokenIdToNftId;
 
-    function initialize(string memory _name, string memory _symbol, address _adminRegistry, string memory _baseURI) public initializer {
-        console.log("This is an NFT contract. Whoa!");
-        __ERC721_init(_name, _symbol);
-        exchangeAddress = msg.sender;
-        adminRegistry = _adminRegistry;
-        baseURI = _baseURI;
-        versionAwareContractName = "Collection for NFTs: V1";
+    function initialize() public reinitializer(2) {
+        console.log("This is an NFT contract V2!");
+        versionAwareContractName = "Collection for NFTs: V2";
     }
 
     function getContractNameWithVersion() public pure override returns (string memory){
-        return "Collection for NFTs: V1";
+        return "Collection for NFTs: V2";
     }
 
     modifier onlyExchange() {
