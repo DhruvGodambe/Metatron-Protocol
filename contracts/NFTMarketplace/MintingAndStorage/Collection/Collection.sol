@@ -5,12 +5,12 @@ import "hardhat/console.sol";
 import "@openzeppelin/contracts/token/ERC721/ERC721.sol";
 import "@openzeppelin/contracts/utils/Counters.sol";
 
-import "../../../Registry/IAdminRegistry.sol";
+import "./../../../Registry/IAdminRegistry.sol";
 
 contract Collection is ERC721 {
 
     address public adminRegistry;
-    address public mintingFactory;
+    address public exchangeAddress;
     string public baseURI;
 
     mapping(uint256 => string) public tokenIdToNftId;
@@ -18,18 +18,18 @@ contract Collection is ERC721 {
     constructor(string memory _name, string memory _symbol, address _adminRegistry, string memory _baseURI)
         ERC721(_name, _symbol)
     {
-        mintingFactory = msg.sender;
+        exchangeAddress = msg.sender;
         console.log("This is an NFT contract. Whoa!");
         adminRegistry = _adminRegistry;
         baseURI = _baseURI;
     }
 
 
-     modifier onlyMintingFactory() {
-        require(
-            mintingFactory == msg.sender,
-            "Only MintingFactory can call this!"
-        );
+    modifier onlyExchange() {
+        console.log("msg.sender is : ", msg.sender);
+        console.log("exchangeAddress is : ", exchangeAddress);
+        require(msg.sender == exchangeAddress, 
+        "Only Exchange can call this!");
         _;
     }
 
@@ -43,7 +43,6 @@ contract Collection is ERC721 {
     }
 
     event BaseURIChanged(string baseURI);
-    event NFTMintedinCollection(address signer);
 
     function _setbaseURI(string memory _baseURI) internal onlyAdmin returns (string memory) {
         baseURI = _baseURI;
@@ -63,15 +62,13 @@ contract Collection is ERC721 {
     }
 
 
-    function mintNewNFT(uint256 _tokenId, string memory _nftId) public onlyMintingFactory returns (uint256, string memory) {
+    function mintCollectible(uint256 _tokenId, string memory _nftId) public onlyExchange returns (bool, uint256, string memory) {
 
         tokenIdToNftId[_tokenId] =_nftId;
 
-        _mint(mintingFactory, _tokenId);
+        _mint(exchangeAddress, _tokenId);
 
-        emit NFTMintedinCollection(msg.sender);
-        console.log("msg.sender in collection is : ", msg.sender );
-        return (_tokenId ,string(abi.encodePacked(baseURI, _nftId)));
+        return (true, _tokenId ,string(abi.encodePacked(baseURI, _nftId)));
         
     }
 
