@@ -24,23 +24,6 @@ let MINTINGfACTORY_V1_Proxy = "";
 let Collection_ADDRESS;
 
 
-// const deployCollection = async () => {
-//   const accounts = await ethers.getSigners();
-//   const admin  = accounts[0];
-//   const provider = new ethers.providers.JsonRpcProvider("https://eth-goerli.g.alchemy.com/v2/OW3K8LQl3oZeZLxuOTzgbRkFsEBkThgA");
-
-//   const nftCollection = await hre.ethers.getContractFactory("Collection");
-//     console.log("Deploying Collection...");
-//     const Collection = await nftCollection.deploy();
-//     await Collection.deployed();
-//     console.log("Collection deployed");
-//     console.log("Collection Contract deployed to: ", Collection.address);
-//     Collection_ADDRESS = Collection.address;
-
-//     Collection
-// }
-
-
 const ExchangeLogicV1Proxy = async () => {
 
   const accounts = await ethers.getSigners();

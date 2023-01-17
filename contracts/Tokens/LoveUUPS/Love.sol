@@ -9,8 +9,13 @@ import "@openzeppelin/contracts-upgradeable/security/PausableUpgradeable.sol";
 //interface
 import "../../Registry/IAdminRegistry.sol";
 
-contract Love is Initializable, UUPSUpgradeable, ERC20Upgradeable, ERC20BurnableUpgradeable, PausableUpgradeable {
-
+contract LoveV1 is 
+    Initializable, 
+    UUPSUpgradeable, 
+    ERC20Upgradeable, 
+    ERC20BurnableUpgradeable, 
+    PausableUpgradeable 
+{
 
     address public adminRegistry;
     address public _owner;
@@ -30,10 +35,21 @@ contract Love is Initializable, UUPSUpgradeable, ERC20Upgradeable, ERC20Burnable
         __Pausable_init();
         adminRegistry = _adminRegistry;
         _owner = msg.sender;
-        _mint(msg.sender, _initialSupply);
+        mint(msg.sender, _initialSupply);
         _balances[_owner] = _initialSupply;
     }
-    
+
+    function balanceOf(address account) public view virtual override returns (uint256) {
+        return _balances[account];
+    }
+
+    function mint(address to, uint256 amount) internal onlyAdmin {
+        _mint(to, amount);
+    }
+
+    function burn(uint256 amount) public virtual override onlyAdmin {
+        _burn(_msgSender(), amount);
+    }   
 
     function _beforeTokenTransfer(address from, address to, uint256 amount)
         internal
