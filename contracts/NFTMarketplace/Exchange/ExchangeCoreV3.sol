@@ -65,11 +65,11 @@ contract ExchangeCoreV3 is
         uint256 _tokenId,
         address _seller
     ) {
-        address tokenOwner = IERC721(_nftCollection).ownerOf(_tokenId);
+        address tokenOwner = IERC721Upgradeable(_nftCollection).ownerOf(_tokenId);
         require(_seller == tokenOwner, "Seller does not owns the token");
 
         // check token approval
-        address tokenApprovedAddress = IERC721(_nftCollection).getApproved(
+        address tokenApprovedAddress = IERC721Upgradeable(_nftCollection).getApproved(
             _tokenId
         );
         require(
@@ -139,7 +139,7 @@ contract ExchangeCoreV3 is
         (bool success, uint256 tokenId, string memory _tokenURL) = Collection(_nftCollection).mintCollectible(_tokenId, _nftId);
         
         if(success){
-            IERC721(_nftCollection).transferFrom(address(mintingFactory), msg.sender, _tokenId);
+            IERC721Upgradeable(_nftCollection).transferFrom(address(mintingFactory), msg.sender, _tokenId);
         }
 
         emit NFTMinted(_nftCollection, tokenId, msg.sender);
