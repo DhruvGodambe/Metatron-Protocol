@@ -1,28 +1,39 @@
 // SPDX-License-Identifier: MIT
-pragma solidity ^0.8.7;
+pragma solidity ^0.8.0;
 
+import "hardhat/console.sol";
 import "@openzeppelin/contracts/utils/math/SafeMath.sol";
 import "./IERC20.sol";
 
 contract GiftCard {
 
     using SafeMath for uint256;
+    address public owner;
+    address public spender;
+    address public tokenAddress;
+
 
     mapping(address => mapping(address => uint256)) public balance;
-    address public owner;
 
-    function initialize() public {
+    constructor(address _tokenAddress) public {
         owner = msg.sender;
+        spender = address(this);
+        tokenAddress = _tokenAddress;
+    console.log("msg.sender is : ", msg.sender);
+    console.log("address(this) is : ", address(this));
     }
 
-    function topUp(address _token, uint256 _value) public {
+
+    function topUp(uint256 _amount) public {
         require(msg.sender == owner, "Only the owner can top up gift cards");
-        IERC20(_token).approve(address(this), _value);
-        IERC20(_token).transferFrom(msg.sender, address(this), _value);
-        balance[msg.sender][_token] = balance[msg.sender][_token].add(_value);
+        console.log("msg.sender in topUp is : ", msg.sender);
+        // require(IERC20(tokenAddress).allowance(owner, spender) >= _amount , "Insufficient allowance");
+        IERC20(tokenAddress).transferFrom(owner, spender, _amount);
+        balance[spender][tokenAddress] = balance[spender][tokenAddress].add(_amount);
     }
 
-    function payNow 
+
+    function payNow
     (
         address from, address to, 
         address[] memory tokens,
@@ -34,11 +45,9 @@ contract GiftCard {
         
         return success;
         }
-
-
     }
 
-    function payNowBatchTransfer 
+    function payNowBatchTransfer
     (
         address token1, address token2, 
         address from, address to, 
@@ -57,7 +66,7 @@ contract GiftCard {
     }
 
     function getBalance(address _token) public view returns (uint256) {
-        return balance[address(this)][_token];
+        return balance[spender][_token];
     }
 
 }
