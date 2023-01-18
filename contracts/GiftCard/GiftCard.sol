@@ -3,7 +3,7 @@ pragma solidity ^0.8.0;
 
 import "hardhat/console.sol";
 import "@openzeppelin/contracts/utils/math/SafeMath.sol";
-import "./IERC20.sol";
+import "./../NFTMarketplace/Interface/IERC20.sol";
 
 contract GiftCard {
 
