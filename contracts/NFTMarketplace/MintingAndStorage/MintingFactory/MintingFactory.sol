@@ -20,8 +20,8 @@
 //     address public adminRegistry;
 
 //     mapping(address => address[]) public ownerToCollection;
-//     mapping(address => mapping(address => uint256)) public collectionToOwnerToId;
-//     mapping(address => address) public collectionToOwner;
+// // mapping(address => mapping(address => uint256)) public collectionToOwnerToId;
+// //     mapping(address => address) public collectionToOwner;
 
 //     event NFTCollectionCreated(string name, string symbol, address nftCollection);
 //     event OwnerUpdated(address nftCollection, address newOwner, uint256 tokenId);
@@ -74,7 +74,7 @@
 //     }
 
 
-//     function updateOwner(
+// //    function updateOwner(
 //         address _nftCollection,
 //         address _newOwner,
 //         uint256 _tokenId

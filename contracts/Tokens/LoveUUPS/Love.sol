@@ -36,7 +36,6 @@ contract LoveV1 is
         adminRegistry = _adminRegistry;
         _owner = msg.sender;
         mint(msg.sender, _initialSupply);
-        _balances[_owner] = _initialSupply;
     }
 
     function balanceOf(address account) public view virtual override returns (uint256) {

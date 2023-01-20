@@ -7,14 +7,17 @@ import "@openzeppelin/contracts-upgradeable/token/ERC20/ERC20Upgradeable.sol";
 import "@openzeppelin/contracts-upgradeable/token/ERC20/extensions/ERC20BurnableUpgradeable.sol";
 import "@openzeppelin/contracts-upgradeable/security/PausableUpgradeable.sol";
 //interface
-import "../../Registry/IAdminRegistry.sol";
+import "./../../Registry/IAdminRegistry.sol";
 
-contract Enoch is Initializable, UUPSUpgradeable, ERC20Upgradeable, ERC20BurnableUpgradeable, PausableUpgradeable {
-
-
+contract EnochV1 is 
+    Initializable, 
+    UUPSUpgradeable, 
+    ERC20Upgradeable, 
+    ERC20BurnableUpgradeable, 
+    PausableUpgradeable 
+{
     address public adminRegistry;
     address public _owner;
-    mapping(address => uint256) private _balances;
 
     modifier onlyAdmin() {
         require(
@@ -30,8 +33,7 @@ contract Enoch is Initializable, UUPSUpgradeable, ERC20Upgradeable, ERC20Burnabl
         __Pausable_init();
         adminRegistry = _adminRegistry;
         _owner = msg.sender;
-        _mint(msg.sender, _initialSupply);
-        _balances[_owner] = _initialSupply;
+        _mint(_owner, _initialSupply);
     }
     
 
