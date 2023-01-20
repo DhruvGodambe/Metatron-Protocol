@@ -12,14 +12,16 @@ contract Collection is Initializable, ERC721Upgradeable, VersionAware {
 
     address public adminRegistry;
     address public exchangeAddress;
+    address public collectionFactory;
     string public baseURI;
 
     mapping(uint256 => string) public tokenIdToNftId;
 
-    function initialize(string memory _name, string memory _symbol, address _adminRegistry, string memory _baseURI) public initializer {
+    function initialize(string memory _name, string memory _symbol, string memory _baseURI, address _exchange, address _adminRegistry) public initializer {
         console.log("This is an NFT contract. Whoa!");
         __ERC721_init(_name, _symbol);
-        exchangeAddress = msg.sender;
+        collectionFactory = msg.sender;
+        exchangeAddress = _exchange;
         adminRegistry = _adminRegistry;
         baseURI = _baseURI;
         versionAwareContractName = "Collection for NFTs: V1";
@@ -37,7 +39,6 @@ contract Collection is Initializable, ERC721Upgradeable, VersionAware {
         _;
     }
 
-
     modifier onlyAdmin() {
         require(
             IAdminRegistry(adminRegistry).isAdmin(msg.sender),
@@ -47,6 +48,7 @@ contract Collection is Initializable, ERC721Upgradeable, VersionAware {
     }
 
     event BaseURIChanged(string baseURI);
+    event NFTMintedinCollection(address signer);
 
     function _setbaseURI(string memory _baseURI) internal onlyAdmin returns (string memory) {
         baseURI = _baseURI;
