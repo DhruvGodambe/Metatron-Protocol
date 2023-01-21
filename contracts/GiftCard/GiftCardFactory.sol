@@ -28,9 +28,9 @@ contract GiftCardFactory {
         _;
     }
 
-    function createGiftCardProxy(address _user, uint256 _index) external onlyAdmin returns (address) {
+    function createGiftCardProxy(address _adminRegistry, uint256 _index) external onlyAdmin returns (address) {
         BeaconProxy proxy = new BeaconProxy(address(beacon), 
-            abi.encodeWithSelector(GiftCard(address(0)).initialize.selector, _user)
+            abi.encodeWithSelector(GiftCard(address(0)).initialize.selector, _adminRegistry)
         );
         giftCards[_index] = address(proxy);
         return address(proxy);
@@ -52,8 +52,6 @@ contract GiftCardFactory {
      function getGiftCardProxy(uint256 _index) public view returns (address) {
         return giftCards[_index];
     }
-
-    
 
 
 }
