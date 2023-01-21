@@ -8,6 +8,8 @@ const { task } = require("hardhat/config");
 import { config as dotEnvConfig } from "dotenv";
 dotEnvConfig();
 const RPCURL = require("./scripts/Wormhole/RPC.json");
+import "@typechain/hardhat";
+import "@nomiclabs/hardhat-ethers"
 
 
 // This is a sample Hardhat task. To learn how to create your own go to

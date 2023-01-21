@@ -49,7 +49,6 @@ const bytes32FromMessage = (message:string) => {
   // console.log("bytes32FromMessage:",bytes32Message);
   return hexMessage;
 }
-
 const toBytes = (signature:string) => Array.from(Buffer.from(signature, 'utf8'));
 */
 
@@ -151,7 +150,6 @@ const main = async () => {
 
 /*    //@ 5. FIXED PRICE Primary Sale
     console.log("@ 5. Fixed Price Primary Sale from ExchangeCore contract");
-
     const tx5 = await ExchangeCore.connect(admin).fixedPricePrimarySale(NFT_COLLECTION,
       nftPrice, 
       tokenId,
@@ -159,15 +157,11 @@ const main = async () => {
       adminAddress,
       enochTokenAddress
     );
-
     const receipt5 = await tx5.wait();
     console.log("Primary sale for ", NFT_COLLECTION, " : ", receipt5);
-
     let event5 = receipt5.events?.find((event:any) => event.event === "FixedPricePrimarySale");
     console.log(event5);
-
     console.log("Token URL for the corresponding token Id is  : ", event5?.args._tokenURL);
-
 */    
     console.log("<<<<===============================================================>>>>");   
 
@@ -196,24 +190,18 @@ const main = async () => {
 /*
     const Collection = new ethers.Contract(NFT_COLLECTION, NFTCollectionabi.abi, provider);
     console.log("Nft Collection instance : ",Collection);
-
     const tx8 = await Collection.tokenURI(tokenId);
     console.log("Token URI", tx8);
 */
     
 
   /*  console.log("<<<<===============================================================>>>>");
-
     //@ 4. MintNFT
     console.log("@ 4. Minting NFT from Minting Factory");
-
     const tx4 = await MintingFactory.connect(ExchangeCore).mintNFT(NFT_COLLECTION);
-
     const receipt4 = await tx4.wait();
     console.log("receipt4 :", receipt4);
-
     let event4 = receipt4.events?.find((event:any) => event.event === "NFTMinted");
-
     console.log("NFT  Minted from Minting Factory");
     
     */
