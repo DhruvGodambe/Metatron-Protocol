@@ -70,37 +70,39 @@ contract GiftCard is
     function setSingleTokenApproval
     (
         address _token,
-        uint256 _amount
+        uint256 _amount,
+        address _spender
     ) public onlyAdmin returns(bool) 
     {
-        bool success = IERC20(_token).approve(address(this), _amount);
+        bool success = IERC20(_token).approve(_spender, _amount);
 
-        emit SingleTokenApproval(_token, _amount, address(this));
+        emit SingleTokenApproval(_token, _amount, _spender);
         return success;
     }
 
     function setMultiTokenApproval
     (
         address[] memory _tokens,
-        uint256[] memory _amounts
+        uint256[] memory _amounts,
+        address _spender
     ) public onlyAdmin returns(bool)
     {
         bool success;
 
         for (uint i = 0; i < _tokens.length; i++) {
-            success = IERC20(_tokens[i]).approve(address(this), _amounts[i]);
+            success = IERC20(_tokens[i]).approve(_spender, _amounts[i]);
         }
 
-        emit MultiTokenApproval(_tokens, _amounts, address(this));
+        emit MultiTokenApproval(_tokens, _amounts, _spender);
         return success;
     }
     
-    function getBalance(address _token) public view returns (uint256) {
+    function getBalance
+    (
+        address _token
+    ) public view returns (uint256) 
+    {
         return IERC20(_token).balanceOf(address(this));
-    }
-
-    function getTokenAllowance(address _token, address _tokenOwner) public view returns (uint256) {
-        return IERC20(_token).allowance(_tokenOwner, address(this));
     }
 
 }
