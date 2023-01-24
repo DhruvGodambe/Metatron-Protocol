@@ -16,8 +16,10 @@ contract GiftCard is
     address public adminRegistry;
 
 
-    event SingleTokenTransferred(address _to, uint256 _amount);
-    event MultiTokenTransferred(address _to, address tokens, uint256 _amount);
+    event SingleTokenTransfer(address token, uint256 amount, address to);
+    event MultiTokenTransfer(address[] tokens, uint256[] amounts, address to);
+    event SingleTokenApproval(address token, uint256 amount, address approvedTo);
+    event MultiTokenApproval(address[] tokens, uint256[] amounts, address approvedTo);
 
     function initialize(address _adminRegistry) external initializer {
         factory = msg.sender;
@@ -38,54 +40,69 @@ contract GiftCard is
     function singleTokenTransfer
     (
         address _token,
-        address _to,
-        uint256 _amount
+        uint256 _amount,
+        address _to
     ) public onlyAdmin returns (bool)
     {
-        IERC20(_token).transfer(_to, _amount);
+        bool success = IERC20(_token).transfer(_to, _amount);
 
-        emit SingleTokenTransferred(_to, _amount);
-        return true;
+        emit SingleTokenTransfer(_token, _amount, _to);
+        return success ;
     }
 
 
     function multiTokenTransfer
     (
         address[] memory _tokens,
-        address _to, 
-        uint256[] memory _amounts
+        uint256[] memory _amounts,
+        address _to
     ) public onlyAdmin returns(bool)
     {
+        bool success;
 
         for (uint i = 0; i < _tokens.length; i++) {
-            IERC20(_tokens[i]).transfer(_to, _amounts[i]);
-
-        emit MultiTokenTransferred(_to, _tokens[i], _amounts[i]);
+            success = IERC20(_tokens[i]).transfer(_to, _amounts[i]);
         }
-        return true;
+        emit MultiTokenTransfer(_tokens, _amounts, _to);
+        return success;
     }
 
+    function setSingleTokenApproval
+    (
+        address _token,
+        uint256 _amount,
+        address _spender
+    ) public onlyAdmin returns(bool) 
+    {
+        bool success = IERC20(_token).approve(_spender, _amount);
 
-    function getBalance(address _token) public view returns (uint256) {
-        return IERC20(_token).balanceOf(address(this));
+        emit SingleTokenApproval(_token, _amount, _spender);
+        return success;
     }
 
-    function getSingleTokenAllowance(address _token, address _tokenOwner) public view returns (uint256) {
-        return IERC20(_token).allowance(_tokenOwner, address(this));
-    }
-
-    function getMultiTokenAllowance
+    function setMultiTokenApproval
     (
         address[] memory _tokens,
-        address[] memory _tokenOwners
-    ) public view returns(uint[] memory)
+        uint256[] memory _amounts,
+        address _spender
+    ) public onlyAdmin returns(bool)
     {
+        bool success;
 
-        uint[] memory myArray = new uint[](_tokens.length);
         for (uint i = 0; i < _tokens.length; i++) {
-            myArray[i] = IERC20(_tokens[i]).allowance(_tokenOwners[i], address(this));
+            success = IERC20(_tokens[i]).approve(_spender, _amounts[i]);
         }
-    return myArray;
+
+        emit MultiTokenApproval(_tokens, _amounts, _spender);
+        return success;
+    }
+    
+    function getBalance
+    (
+        address _token
+    ) public view returns (uint256) 
+    {
+        return IERC20(_token).balanceOf(address(this));
     }
 
 }
