@@ -12,7 +12,7 @@ contract GiftCardFactory {
     address public adminRegistry;
     address public giftCard;
     
-    mapping(uint256 => address) private giftCards;
+    mapping(string => address) private giftCards;
 
     constructor(address _giftCard, address _adminRegistry) {
         beacon = new UpgradeableBeacon(_giftCard);
@@ -28,9 +28,9 @@ contract GiftCardFactory {
         _;
     }
 
-    function createGiftCardProxy(address _adminRegistry, uint256 _index) external onlyAdmin returns (address) {
+    function createGiftCardProxy(string memory _index) external onlyAdmin returns (address) {
         BeaconProxy proxy = new BeaconProxy(address(beacon), 
-            abi.encodeWithSelector(GiftCard(address(0)).initialize.selector, _adminRegistry)
+            abi.encodeWithSelector(GiftCard(address(0)).initialize.selector, adminRegistry)
         );
         giftCards[_index] = address(proxy);
         return address(proxy);
@@ -49,7 +49,7 @@ contract GiftCardFactory {
         return address(beacon);
     }
 
-     function getGiftCardProxy(uint256 _index) public view returns (address) {
+     function getGiftCardProxy(string memory _index) public view returns (address) {
         return giftCards[_index];
     }
 
