@@ -1,7 +1,5 @@
-const { ethers} = require("hardhat");
-
-const Book = require("../NFTMarketplace/Addresses.json");
-const adminRegistryAddress = Book.ADMIN_REGISTRY_ADDRESS;
+const { ethers, upgrades} = require("hardhat");
+const hre = require("hardhat");
 
 const main = async () => {
 
@@ -26,9 +24,8 @@ const main = async () => {
 
 
 	const decimals = 18;
-	const EnochSupply = "90000000"; // $90M
-	// const LoveSupply = "1000000000"; // $1B
-	const _initialSupply = ethers.utils.parseUnits(EnochSupply, decimals);
+	const LoveSupply = "1000000000"; // $1B
+	const _initialSupply = ethers.utils.parseUnits(LoveSupply, decimals);
 
     const args = ["0x0CF20Fa8217D666eA2fA99F674C395e33BA4e79C", _initialSupply];
 
@@ -37,6 +34,17 @@ const main = async () => {
     console.log("encodedData : ", encodedData);
 
 
+
+  const loveProxy = await hre.ethers.getContractFactory("LoveProxy");
+  console.log("Deploying Love Proxy...");
+  const proxy = await loveProxy.deploy
+  (
+    "0xD215853Ffb7873eb932d12bFC7F447896C397c4E", // implementation V1 contract
+    encodedData // bytes memory data
+  );
+
+  await proxy.deployed();
+  console.log("Love PROXY address: ", proxy.address);
 
 }
 

@@ -6,10 +6,10 @@ import "@openzeppelin/contracts-upgradeable/proxy/utils/Initializable.sol";
 import "@openzeppelin/contracts-upgradeable/token/ERC20/ERC20Upgradeable.sol";
 import "@openzeppelin/contracts-upgradeable/token/ERC20/extensions/ERC20BurnableUpgradeable.sol";
 import "@openzeppelin/contracts-upgradeable/security/PausableUpgradeable.sol";
-//interface
+
 import "./../../Registry/IAdminRegistry.sol";
 
-contract EnochV1 is 
+contract Enoch is 
     Initializable, 
     UUPSUpgradeable, 
     ERC20Upgradeable, 

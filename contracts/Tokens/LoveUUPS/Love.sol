@@ -6,20 +6,19 @@ import "@openzeppelin/contracts-upgradeable/proxy/utils/Initializable.sol";
 import "@openzeppelin/contracts-upgradeable/token/ERC20/ERC20Upgradeable.sol";
 import "@openzeppelin/contracts-upgradeable/token/ERC20/extensions/ERC20BurnableUpgradeable.sol";
 import "@openzeppelin/contracts-upgradeable/security/PausableUpgradeable.sol";
-//interface
-import "../../Registry/IAdminRegistry.sol";
 
-contract LoveV1 is 
+import "./../../Registry/IAdminRegistry.sol";
+
+contract Love is 
     Initializable, 
     UUPSUpgradeable, 
     ERC20Upgradeable, 
     ERC20BurnableUpgradeable, 
     PausableUpgradeable 
 {
-
+    
     address public adminRegistry;
     address public _owner;
-    mapping(address => uint256) private _balances;
 
     modifier onlyAdmin() {
         require(
@@ -35,11 +34,7 @@ contract LoveV1 is
         __Pausable_init();
         adminRegistry = _adminRegistry;
         _owner = msg.sender;
-        mint(msg.sender, _initialSupply);
-    }
-
-    function balanceOf(address account) public view virtual override returns (uint256) {
-        return _balances[account];
+        mint(_owner, _initialSupply);
     }
 
     function mint(address to, uint256 amount) internal onlyAdmin {

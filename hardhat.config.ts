@@ -103,7 +103,7 @@ module.exports = {
           },
         },
       },{
-        version: "0.8.13",
+        version: "0.8.17",
         settings: {
           optimizer: {
             enabled: true,
@@ -127,6 +127,6 @@ module.exports = {
     // goerli
     apiKey: "7ADQVGNSBRPGF84Q1XK4MX2FW4ZJ7JDHUS"
     // mumbai
-    // apiKey: "7ADQVGNSBRPGF84Q1XK4MX2FW4ZJ7JDHUS"
+    // apiKey: "PTZM9U7H8S3XN75545M589BJ26DIPZH9Q7"
   }
 };
