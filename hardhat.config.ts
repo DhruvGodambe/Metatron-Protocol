@@ -12,22 +12,6 @@ import "@typechain/hardhat";
 import "@nomiclabs/hardhat-ethers"
 
 
-// This is a sample Hardhat task. To learn how to create your own go to
-// https://hardhat.org/guides/create-task.html
-task("accounts", "Prints the list of accounts", async (taskArgs:any, hre:any) => {
-  const accounts = await hre.ethers.getSigners();
-
-  for (const account of accounts) {
-    console.log(account.address);
-  }
-});
-
-// You need to export an object to set up your config
-// Go to https://hardhat.org/config/ to learn more
-
-/**
- * @type import('hardhat/config').HardhatUserConfig
- */
 module.exports = {
   defaultNetwork: "hardhat",
   networks: {
@@ -38,28 +22,24 @@ module.exports = {
 
 
     goerli: {
-      // url: "https://eth-goerli.g.alchemy.com/v2/OW3K8LQl3oZeZLxuOTzgbRkFsEBkThgA",
       url: RPCURL.RPCurl.goerli,
       accounts: [process.env.PRIVATE_KEY_1],
       chainId: 5,
     },
 
     mumbai: {
-      // url: `https://matic-mumbai.chainstacklabs.com`,
       url: RPCURL.RPCurl.mumbai,
       accounts: [process.env.PRIVATE_KEY_1],
       chainId: 80001,
     },
 
     fuji: {
-      // url: `https://api.avax-test.network/ext/bc/C/rpc`,
       url: RPCURL.RPCurl.fuji,
       accounts: [process.env.PRIVATE_KEY_1],
       chainId: 43113,
     },
 
     bsc: {
-      // url: `https://data-seed-prebsc-1-s1.binance.org:8545`,
       url: RPCURL.RPCurl.bsc,
       accounts: [process.env.PRIVATE_KEY_1],
       chainId: 97,
@@ -123,10 +103,6 @@ module.exports = {
     timeout: 40000,
   },
   etherscan: {
-    // apiKey: [process.env.ETHERSCAN_API_KEY]
-    // goerli
-    apiKey: "7ADQVGNSBRPGF84Q1XK4MX2FW4ZJ7JDHUS"
-    // mumbai
-    // apiKey: "PTZM9U7H8S3XN75545M589BJ26DIPZH9Q7"
+    apiKey: [process.env.ETHERSCAN_API_KEY]
   }
 };

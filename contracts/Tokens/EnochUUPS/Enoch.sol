@@ -7,8 +7,6 @@ import "@openzeppelin/contracts-upgradeable/token/ERC20/ERC20Upgradeable.sol";
 import "@openzeppelin/contracts-upgradeable/token/ERC20/extensions/ERC20BurnableUpgradeable.sol";
 import "@openzeppelin/contracts-upgradeable/security/PausableUpgradeable.sol";
 
-import "./../../Registry/IAdminRegistry.sol";
-
 contract Enoch is 
     Initializable, 
     UUPSUpgradeable, 
@@ -16,37 +14,26 @@ contract Enoch is
     ERC20BurnableUpgradeable, 
     PausableUpgradeable 
 {
-    address public adminRegistry;
     address public _owner;
 
     modifier onlyAdmin() {
         require(
-            IAdminRegistry(adminRegistry).isAdmin(msg.sender),
+            msg.sender == _owner,
             "Only Admin can call this!"
         );
         _;
     }
 
-    function initialize(address _adminRegistry, uint256 _initialSupply) external initializer {
-        __ERC20_init("ENOCH token", "ENOCH");
+    function initialize(uint256 _initialSupply) external initializer {
+        __ERC20_init("ENOCH", "ENOCH");
         __ERC20Burnable_init();
         __Pausable_init();
-        adminRegistry = _adminRegistry;
         _owner = msg.sender;
         _mint(_owner, _initialSupply);
     }
-    
 
-    function _beforeTokenTransfer(address from, address to, uint256 amount)
-        internal
-        whenNotPaused
-        override
-    {
-        super._beforeTokenTransfer(from, to, amount);
-    }
+    function _authorizeUpgrade(address newImplementation) internal onlyAdmin override {}
 
-    function _authorizeUpgrade(address _newImplementation) internal onlyAdmin override {}
-    
     function pause() public onlyAdmin whenNotPaused {
         _pause();
     }
@@ -54,6 +41,5 @@ contract Enoch is
     function unpause() public onlyAdmin whenPaused {
         _unpause();
     }
-
 
 }

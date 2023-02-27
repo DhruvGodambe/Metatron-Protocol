@@ -7,30 +7,24 @@ const main = async () => {
 
     const constructorABI = [{
 		"inputs": [
-			{
-				"internalType": "address",
-				"name": "_adminRegistry",
-				"type": "address"
-			},
-			{
-				"internalType": "uint256",
-				"name": "_initialSupply",
-				"type": "uint256"
-			}
+		  {
+			"internalType": "uint256",
+			"name": "_initialSupply",
+			"type": "uint256"
+		  }
 		],
 		"name": "initialize",
 		"outputs": [],
 		"stateMutability": "nonpayable",
 		"type": "function"
-	}];
-
+	  }];
 
 	const decimals = 18;
-	const EnochSupply = "90000000"; // $90M
-	// const LoveSupply = "1000000000"; // $1B
-	const _initialSupply = ethers.utils.parseUnits(EnochSupply, decimals);
+	// const EnochSupply = "90000000"; // $90M
+	const LoveSupply = "1000000000"; // $1B
+	const _initialSupply = ethers.utils.parseUnits(LoveSupply, decimals);
 
-    const args = ["0x0CF20Fa8217D666eA2fA99F674C395e33BA4e79C", _initialSupply];
+    const args = [_initialSupply];
 
     let interface= new ethers.utils.Interface(constructorABI);
     const encodedData = interface.encodeFunctionData("initialize", args);

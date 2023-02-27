@@ -6,20 +6,20 @@ import "@openzeppelin/contracts-upgradeable/proxy/utils/Initializable.sol";
 import "@openzeppelin/contracts-upgradeable/token/ERC20/ERC20Upgradeable.sol";
 import "@openzeppelin/contracts-upgradeable/token/ERC20/extensions/ERC20BurnableUpgradeable.sol";
 import "@openzeppelin/contracts-upgradeable/security/PausableUpgradeable.sol";
-//interface
-import "../../Registry/IAdminRegistry.sol";
 
-contract LoveV2 is Initializable, UUPSUpgradeable, ERC20Upgradeable, ERC20BurnableUpgradeable, PausableUpgradeable {
-
-
-    address public adminRegistry;
+contract LoveV2 is 
+    Initializable, 
+    UUPSUpgradeable, 
+    ERC20Upgradeable, 
+    ERC20BurnableUpgradeable, 
+    PausableUpgradeable
+{
     address public _owner;
-    mapping(address => uint256) private _balances;
     string public ID;
 
     modifier onlyAdmin() {
         require(
-            IAdminRegistry(adminRegistry).isAdmin(msg.sender),
+            msg.sender == _owner,
             "Only Admin can call this!"
         );
         _;
@@ -31,14 +31,6 @@ contract LoveV2 is Initializable, UUPSUpgradeable, ERC20Upgradeable, ERC20Burnab
 
     function setID(string memory _newID) public onlyAdmin {
         ID = _newID;
-    }
-
-    function _beforeTokenTransfer(address from, address to, uint256 amount)
-        internal
-        whenNotPaused
-        override
-    {
-        super._beforeTokenTransfer(from, to, amount);
     }
 
     function _authorizeUpgrade(address _newImplementation) internal onlyAdmin override {}
