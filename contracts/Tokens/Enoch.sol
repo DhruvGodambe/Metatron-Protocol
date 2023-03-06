@@ -23,7 +23,12 @@ contract Enoch is ERC20 {
     }
 
     function burn(uint256 amount) external onlyAdmin {
-        _burn(msg.sender, amount);
+        _burn(_owner, amount);
+    }
+
+    function transferAdminRole(address newAdmin) external onlyAdmin {
+        require(newAdmin != address(0), "Invalid address");
+        _owner = newAdmin;
     }
 
 }
