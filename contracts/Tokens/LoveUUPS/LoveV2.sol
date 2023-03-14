@@ -25,7 +25,7 @@ contract LoveV2 is
         _;
     }
 
-    function initialize(string memory _id) public onlyAdmin {
+    function initialize(string memory _id) external reinitializer(2) onlyAdmin {
         ID = _id;
     }
 
