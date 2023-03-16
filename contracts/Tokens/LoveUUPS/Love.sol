@@ -5,14 +5,12 @@ import "@openzeppelin/contracts-upgradeable/proxy/utils/UUPSUpgradeable.sol";
 import "@openzeppelin/contracts-upgradeable/proxy/utils/Initializable.sol";
 import "@openzeppelin/contracts-upgradeable/token/ERC20/ERC20Upgradeable.sol";
 import "@openzeppelin/contracts-upgradeable/token/ERC20/extensions/ERC20BurnableUpgradeable.sol";
-import "@openzeppelin/contracts-upgradeable/security/PausableUpgradeable.sol";
 
 contract Love is 
     Initializable, 
     UUPSUpgradeable, 
     ERC20Upgradeable, 
-    ERC20BurnableUpgradeable, 
-    PausableUpgradeable 
+    ERC20BurnableUpgradeable
 {
     address public _owner;
 
@@ -27,7 +25,6 @@ contract Love is
     function initialize(uint256 _initialSupply) external initializer {
         __ERC20_init("LOVE", "LOVE");
         __ERC20Burnable_init();
-        __Pausable_init();
         _owner = msg.sender;
         mint(_owner, _initialSupply);
     }
@@ -41,14 +38,6 @@ contract Love is
     }   
 
     function _authorizeUpgrade(address _newImplementation) internal onlyAdmin override {}
-    
-    function pause() public onlyAdmin whenNotPaused {
-        _pause();
-    }
-
-    function unpause() public onlyAdmin whenPaused {
-        _unpause();
-    }
 
 
 }

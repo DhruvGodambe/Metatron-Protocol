@@ -7,7 +7,7 @@ import "@openzeppelin/contracts/token/ERC20/ERC20.sol";
 contract Enoch is ERC20 {
 
     address public _owner;
-    uint256 private _totalSupply = 100000000000000000000000000; //100,000,000 ENOCH tokens
+    uint256 private _totalSupply = 70000000000000000000000000; //70,000,000 ENOCH tokens
     
     modifier onlyAdmin() {
         require(
