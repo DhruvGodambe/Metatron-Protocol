@@ -19,11 +19,15 @@ module.exports = {
       url: "http://127.0.0.1:8545/",
     },
     
-
+    sepolia: {
+      url: RPCURL.RPCurl.sepolia,
+      accounts: [process.env.PRIVATE_KEY_2],
+      chainId: 11155111
+    },
 
     goerli: {
       url: RPCURL.RPCurl.goerli,
-      accounts: [process.env.PRIVATE_KEY_1],
+      accounts: [process.env.PRIVATE_KEY_2],
       chainId: 5,
     },
 
@@ -44,6 +48,12 @@ module.exports = {
       accounts: [process.env.PRIVATE_KEY_1],
       chainId: 97,
     },
+
+    ethereum: {
+      url: RPCURL.RPCurl.ethereum,
+      accounts: [process.env.PRIVATE_KEY_2],
+      chaindId: 1
+    }
   },
   solidity: {
     compilers: [
@@ -103,6 +113,6 @@ module.exports = {
     timeout: 40000,
   },
   etherscan: {
-    apiKey: [process.env.ETHERSCAN_API_KEY]
+    apiKey: process.env.ETHERSCAN_API_KEY
   }
 };
