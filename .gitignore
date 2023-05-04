@@ -7,4 +7,4 @@ request.json
 typechain-types
 .prettierrc
 .prettierignore
-./scripts/UUPS/Wormhole/RPC.json
+./scripts/Wormhole/RPC.json
