@@ -7,12 +7,6 @@ const fs = require('fs');
 const { writeFileSync } = require("fs");
 const path = require('path');
 
-const NFTCollectionabi = require('../../artifacts/contracts/NFTMarketplace/MintingAndStorage/NFTCollection.sol/NFTCollection.json');
-const IMintingFactory = require('../../artifacts/contracts/NFTMarketplace/Interface/IMintingFactory.sol/IMintingFactory.json');
-const IAdminRegistry = require('../../artifacts/contracts/Registry/IAdminRegistry.sol/IAdminRegistry.json');
-
-
-
 /*
 marketplaceDeployment.ts requirements:
 1. deploy adminregistry 
@@ -21,8 +15,6 @@ marketplaceDeployment.ts requirements:
 4. deploy exchangeCore
 5. set exchange address in minting factory
 */
-
-
 
 const deployment = async () => {
 
@@ -46,7 +38,7 @@ const deployment = async () => {
 
     console.log("Deploying Minting Factory...");
     
-    const MintingFactory = await hre.ethers.getContractFactory("NFTMintingFactory");
+    const MintingFactory = await hre.ethers.getContractFactory("MintingFactory");
     const mintingFactory = await MintingFactory.deploy(adminRegistry.address);    
     await mintingFactory.deployed();
     console.log("Minting Factory address : ", mintingFactory.address);

@@ -2,7 +2,6 @@
 
 pragma solidity ^0.8.4;
 
-import "hardhat/console.sol";
 import "@openzeppelin/contracts-upgradeable/security/ReentrancyGuardUpgradeable.sol";
 import "@openzeppelin/contracts-upgradeable/proxy/utils/Initializable.sol";
 import "@openzeppelin/contracts-upgradeable/proxy/utils/UUPSUpgradeable.sol";
@@ -10,12 +9,12 @@ import "@openzeppelin/contracts-upgradeable/security/PausableUpgradeable.sol";
 import "@openzeppelin/contracts/utils/math/SafeMath.sol";
 
 import "./../MintingAndStorage/Collection/Collection.sol";
-import "./../Interface/IERC20.sol";
-import "./../Interface/IMintingFactory.sol";
-import "./../../Registry/IAdminRegistry.sol";
+import "../Interface/IERC20.sol";
+import "../Interface/IMintingFactory.sol";
+import "../../Registry/IAdminRegistry.sol";
 import "../SignatureLib.sol";
 
-contract ExchangeCore is 
+contract ExchangeCoreV3 is 
     Initializable,
     UUPSUpgradeable,
     ReentrancyGuardUpgradeable,
@@ -27,6 +26,8 @@ contract ExchangeCore is
 
     address public treasury;
     address public adminRegistry;
+    string public ID;
+    string public IamV3;
 
     event FixedPricePrimarySale(
         address _nftCollection, 
@@ -59,7 +60,7 @@ contract ExchangeCore is
         );
         _;
     }
-
+    
     modifier validateSeller(
         address _nftCollection,
         uint256 _tokenId,
@@ -85,30 +86,28 @@ contract ExchangeCore is
         address _buyerToken
     ) {
         require(
-            IERC20(_buyerToken).allowance(_buyer, address(this)) >= _amount,
+            IERC20(_buyerToken).allowance(_buyer, address(this)) > _amount,
             "Allowance is less than the NFT's price."
         );
         require(
-            IERC20(_buyerToken).balanceOf(_buyer) >= _amount,
+            IERC20(_buyerToken).balanceOf(_buyer) > _amount,
             "Buyer doesn't have sufficient funds"
         );
         _;
     }
 
 
-    function initialize(
-        IMintingFactory _mintingFactory, 
-        address _adminRegistry, 
-        address _treasury
-    ) external virtual initializer {
-        __UUPSUpgradeable_init();
-        __Pausable_init();
-        __ReentrancyGuard_init();
-        mintingFactory = IMintingFactory(_mintingFactory);
-        adminRegistry = _adminRegistry;
-        treasury = _treasury;
+    function initialize() public onlyAdmin {
+        IamV3 = "V3";
     }
 
+    function setID(string memory _id) public onlyAdmin {
+        ID = _id;
+    }
+    
+    function setIamV3(string memory _iamV3) public onlyAdmin {
+        IamV3 = _iamV3;
+    }
 
     function fixedPricePrimarySale(
         address _nftCollection, 
@@ -148,7 +147,7 @@ contract ExchangeCore is
         
         return _tokenURL;
     }
-    
+
 
     function auctionPrimarySale(
         address _nftCollection,

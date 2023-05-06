@@ -7,3 +7,4 @@ request.json
 typechain-types
 .prettierrc
 .prettierignore
+./scripts/Wormhole/RPC.json

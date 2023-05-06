@@ -7,15 +7,28 @@ import "@openzeppelin/contracts/token/ERC20/ERC20.sol";
 contract Enoch is ERC20 {
 
     address public _owner;
-
-    uint256 private _totalSupply = 90000000000000000000000000; //90,000,000 ENOCH tokens
-
-    mapping(address => uint256) private _balances;
+    uint256 private _totalSupply = 54000000000000000000000000; //54,000,000 ENOCH tokens
     
-    constructor() ERC20("ENOCH token", "ENOCH") {
+    modifier onlyAdmin() {
+        require(
+            msg.sender == _owner,
+            "Only Admin can call this!"
+        );
+        _;
+    }
+    
+    constructor() ERC20("ENOCH", "ENOCH") {
         _owner = msg.sender;
         _mint(msg.sender, _totalSupply);
-        _balances[_owner] = _totalSupply;
+    }
+
+    function burn(uint256 amount) external onlyAdmin {
+        _burn(_owner, amount);
+    }
+
+    function transferAdminRole(address newAdmin) external onlyAdmin {
+        require(newAdmin != address(0), "Invalid address");
+        _owner = newAdmin;
     }
 
 }
