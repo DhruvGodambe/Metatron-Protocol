@@ -19,9 +19,9 @@ const main = async () => {
 
 
 	const decimals = 18;
-	const LoveSupply = "1500000000"; // 1.5B
+	const LoveSupply = "500000000"; // 500M
 	const _initialSupply = ethers.utils.parseUnits(LoveSupply, decimals);
-	const implementation = "0x16B175f81033DF71723BA677A28bf212d4ba66E2"
+	const implementation = "0xC858D67961467B05d0a8620F6418FCC762e5Af50"
 
     const args = [_initialSupply];
 

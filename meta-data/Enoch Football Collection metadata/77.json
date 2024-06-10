@@ -1,0 +1,36 @@
+{
+    "name": "Giant BAU Argentina Football kit Lorenzo Jersey",
+    "description": "Soccer Jersey Applicable Occasions: The soccer uniform is very suitable for the 3d Enoch avatar wear, such as football training, various ball games, outdoor running, casual walking, physical exercise, etc. it is a perfect gift for your avatar and your friends", 
+    "external_url": "https://enoch.app", 
+    "image": "https://frontnd-s3-enoch-dev.s3.eu-west-2.amazonaws.com/TEEM+JERSEY+SET+-+BAU.png",
+    "attributes": [
+        {
+            "trait_type": "For", 
+            "value": "Adult/Children"
+        },
+        {
+            "trait_type": "Gender", 
+            "value": "Unisex"
+        },
+        {
+            "trait_type": "Brand", 
+            "value": "Giant"
+        },
+        {
+            "trait_type": "Club", 
+            "value": "Buenos Aires United"
+        },
+        {
+            "trait_type": "Color Scheme", 
+            "value": "Yellow"
+        },
+        {
+            "trait_type": "Tier", 
+            "value": "Limited"
+        },
+        {
+            "trait_type": "Collaborator",
+            "value": "Enoch Studio"
+        }
+    ]
+}

@@ -33,7 +33,7 @@ module.exports = {
 
     mumbai: {
       url: RPCURL.RPCurl.mumbai,
-      accounts: [process.env.PRIVATE_KEY_1],
+      accounts: [process.env.PRIVATE_KEY_2],
       chainId: 80001,
     },
 
@@ -43,14 +43,20 @@ module.exports = {
       chainId: 43113,
     },
 
-    bsc: {
+    bscTestnet: {
       url: RPCURL.RPCurl.bsc,
-      accounts: [process.env.PRIVATE_KEY_1],
+      accounts: [process.env.PRIVATE_KEY_2],
       chainId: 97,
     },
 
     ethereum: {
       url: RPCURL.RPCurl.ethereum,
+      accounts: [process.env.PRIVATE_KEY_2],
+      chaindId: 1
+    },
+
+    polygon: {
+      url: RPCURL.RPCurl.polygon,
       accounts: [process.env.PRIVATE_KEY_2],
       chaindId: 1
     }
@@ -113,6 +119,6 @@ module.exports = {
     timeout: 40000,
   },
   etherscan: {
-    apiKey: process.env.ETHERSCAN_API_KEY
+    apiKey: process.env.POLYGONSCAN_API_KEY
   }
 };

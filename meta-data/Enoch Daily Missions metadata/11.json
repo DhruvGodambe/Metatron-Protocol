@@ -1,0 +1,16 @@
+{
+    "name": "#AMA10062023002",
+    "description": "Enoch AMA Keys are unique redeemable keys. Key holders can use this key in the Enoch Daily mission pools to get exciting rewards. Go to the Enoch stargate app to learn more.", 
+    "external_url": "https://enoch.app", 
+    "image": "https://frontnd-s3-enoch-dev.s3.eu-west-2.amazonaws.com/AMA_NFT_Key_2.png",
+    "attributes": [
+        {
+            "trait_type": "Mission Type", 
+            "value": "Hero"
+        },
+        {
+            "trait_type": "Collectible Type", 
+            "value": "Redeemable"
+        }
+    ]
+}

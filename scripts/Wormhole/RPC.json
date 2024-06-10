@@ -5,7 +5,8 @@
         "fuji" : "https://api.avax-test.network/ext/bc/C/rpc",
         "bsc" : "https://data-seed-prebsc-1-s1.binance.org:8545",
         "sepolia": "https://eth-sepolia.g.alchemy.com/v2/wk6n9nAeJzyFl3d83RNRjcgk_CxWouaW",
-        "ethereum": "https://eth-mainnet.g.alchemy.com/v2/bN5TI5gKvevi0dFM9BgRaYXSxWabB5qw"
+        "ethereum": "https://eth-mainnet.g.alchemy.com/v2/bN5TI5gKvevi0dFM9BgRaYXSxWabB5qw",
+        "polygon": "https://polygon-mainnet.g.alchemy.com/v2/z_FtmYQTBTXrPLwkzILtQ34G09z6lHdH"
     },
 
     "WormholeRestAddress" : "https://wormhole-v2-testnet-api.certus.one"
